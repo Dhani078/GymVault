@@ -185,6 +185,8 @@ export default function AuthScreen() {
         } catch (e) {}
         
         showNotif('success', 'Welcome Back!', 'You are now logged in. Redirecting to dashboard...');
+        const { DeviceEventEmitter } = require('react-native');
+        DeviceEventEmitter.emit('offline_login', data.session);
       } else {
         showNotif('error', 'No Session', 'The server did not return a session. Please try again.');
       }
