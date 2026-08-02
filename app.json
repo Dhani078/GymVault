@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "GYM",
+    "name": "GymVault",
     "slug": "GYM",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,17 +13,68 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.dhani0788.GYM",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/652c3937-6e91-41a4-9a14-98383c2f012b"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "652c3937-6e91-41a4-9a14-98383c2f012b"
+      }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends.",
+          "cameraPermission": "The app accesses your camera to let you take photos."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff"
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-4822166160113924~7387295722",
+          "iosAppId": "ca-app-pub-4822166160113924~7156354684"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24,
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ],
+      "expo-font"
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
