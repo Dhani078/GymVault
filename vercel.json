@@ -3,7 +3,11 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/ads.txt",
+      "destination": "/ads.txt"
+    },
+    {
+      "source": "/((?!ads\\.txt).*)",
       "destination": "/index.html"
     }
   ],
@@ -17,11 +21,7 @@
         },
         {
           "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
+          "value": "ALLOWALL"
         }
       ]
     }
