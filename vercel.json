@@ -1,13 +1,12 @@
 {
   "version": 2,
-  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/ads.txt",
-      "destination": "/ads.txt"
+      "destination": "/api/ads.txt"
     },
     {
-      "source": "/((?!ads\\.txt).*)",
+      "source": "/((?!api/|ads\\.txt).*)",
       "destination": "/index.html"
     }
   ],
@@ -20,8 +19,8 @@
           "value": "nosniff"
         },
         {
-          "key": "X-Frame-Options",
-          "value": "ALLOWALL"
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
         }
       ]
     }
