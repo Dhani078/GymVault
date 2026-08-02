@@ -21,29 +21,22 @@ try {
 export default function DummyAdBanner() {
   const [isVisible, setIsVisible] = useState(true);
 
-  if (!isVisible) return null;
+  if (!isVisible || !isAdMobAvailable || !BannerAd) return null;
 
   return (
     <View style={styles.bannerContainer}>
       <View style={styles.adWrapper}>
-        {isAdMobAvailable && BannerAd ? (
-          <BannerAd
-            unitId={adUnitIds.banner}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            requestOptions={{
-              requestNonPersonalizedAdsOnly: true,
-            }}
-            onAdFailedToLoad={(error) => {
-              console.warn('AdMob Banner Error:', error);
-              setIsVisible(false);
-            }}
-          />
-        ) : (
-          // Dummy fallback untuk Expo Go / Web
-          <View style={styles.dummyBanner}>
-            <AppText style={styles.dummyText}>📢 Ad Space (AdMob aktif di APK build)</AppText>
-          </View>
-        )}
+        <BannerAd
+          unitId={adUnitIds.banner}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+          onAdFailedToLoad={(error) => {
+            console.warn('AdMob Banner Error:', error);
+            setIsVisible(false);
+          }}
+        />
       </View>
       
       <TouchableOpacity 
