@@ -1,54 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
-
-const ADSENSE_PUB_ID = 'ca-pub-4822166160113924';
+// Web Ad Banner Component
+// 
+// AdSense verification script is loaded via web/index.html <head> tag.
+// Ad slots are NOT rendered until Google approves the site (status: "Sedang disiapkan").
+// Rendering <ins class="adsbygoogle"> before approval causes AdSense to inject
+// error iframes with unpredictable heights, which breaks the flex layout and
+// pushes the bottom tab bar off-screen.
+//
+// Once AdSense status changes to "Siap" (Ready), uncomment the ad slot rendering below.
 
 export default function DummyAdBanner() {
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      const timer = setTimeout(() => {
-        try {
-          if (!document.getElementById('google-adsense-script')) {
-            const script = document.createElement('script');
-            script.id = 'google-adsense-script';
-            script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUB_ID}`;
-            script.async = true;
-            script.crossOrigin = 'anonymous';
-            document.head.appendChild(script);
-          }
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) {
-          setHasError(true);
-        }
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  if (Platform.OS !== 'web' || hasError) return null;
-
-  return (
-    <View style={styles.container}>
-      <ins
-        className="adsbygoogle"
-        style={{ display: 'inline-block', width: '100%', height: '50px' }}
-        data-ad-client={ADSENSE_PUB_ID}
-        data-ad-format="horizontal"
-      />
-    </View>
-  );
+  // Return null until AdSense site approval is complete.
+  // The verification script in web/index.html is sufficient for Google's crawler.
+  return null;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 50,
-    backgroundColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-});
