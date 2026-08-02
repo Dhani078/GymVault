@@ -1232,20 +1232,24 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
   };
 
   const handleSignOut = async () => {
-    if (Platform.OS === 'web') {
+    const doLogout = async () => {
       setSettingsVisible(false);
       await clearLocalDataOnSignOut();
+      try {
+        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+        await AsyncStorage.removeItem('@supabase.auth.token');
+      } catch (e) {}
       await supabase.auth.signOut();
+      const { DeviceEventEmitter } = require('react-native');
+      DeviceEventEmitter.emit('offline_login', null);
+    };
+
+    if (Platform.OS === 'web') {
+      await doLogout();
     } else {
       Alert.alert(t('alert_logout_title'), t('alert_logout_msg'), [
         { text: t('alert_cancel'), style: 'cancel' },
-        {
-          text: t('logout'), style: 'destructive', onPress: async () => {
-            setSettingsVisible(false);
-            await clearLocalDataOnSignOut();
-            await supabase.auth.signOut();
-          }
-        }
+        { text: t('logout'), style: 'destructive', onPress: doLogout }
       ]);
     }
   };

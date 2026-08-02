@@ -113,22 +113,22 @@ function AppContent() {
       setLoading(false);
     });
 
-    initApp();
-
-    return () => {
-      offlineSub.remove();
-    };
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (_event === 'SIGNED_OUT') {
+      setLoading(false);
+      if (_event === 'SIGNED_OUT' || !session) {
         setWorkoutData([]);
         setWorkoutIndex(0);
         setWorkoutStartTime(null);
       }
     });
 
-    return () => subscription.unsubscribe();
+    initApp();
+
+    return () => {
+      offlineSub.remove();
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Save active workout state to AsyncStorage whenever it changes
