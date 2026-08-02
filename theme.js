@@ -275,6 +275,7 @@ export const styles = {
       paddingTop: 12,
       alignItems: 'center',
       justifyContent: 'space-between',
+      flexShrink: 0,
     };
   },
   get tabItem() {
