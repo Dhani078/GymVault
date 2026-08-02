@@ -375,40 +375,6 @@ export default function AuthScreen() {
         )}
       </TouchableOpacity>
 
-      {/* Offline Mode / Guest Access Option */}
-      <View style={{ alignItems: 'center', marginTop: 24 }}>
-        <TouchableOpacity 
-          onPress={async () => {
-            const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-            const guestSession = {
-              user: {
-                id: 'guest_offline_user',
-                email: 'athlete@gymvault.app',
-                user_metadata: { full_name: 'Athlete (Offline)' }
-              }
-            };
-            await AsyncStorage.setItem('@supabase.auth.token', JSON.stringify({ currentSession: guestSession }));
-            const { DeviceEventEmitter } = require('react-native');
-            DeviceEventEmitter.emit('offline_login', guestSession);
-          }}
-          style={{
-            paddingVertical: 10,
-            paddingHorizontal: 20,
-            borderRadius: 12,
-            backgroundColor: 'rgba(255,255,255,0.05)',
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-          }}
-        >
-          <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 13 }}>
-            ⚡ Lanjutkan Tanpa Internet (Mode Offline)
-          </AppText>
-        </TouchableOpacity>
-        <AppText style={{ color: theme.colors.textMuted, fontSize: 11, marginTop: 8 }}>
-          Semua fitur latihan & histori tetap berfungsi di HP Anda.
-        </AppText>
-      </View>
-
       {/* OAuth - Coming Soon */}
       <View style={{ alignItems: 'center', marginTop: 16, opacity: 0.5 }}>
         <AppText style={{ color: theme.colors.textMuted, fontSize: 12 }}>Google & Apple Sign-In coming soon</AppText>
