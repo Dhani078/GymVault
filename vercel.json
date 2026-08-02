@@ -1,7 +1,6 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "framework": "expo",
   "rewrites": [
     {
       "source": "/(.*)",
