@@ -292,10 +292,25 @@ export default function AuthScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.screen}>
     <SmoothScrollView contentContainerStyle={{ flexGrow: 1, padding: 24, justifyContent: 'center' }}>
       {/* Animated Premium Logo */}
-      <Animated.View style={{ alignItems: 'center', marginBottom: 40, transform: [{ translateY: floatAnim }] }}>
-        <GymVaultLogo size={80} />
-        <AppText weight="bold" style={{ fontSize: 36, marginTop: 20, letterSpacing: -1, color: theme.colors.text }}>GymVault</AppText>
-        <AppText style={{ color: theme.colors.textMuted, fontSize: 14, marginTop: 4, letterSpacing: 2 }}>ELITE FITNESS</AppText>
+      <Animated.View style={{ alignItems: 'center', marginBottom: 36, transform: [{ translateY: floatAnim }] }}>
+        <View style={{
+          width: 104,
+          height: 104,
+          borderRadius: 28,
+          backgroundColor: 'rgba(255, 255, 255, 0.03)',
+          borderWidth: 1,
+          borderColor: 'rgba(204, 255, 0, 0.2)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          shadowColor: theme.colors.primary,
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.25,
+          shadowRadius: 16,
+        }}>
+          <GymVaultLogo size={76} />
+        </View>
+        <AppText weight="bold" style={{ fontSize: 36, marginTop: 18, letterSpacing: -1, color: theme.colors.text }}>GymVault</AppText>
+        <AppText style={{ color: theme.colors.textMuted, fontSize: 13, marginTop: 4, letterSpacing: 3 }}>ELITE FITNESS</AppText>
       </Animated.View>
 
       {/* ═══ NOTIFICATION BANNER ═══ */}
