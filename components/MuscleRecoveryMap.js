@@ -5,6 +5,7 @@ import { AppText, theme } from '../theme';
 import { Shield, Zap, Activity, Info, Calendar, X } from 'lucide-react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useDynamicIsland } from '../contexts/DynamicIslandContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Anatomical SVG Paths mapped to viewBox="50 10 170 190" (Center = 135)
 const FRONT_MUSCLE_PATHS = [
@@ -231,7 +232,6 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
   const loadOverrides = async () => {
     try {
       const userId = session?.user?.id || 'guest';
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       const data = await AsyncStorage.getItem(`muscle_recovery_overrides_${userId}`);
       if (data) {
         setOverrides(JSON.parse(data));
@@ -246,7 +246,6 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
   const saveOverride = async (muscleId, percentage) => {
     try {
       const userId = session?.user?.id || 'guest';
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       const updated = {
         ...overrides,
         [muscleId]: {
@@ -315,80 +314,82 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
         sets.forEach(set => {
           const rawMuscle = (set.muscle_group || set.exercises?.muscle_group || '').toLowerCase();
           const exName = (set.exercises?.name || '').toLowerCase();
-          let targetGroup = null;
+          const targetGroups = [];
 
           if (
             rawMuscle.includes('traps') || rawMuscle.includes('trapezius') || rawMuscle.includes('pundak') || rawMuscle.includes('leher') ||
-            exName.includes('shrug') || exName.includes('upright row') || exName.includes('farmer')
-          ) targetGroup = 'traps';
-          else if (
+            exName.includes('shrug') || exName.includes('upright row') || exName.includes('farmer') || exName.includes('deadlift')
+          ) targetGroups.push('traps');
+          if (
             rawMuscle.includes('chest') || rawMuscle.includes('pec') || rawMuscle.includes('dada') ||
-            exName.includes('bench press') || exName.includes('chest press') || exName.includes('push up') || exName.includes('push-up') || exName.includes('fly') || exName.includes('cable crossover') || exName.includes('pec deck')
-          ) targetGroup = 'chest';
-          else if (
+            exName.includes('bench press') || exName.includes('chest press') || exName.includes('push up') || exName.includes('push-up') || exName.includes('fly') || exName.includes('cable crossover') || exName.includes('pec deck') || exName.includes('dip')
+          ) targetGroups.push('chest');
+          if (
             rawMuscle.includes('lower back') || rawMuscle.includes('erector') || rawMuscle.includes('punggung bawah') || rawMuscle.includes('pinggang') ||
-            exName.includes('deadlift') || exName.includes('hyperextension') || exName.includes('good morning') || exName.includes('back extension')
-          ) targetGroup = 'lower_back';
-          else if (
+            exName.includes('deadlift') || exName.includes('hyperextension') || exName.includes('good morning') || exName.includes('back extension') || exName.includes('row')
+          ) targetGroups.push('lower_back');
+          if (
             rawMuscle.includes('back') || rawMuscle.includes('lats') || rawMuscle.includes('sayap') || rawMuscle.includes('punggung') ||
-            exName.includes('row') || exName.includes('pull up') || exName.includes('pull-up') || exName.includes('pulldown') || exName.includes('t-bar') || exName.includes('lat pull')
-          ) targetGroup = 'lats';
-          else if (
+            exName.includes('row') || exName.includes('pull up') || exName.includes('pull-up') || exName.includes('pulldown') || exName.includes('t-bar') || exName.includes('lat pull') || exName.includes('chin-up') || exName.includes('chin up')
+          ) targetGroups.push('lats');
+          if (
             rawMuscle.includes('shoulder') || rawMuscle.includes('delt') || rawMuscle.includes('bahu') ||
-            exName.includes('shoulder press') || exName.includes('lateral raise') || exName.includes('front raise') || exName.includes('overhead press') || exName.includes('military press') || exName.includes('arnold press') || exName.includes('face pull')
-          ) targetGroup = 'shoulders';
-          else if (
+            exName.includes('shoulder press') || exName.includes('lateral raise') || exName.includes('front raise') || exName.includes('overhead press') || exName.includes('military press') || exName.includes('arnold press') || exName.includes('face pull') || exName.includes('bench press') || exName.includes('push up') || exName.includes('upright row')
+          ) targetGroups.push('shoulders');
+          if (
             rawMuscle.includes('forearm') || rawMuscle.includes('lengan bawah') || rawMuscle.includes('brachioradialis') ||
-            exName.includes('wrist curl') || exName.includes('reverse curl') || exName.includes('grip') || exName.includes('plate pinch')
-          ) targetGroup = 'forearms';
-          else if (
+            exName.includes('wrist curl') || exName.includes('reverse curl') || exName.includes('grip') || exName.includes('plate pinch') || exName.includes('deadlift') || exName.includes('farmer') || exName.includes('pull up') || exName.includes('row')
+          ) targetGroups.push('forearms');
+          if (
             rawMuscle.includes('bicep') || rawMuscle.includes('bisep') ||
-            exName.includes('curl') || exName.includes('chin-up') || exName.includes('chin up') || exName.includes('preacher')
-          ) targetGroup = 'biceps';
-          else if (
+            exName.includes('curl') || exName.includes('chin-up') || exName.includes('chin up') || exName.includes('preacher') || exName.includes('pull up') || exName.includes('pull-up') || exName.includes('row') || exName.includes('pulldown')
+          ) targetGroups.push('biceps');
+          if (
             rawMuscle.includes('tricep') || rawMuscle.includes('trisep') ||
-            exName.includes('extension') || exName.includes('dip') || exName.includes('skull crusher') || exName.includes('pushdown') || exName.includes('kickback') || exName.includes('french press')
-          ) targetGroup = 'triceps';
-          else if (
+            exName.includes('extension') || exName.includes('dip') || exName.includes('skull crusher') || exName.includes('pushdown') || exName.includes('kickback') || exName.includes('french press') || exName.includes('bench press') || exName.includes('push up') || exName.includes('shoulder press') || exName.includes('overhead press')
+          ) targetGroups.push('triceps');
+          if (
             rawMuscle.includes('quad') || rawMuscle.includes('thigh') || rawMuscle.includes('paha depan') ||
             exName.includes('squat') || exName.includes('leg press') || exName.includes('leg extension') || exName.includes('lunge') || exName.includes('hack squat') || exName.includes('split squat') || exName.includes('step up')
-          ) targetGroup = 'quads';
-          else if (
+          ) targetGroups.push('quads');
+          if (
             rawMuscle.includes('glute') || rawMuscle.includes('bokong') || rawMuscle.includes('pantat') ||
-            exName.includes('hip thrust') || exName.includes('glute kickback') || exName.includes('butt') || exName.includes('bridge') || exName.includes('cable pull through')
-          ) targetGroup = 'glutes';
-          else if (
+            exName.includes('hip thrust') || exName.includes('glute kickback') || exName.includes('butt') || exName.includes('bridge') || exName.includes('cable pull through') || exName.includes('squat') || exName.includes('deadlift') || exName.includes('lunge') || exName.includes('split squat')
+          ) targetGroups.push('glutes');
+          if (
             rawMuscle.includes('calf') || rawMuscle.includes('calves') || rawMuscle.includes('betis') ||
             exName.includes('calf raise') || exName.includes('jinjit') || exName.includes('soleus')
-          ) targetGroup = 'calves';
-          else if (
+          ) targetGroups.push('calves');
+          if (
             rawMuscle.includes('hamstring') || rawMuscle.includes('paha belakang') ||
-            exName.includes('leg curl') || exName.includes('romanian deadlift') || exName.includes('rdl') || exName.includes('stiff leg')
-          ) targetGroup = 'hamstrings';
-          else if (
+            exName.includes('leg curl') || exName.includes('romanian deadlift') || exName.includes('rdl') || exName.includes('stiff leg') || exName.includes('deadlift') || exName.includes('squat') || exName.includes('lunge')
+          ) targetGroups.push('hamstrings');
+          if (
             rawMuscle.includes('abs') || rawMuscle.includes('core') || rawMuscle.includes('abdominal') || rawMuscle.includes('perut') ||
             exName.includes('crunch') || exName.includes('plank') || exName.includes('sit up') || exName.includes('sit-up') || exName.includes('leg raise') || exName.includes('russian twist') || exName.includes('ab wheel')
-          ) targetGroup = 'core';
+          ) targetGroups.push('core');
 
-          if (targetGroup && hoursAgo < states[targetGroup].hoursAgo) {
-            states[targetGroup].hoursAgo = hoursAgo;
-            
-            // Auto-recovery calculation:
-            let percentage = 100;
-            if (hoursAgo < 24) {
-              percentage = Math.round(10 + (hoursAgo / 24) * 20); // 10% to 30%
-            } else if (hoursAgo < 48) {
-              percentage = Math.round(30 + ((hoursAgo - 24) / 24) * 40); // 30% to 70%
-            } else if (hoursAgo < 72) {
-              percentage = Math.round(70 + ((hoursAgo - 48) / 24) * 25); // 70% to 95%
+          targetGroups.forEach(tg => {
+            if (hoursAgo < states[tg].hoursAgo) {
+              states[tg].hoursAgo = hoursAgo;
+              
+              // Auto-recovery calculation:
+              let percentage = 100;
+              if (hoursAgo < 24) {
+                percentage = Math.round(10 + (hoursAgo / 24) * 20); // 10% to 30%
+              } else if (hoursAgo < 48) {
+                percentage = Math.round(30 + ((hoursAgo - 24) / 24) * 40); // 30% to 70%
+              } else if (hoursAgo < 72) {
+                percentage = Math.round(70 + ((hoursAgo - 48) / 24) * 25); // 70% to 95%
+              }
+
+              let status = 'Fresh';
+              if (percentage < 40) status = 'Fatigued';
+              else if (percentage < 75) status = 'Recovering';
+
+              states[tg] = { status, percentage, hoursAgo };
             }
-
-            let status = 'Fresh';
-            if (percentage < 40) status = 'Fatigued';
-            else if (percentage < 75) status = 'Recovering';
-
-            states[targetGroup] = { status, percentage, hoursAgo };
-          }
+          });
         });
       });
     }

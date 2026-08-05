@@ -16,8 +16,11 @@ import SmoothScrollView from '../components/SmoothScrollView';
 import DummyAdBanner from '../components/DummyAdBanner';
 import useInterstitialAd from '../components/DummyInterstitialAd';
 
+import * as Crypto from 'expo-crypto';
+
+// Gunakan UUID v4 standar agar tidak terjadi bentrok ID
 function makeId() {
-  return String(Date.now()) + String(Math.random()).slice(2, 8);
+  return Crypto.randomUUID();
 }
 
 const getVolumeComparison = (vol) => {

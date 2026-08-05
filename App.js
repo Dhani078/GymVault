@@ -37,8 +37,11 @@ const TABS = [
   { key: 'Profile', label: 'Profile', icon: BarChart3 },
 ];
 
+import * as Crypto from 'expo-crypto';
+
+// Gunakan UUID v4 standar agar tidak terjadi bentrok ID
 function makeId() {
-  return String(Date.now()) + String(Math.random()).slice(2, 8);
+  return Crypto.randomUUID();
 }
 
 function AppContent() {
