@@ -108,7 +108,12 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
       if (data.error) throw new Error(data.error.message);
 
       let text = data.candidates[0].content.parts[0].text.trim();
-      if (text.startsWith('```json')) text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      text = text.replace(/```(?:json)?\s*([\s\S]*?)```/g, '$1').trim();
+      const jsonStart = text.indexOf('{');
+      const jsonEnd = text.lastIndexOf('}');
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        text = text.substring(jsonStart, jsonEnd + 1);
+      }
 
       const routine = JSON.parse(text);
       if (!routine.exercises || !Array.isArray(routine.exercises)) {

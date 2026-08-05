@@ -55,13 +55,8 @@ const getLocalDateString = (date = new Date()) => {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
-const GEMINI_API_KEY = (() => {
-  const envKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-  if (envKey && typeof envKey === 'string' && envKey.trim() !== '' && envKey !== 'undefined' && envKey !== 'null') {
-    return envKey;
-  }
-  return "AIzaSyDVkBIsm2qZx6YwRS62l3qPKtuXqP6d9jU";
-})();
+// URL Backend Vercel (Setup di .env EXPO_PUBLIC_API_URL atau gunakan domain vercel kamu)
+const BACKEND_URL = process.env.EXPO_PUBLIC_API_URL || 'https://gymvault-app.vercel.app';
 
 export default function NutritionScannerModal({ visible, onClose, session }) {
   const [scannedImage, setScannedImage] = useState(null);
@@ -153,38 +148,26 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
       const { NUTRITION_DATASET } = require('../services/NutritionDataset');
       const knownNames = NUTRITION_DATASET.slice(0, 45).map(item => item.name).join(", ");
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      // Memanggil fungsi serverless Vercel kita alih-alih API Google langsung
+      const response = await fetch(`${BACKEND_URL}/api/analyze-nutrition`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: `Analyze this food image. Classify it into one of these exact known categories if it matches or looks like them: [${knownNames}]. Otherwise, estimate the calorie and macros. Return ONLY a valid JSON object strictly matching this format without markdown wrappers: {"food": "Category Name", "cal": 0, "p": 0, "c": 0, "f": 0}. If no food is detected, return {"food": "Unknown", "cal": 0, "p": 0, "c": 0, "f": 0}.` },
-              {
-                inline_data: {
-                  mime_type: "image/jpeg",
-                  data: base64Image
-                }
-              }
-            ]
-          }]
+          base64Image: base64Image,
+          knownNames: knownNames
         })
       });
 
       const data = await response.json();
 
       if (data.error) {
-        throw new Error(data.error.message || "API Error");
+        throw new Error(data.error);
       }
 
-      const textResponse = data.candidates[0].content.parts[0].text;
+      let parsedResult = data;
 
-      // Clean up response if it contains markdown code blocks
-      const cleanJsonStr = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-
-      const parsedResult = JSON.parse(cleanJsonStr);
       try {
         const { matchNutritionDataset } = require('../services/NutritionDataset');
         const matched = matchNutritionDataset(parsedResult.food);
@@ -200,9 +183,8 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
       }
       return parsedResult;
     } catch (error) {
-      console.warn("Gemini API Error:", error.message);
-      // Fallback in case of error so app doesn't crash completely
-      return { food: "Error / Invalid API Key", cal: 0, p: 0, c: 0, f: 0 };
+      console.warn("Serverless API Error / Network Error:", error.message);
+      return { food: "Error Jaringan / Server", cal: 0, p: 0, c: 0, f: 0 };
     }
   };
 

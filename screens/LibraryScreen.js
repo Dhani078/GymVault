@@ -157,6 +157,55 @@ const ExerciseCard = React.memo(({ item, index, scrollY, onPress }) => (
   </AnimatedScrollCard>
 ));
 
+const levenshtein = (a, b) => {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  let prevRow = Array.from({ length: a.length + 1 }, (_, i) => i);
+  for (let i = 0; i < b.length; i++) {
+    let currRow = [i + 1];
+    for (let j = 0; j < a.length; j++) {
+      currRow.push(Math.min(
+        currRow[j] + 1,
+        prevRow[j + 1] + 1,
+        prevRow[j] + (a[j] === b[i] ? 0 : 1)
+      ));
+    }
+    prevRow = currRow;
+  }
+  return prevRow[a.length];
+};
+
+const isFuzzyMatch = (search, target) => {
+  if (!search) return true;
+  const s = search.toLowerCase().trim();
+  const t = target.toLowerCase();
+  if (t.includes(s)) return true;
+  
+  const sNoSpace = s.replace(/\s+/g, '');
+  const tNoSpace = t.replace(/\s+/g, '');
+  if (tNoSpace.includes(sNoSpace)) return true;
+  
+  const distWhole = levenshtein(sNoSpace, tNoSpace);
+  if (distWhole <= 2) return true;
+  
+  const sWords = s.split(/\s+/).filter(Boolean);
+  const tWords = t.split(/\s+/).filter(Boolean);
+  
+  if (sWords.length === 0) return true;
+
+  return sWords.every(sw => {
+    return tWords.some(tw => {
+      if (tw.includes(sw)) return true;
+      if (sw.length > 2) {
+        const dist = levenshtein(sw, tw);
+        const maxDist = sw.length > 4 ? 2 : 1;
+        if (dist <= maxDist) return true;
+      }
+      return false;
+    });
+  });
+};
+
 let globalCachedExercises = null;
 let globalCachedMuscleGroups = null;
 
@@ -174,7 +223,6 @@ export default function LibraryScreen({ onStartExercise }) {
 
   const [muscleGroups, setMuscleGroups] = useState(['All']);
   const [exercises, setExercises] = useState(FALLBACK_EXERCISES);
-  const [loading, setLoading] = useState(false);
   const [isFetchingMore, setIsFetchingMore] = useState(true);
   const [showDoneBanner, setShowDoneBanner] = useState(false);
   const [selectedEx, setSelectedEx] = useState(null);
@@ -365,7 +413,7 @@ export default function LibraryScreen({ onStartExercise }) {
     }
 
     return baseList.filter(e => {
-      const matchesSearch = e.name?.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch = isFuzzyMatch(search, e.name || '');
       const matchesGroup = activeMuscle === 'All' || e.muscle_group?.toLowerCase() === activeMuscle.toLowerCase();
       const matchesDiff = activeDifficulty === 'All' || e.level?.toLowerCase() === activeDifficulty.toLowerCase();
 
@@ -505,35 +553,28 @@ export default function LibraryScreen({ onStartExercise }) {
         </View>
       ) : null}
 
-      {loading ? (
-        <View style={{ padding: 40, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator color={theme.colors.primary} size="large" />
-          <AppText style={{ color: theme.colors.textMuted, marginTop: 12 }}>Loading 2000+ HD Exercises...</AppText>
+      <View style={{ flex: 1, paddingHorizontal: 24 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <AppText weight="bold" style={{ fontSize: 18 }}>
+            {search || isAnyFilterActive ? t('filtered_results') : t('popular_exercises')} ({filtered.length})
+          </AppText>
         </View>
-      ) : (
-        <View style={{ flex: 1, paddingHorizontal: 24 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <AppText weight="bold" style={{ fontSize: 18 }}>
-              {search || isAnyFilterActive ? t('filtered_results') : t('popular_exercises')} ({filtered.length})
-            </AppText>
-          </View>
 
-          <AnimatedFlashList
-            data={filtered}
-            keyExtractor={item => item.id.toString()}
-            renderItem={renderItem}
-            estimatedItemSize={92}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={
-              <View style={{ padding: 32, alignItems: 'center' }}>
-                <Filter color={theme.colors.textMuted} size={32} style={{ marginBottom: 12 }} />
-                <AppText style={{ color: theme.colors.textMuted }}>No exercises match your filters.</AppText>
-              </View>
-            }
-          />
-        </View>
-      )}
+        <AnimatedFlashList
+          data={filtered}
+          keyExtractor={item => item.id.toString()}
+          renderItem={renderItem}
+          estimatedItemSize={92}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={{ padding: 32, alignItems: 'center' }}>
+              <Filter color={theme.colors.textMuted} size={32} style={{ marginBottom: 12 }} />
+              <AppText style={{ color: theme.colors.textMuted }}>No exercises match your filters.</AppText>
+            </View>
+          }
+        />
+      </View>
 
       {/* Filter Bottom Sheet Modal */}
       <Modal visible={filterModalVisible} animationType="slide" transparent={true}>

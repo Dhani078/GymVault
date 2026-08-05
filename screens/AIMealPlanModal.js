@@ -100,10 +100,13 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
         throw new Error("No response content from Gemini.");
       }
 
-      // Cleanup markdown if present
+      // Cleanup markdown and extract JSON block
       let cleanText = rawText.trim();
-      if (cleanText.startsWith('```')) {
-        cleanText = cleanText.replace(/^```json\s*/, '').replace(/```$/, '').trim();
+      cleanText = cleanText.replace(/```(?:json)?\s*([\s\S]*?)```/g, '$1').trim();
+      const jsonStart = cleanText.indexOf('{');
+      const jsonEnd = cleanText.lastIndexOf('}');
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        cleanText = cleanText.substring(jsonStart, jsonEnd + 1);
       }
 
       const parsed = JSON.parse(cleanText);

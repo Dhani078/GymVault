@@ -522,7 +522,13 @@ export default function AIChatBubble() {
       let replyText = aiText;
       let logData = null;
       try {
-        const cleanJsonStr = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
+        let cleanJsonStr = aiText.replace(/```(?:json)?\s*([\s\S]*?)```/g, '$1').trim();
+        const jsonStart = cleanJsonStr.indexOf('{');
+        const jsonEnd = cleanJsonStr.lastIndexOf('}');
+        if (jsonStart !== -1 && jsonEnd !== -1) {
+           cleanJsonStr = cleanJsonStr.substring(jsonStart, jsonEnd + 1);
+        }
+
         const parsed = JSON.parse(cleanJsonStr);
         replyText = parsed.reply || aiText;
         logData = parsed.log;

@@ -16,6 +16,7 @@ import AIMealPlanModal from './AIMealPlanModal';
 import SmoothScrollView from '../components/SmoothScrollView';
 import SkiaProgressRing from '../components/SkiaProgressRing';
 import DummyAdBanner from '../components/DummyAdBanner';
+import { MotiView } from 'moti';
 
 const getLocalDateString = () => {
   const d = new Date();
@@ -325,33 +326,13 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
     };
   }, [session]);
 
-  // Animations
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-
+  // Animations refactored to MotiView
   useEffect(() => {
     return () => {
       if (reactionTimer) clearTimeout(reactionTimer);
     };
   }, [reactionTimer]);
 
-  useEffect(() => {
-    // Mount Animation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.cubic),
-      }),
-      Animated.spring(slideAnim, {
-        toValue: 0,
-        tension: 50,
-        friction: 8,
-        useNativeDriver: true,
-      })
-    ]).start();
-  }, []);
 
   useEffect(() => {
     if (session?.user?.id) fetchDashboardData();
@@ -452,7 +433,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
       }
 
       const { data: sessions, error: sessErr } = await safeSelect('workout_sessions', {
-        columns: 'id, started_at, workout_sets(weight_kg, reps, is_checked, exercises(muscle_group))',
+        columns: 'id, started_at, workout_sets(weight_kg, reps, is_checked, exercises(name, muscle_group))',
         filters: { user_id: session.user.id, is_completed: true },
         order: { column: 'started_at', ascending: false },
       });
@@ -917,7 +898,11 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
         contentContainerStyle={{ padding: 24, paddingBottom: 100 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
       >
-      <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
+      <MotiView 
+        from={{ opacity: 0, translateY: 30 }} 
+        animate={{ opacity: 1, translateY: 0 }} 
+        transition={{ type: 'timing', duration: 500 }}
+      >
 
         {/* Connection & Offline Sync Status Banner */}
         {(!isOnline || offlineQueueCount > 0) && (
@@ -1764,7 +1749,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           </View>
         )}
 
-      </Animated.View>
+      </MotiView>
 
       {/* Interactive CNS Readiness Modal */}
       <Modal visible={modalVisible} transparent animationType="slide">
