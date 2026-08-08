@@ -245,7 +245,7 @@ export default function useAdminData() {
         .from('workout_sessions')
         .select('*')
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
+        .order('started_at', { ascending: false })
         .limit(5); // 5 aktivitas terakhir
         
       if (!error && data) {
