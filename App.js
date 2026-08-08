@@ -9,6 +9,7 @@ import { AppModeProvider } from './contexts/AppModeContext';
 import * as Notifications from 'expo-notifications';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_700Bold } from '@expo-google-fonts/inter';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import AdaptiveLayout from './components/AdaptiveLayout';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -322,114 +323,106 @@ function AppContent() {
     );
   }
 
-  if (!session) {
+  const renderContent = () => {
+    if (!session) {
+      return <AuthScreen />;
+    }
+    if (showOnboarding) {
+      return <OnboardingScreen onComplete={() => setShowOnboarding(false)} />;
+    }
+    if (showPaywall) {
+      return <PaywallScreen onSkip={() => setShowPaywall(false)} session={session} />;
+    }
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-        <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
-        <AuthScreen />
-      </SafeAreaView>
-    );
-  }
+      <>
+        <View style={{ flex: 1, width: '100%', alignSelf: 'center', backgroundColor: colors.background, overflow: 'hidden' }}>
+          <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, display: tab === 'Dashboard' ? 'flex' : 'none' }}>
+              {visitedTabs.includes('Dashboard') && <DashboardScreen onStartWorkout={handleStartWorkout} onStartRoutine={handleStartRoutine} session={session} dbReady={dbReady} hasActiveWorkout={workoutData.length > 0} />}
+            </View>
+            <View style={{ flex: 1, display: tab === 'Library' ? 'flex' : 'none' }}>
+              {visitedTabs.includes('Library') && <LibraryScreen onStartExercise={handleAddExercise} />}
+            </View>
+            <View style={{ flex: 1, display: tab === 'Logger' ? 'flex' : 'none' }}>
+              {visitedTabs.includes('Logger') && (
+                <LoggerScreen
+                  session={session}
+                  dbReady={dbReady}
+                  workoutData={workoutData}
+                  setWorkoutData={setWorkoutData}
+                  currentIndex={workoutIndex}
+                  setCurrentIndex={setWorkoutIndex}
+                  workoutStartTime={workoutStartTime}
+                  onFinish={handleFinishWorkout}
+                  onGoToLibrary={() => setTab('Library')}
+                />
+              )}
+            </View>
+            <View style={{ flex: 1, display: tab === 'History' ? 'flex' : 'none' }}>
+              {visitedTabs.includes('History') && <HistoryScreen session={session} dbReady={dbReady} />}
+            </View>
+            <View style={{ flex: 1, display: tab === 'Profile' ? 'flex' : 'none' }}>
+              {visitedTabs.includes('Profile') && <ProfileScreen session={session} dbReady={dbReady} onSignOut={() => supabase.auth.signOut()} onGoToHistory={() => setTab('History')} />}
+            </View>
+          </View>
 
-  if (showOnboarding) {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-        <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
-        <OnboardingScreen onComplete={() => setShowOnboarding(false)} />
-      </SafeAreaView>
-    );
-  }
+          <View style={styles.tabBar}>
+            {TABS.map(t => {
+              if (t.isAction) {
+                return (
+                  <View key={t.key} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      style={{
+                        top: -20,
+                        width: 60,
+                        height: 60,
+                        borderRadius: 30,
+                        backgroundColor: theme.colors.primary,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        shadowColor: theme.colors.primary,
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.5,
+                        shadowRadius: 10,
+                        elevation: 8,
+                        borderWidth: 4,
+                        borderColor: colors.background,
+                      }}
+                      onPress={() => setScannerVisible(true)}
+                    >
+                      <t.icon color="#000" size={28} />
+                    </TouchableOpacity>
+                  </View>
+                );
+              }
 
-  if (showPaywall) {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-        <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
-        <PaywallScreen onSkip={() => setShowPaywall(false)} session={session} />
-      </SafeAreaView>
+              const active = tab === t.key;
+              return (
+                <TouchableOpacity key={t.key} style={styles.tabItem} onPress={() => setTab(t.key)}>
+                  <t.icon color={active ? theme.colors.primary : theme.colors.textMuted} size={24} />
+                  <AppText style={[styles.tabLabel, active && { color: theme.colors.primary }]}>{t.label}</AppText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        <NutritionScannerModal 
+          visible={scannerVisible} 
+          onClose={() => setScannerVisible(false)} 
+          session={session}
+        />
+      </>
     );
-  }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
-      <View style={{ flex: 1, width: '100%', maxWidth: Platform.OS === 'web' ? 500 : '100%', alignSelf: 'center', backgroundColor: colors.background, overflow: 'hidden' }}>
-        <View style={{ flex: 1 }}>
-          <View style={{ flex: 1, display: tab === 'Dashboard' ? 'flex' : 'none' }}>
-            {visitedTabs.includes('Dashboard') && <DashboardScreen onStartWorkout={handleStartWorkout} onStartRoutine={handleStartRoutine} session={session} dbReady={dbReady} hasActiveWorkout={workoutData.length > 0} />}
-          </View>
-          <View style={{ flex: 1, display: tab === 'Library' ? 'flex' : 'none' }}>
-            {visitedTabs.includes('Library') && <LibraryScreen onStartExercise={handleAddExercise} />}
-          </View>
-          <View style={{ flex: 1, display: tab === 'Logger' ? 'flex' : 'none' }}>
-            {visitedTabs.includes('Logger') && (
-              <LoggerScreen
-                session={session}
-                dbReady={dbReady}
-                workoutData={workoutData}
-                setWorkoutData={setWorkoutData}
-                currentIndex={workoutIndex}
-                setCurrentIndex={setWorkoutIndex}
-                workoutStartTime={workoutStartTime}
-                onFinish={handleFinishWorkout}
-                onGoToLibrary={() => setTab('Library')}
-              />
-            )}
-          </View>
-          <View style={{ flex: 1, display: tab === 'History' ? 'flex' : 'none' }}>
-            {visitedTabs.includes('History') && <HistoryScreen session={session} dbReady={dbReady} />}
-          </View>
-          <View style={{ flex: 1, display: tab === 'Profile' ? 'flex' : 'none' }}>
-            {visitedTabs.includes('Profile') && <ProfileScreen session={session} dbReady={dbReady} onSignOut={() => supabase.auth.signOut()} onGoToHistory={() => setTab('History')} />}
-          </View>
-        </View>
-
-        <View style={styles.tabBar}>
-          {TABS.map(t => {
-            if (t.isAction) {
-              return (
-                <View key={t.key} style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    style={{
-                      top: -20,
-                      width: 60,
-                      height: 60,
-                      borderRadius: 30,
-                      backgroundColor: theme.colors.primary,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      shadowColor: theme.colors.primary,
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.5,
-                      shadowRadius: 10,
-                      elevation: 8,
-                      borderWidth: 4,
-                      borderColor: colors.background,
-                    }}
-                    onPress={() => setScannerVisible(true)}
-                  >
-                    <t.icon color="#000" size={28} />
-                  </TouchableOpacity>
-                </View>
-              );
-            }
-
-            const active = tab === t.key;
-            return (
-              <TouchableOpacity key={t.key} style={styles.tabItem} onPress={() => setTab(t.key)}>
-                <t.icon color={active ? theme.colors.primary : theme.colors.textMuted} size={24} />
-                <AppText style={[styles.tabLabel, active && { color: theme.colors.primary }]}>{t.label}</AppText>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </View>
-
-      <NutritionScannerModal 
-        visible={scannerVisible} 
-        onClose={() => setScannerVisible(false)} 
-        session={session}
-      />
+      <AdaptiveLayout session={session}>
+        {renderContent()}
+      </AdaptiveLayout>
     </SafeAreaView>
   );
 }

@@ -202,3 +202,16 @@ To ensure GymVault meets the "Anti-Slop" High-End standard and functions flawles
 * **Trophy Cabinet V2:** Gamification system refactored into a scalable array-driven UI mapping 6 core achievements (First Blood, Consistency King, Iron Addict, The Elephant, Titan Strength, Streak Master).
 * **Enhanced Daily Check-In:** Replaced static text prompts with a 7-day visual node trail, utilizing dynamic glowing states for current-day claims and past-day checkmarks.
 * **Stability:** Removed unstable third-party visual dependencies (`react-native-confetti-cannon`) that blocked cross-platform bundling, ensuring zero-error compilation for APK and Web builds.
+
+---
+
+## 10. Multi-Platform Architecture: Single URL (Vercel) Adaptive Strategy (HP + PC)
+GymVault maintains a single unified deployment domain (e.g. `gymvault.vercel.app`) with ZERO URL fragmentation across devices:
+* **Mobile (HP) Viewport (< 768px)**:
+  * Serves the full-featured mobile PWA / app experience.
+  * Preserves exact AMOLED mobile UX, authentication, logger, and bottom tabs without any visual disruption.
+* **Desktop (PC) Viewport (≥ 768px)**:
+  * **Unauthenticated / Guest Users**: Automatically renders the **High-End Cinematic Landing Page** introducing GymVault features, live preview mockups, and mobile PWA install CTA (QR Code / Direct Link).
+  * **Authenticated Regular Users**: Displays a centered desktop frame / web layout optimized for large screens with mobile preview containers.
+  * **Authenticated Admin Users (`role === 'admin'`)**: Automatically routes to the **Admin Analytics Control Panel** featuring real-time player stats, workout volume charts, active streak metrics, and user management tables powered by Supabase aggregated functions.
+
