@@ -107,10 +107,14 @@ export default function UserModals({
                   <View key={session.id || idx} style={styles.workoutItem}>
                     <Activity color="#666" size={16} />
                     <View style={{ flex: 1, marginLeft: 12 }}>
-                      <Text style={styles.workoutName}>{session.workout_name || 'Latihan Custom'}</Text>
-                      <Text style={styles.workoutDate}>{new Date(session.created_at).toLocaleString()}</Text>
+                      <Text style={styles.workoutName}>{session.split_name || 'Latihan Custom'}</Text>
+                      <Text style={styles.workoutDate}>{new Date(session.started_at).toLocaleString()}</Text>
                     </View>
-                    <Text style={styles.workoutDuration}>{session.duration ? `${Math.floor(session.duration / 60)} mnt` : '-'}</Text>
+                    {session.is_completed ? (
+                      <Text style={styles.workoutDuration}>Selesai</Text>
+                    ) : (
+                      <Text style={[styles.workoutDuration, { color: '#FFA500' }]}>Berlangsung</Text>
+                    )}
                   </View>
                 ))
               ) : (
