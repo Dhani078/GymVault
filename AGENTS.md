@@ -24,9 +24,17 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v54.0.0/ before 
 - Task: Preventing crashes, writing tests, fixing bugs.
 - When to use: Final review of code or when something breaks.
 
+## 5. The Adaptive Platform Strategist (Cross-Platform & PC Engine)
+- Focus: Device detection, Desktop UI, Landing Pages, Admin Portals.
+- Task: Managing responsive viewport breakpoints, role-based desktop UI routing, and Vercel web performance.
+- When to use: Implementing PC Landing Page, Admin Analytics Dashboard, or cross-platform responsive logic.
+
 ---
-# CURRENT PROJECT CONTEXT: "The Adaptive Engine"
-- We are currently building the **Adaptive Engine** for GymVault (switching between Gym Mode and Home Mode).
-- Key Focus: Global `AppModeContext`, Conditional UI Rendering, and Local Storage Persistence.
+# CURRENT PROJECT CONTEXT: "The Adaptive Engine & Desktop Web Integration"
+- **Adaptive Engine (Mobile)**: Gym Mode vs. Home Mode seamlessly toggled via `AppModeContext`.
+- **PC Web & Desktop Integration**: Unified Vercel URL serving:
+  1. *Mobile (HP)*: Mobile App (Auth required).
+  2. *Desktop Guest (PC)*: High-End Cinematic Landing Page.
+  3. *Desktop Admin (PC)*: Admin Control Panel & User Analytics Dashboard (`role === 'admin'`).
 @CLAUDE.md
 @GYMVAULT_CONTEXT.md
