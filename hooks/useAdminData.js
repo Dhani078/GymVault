@@ -67,21 +67,32 @@ export default function useAdminData() {
       
       const suspendedCount = users?.filter(u => u.status === 'suspended').length || 0;
       const activeCount = (users?.length || 0) - suspendedCount;
-      const premiumCount = Math.floor((users?.length || 0) * 0.15); // dummy 15%
+      const premiumCount = users?.filter(u => u.status === 'premium').length || 0;
       
-      // Calculate growth (Bar chart data) for last 6 months
+      // Calculate growth (Bar chart data) for last 6 months based on REAL data
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
       const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
       const chartData = [];
       
       for (let i = 5; i >= 0; i--) {
         let mIndex = currentMonth - i;
-        if (mIndex < 0) mIndex += 12;
-        // Kita buat visual data yang terlihat realistis (menaik)
-        const baseValue = 10 + (5 - i) * 15;
+        let yIndex = currentYear;
+        if (mIndex < 0) {
+          mIndex += 12;
+          yIndex -= 1;
+        }
+        
+        // Count users who joined in this specific month and year
+        const usersJoinedThisMonth = (users || []).filter(u => {
+          if (!u.created_at) return false;
+          const joinDate = new Date(u.created_at);
+          return joinDate.getMonth() === mIndex && joinDate.getFullYear() === yIndex;
+        }).length;
+
         chartData.push({ 
           label: months[mIndex], 
-          value: baseValue + Math.floor(Math.random() * 20) 
+          value: usersJoinedThisMonth
         });
       }
 
