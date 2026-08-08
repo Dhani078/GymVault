@@ -164,6 +164,21 @@ export default function AuthScreen() {
           showNotif('error', 'Login Failed', error.message);
         }
       } else if (data?.session) {
+        // --- CHECK IF USER IS SUSPENDED ---
+        try {
+          const { data: profileData, error: profileError } = await supabase
+            .from('users_profile')
+            .select('status')
+            .eq('id', data.session.user.id)
+            .single();
+            
+          if (!profileError && profileData?.status === 'suspended') {
+            await supabase.auth.signOut();
+            showNotif('error', 'Account Suspended', 'Your account has been suspended by an administrator. Please contact support.');
+            return;
+          }
+        } catch (e) {}
+
         // --- RESTORE PRO STATUS IF THEY HAVE A REDEEMED CODE ---
         try {
           const { data: promoData, error: promoError } = await supabase

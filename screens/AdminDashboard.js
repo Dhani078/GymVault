@@ -1,136 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Modal, Platform, Alert } from 'react-native';
-import { Users, Activity, BarChart, LogOut, ShieldAlert, Trash2, Eye, Download, X } from 'lucide-react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Modal, Platform, Alert, TextInput, RefreshControl } from 'react-native';
+import { Users, Activity, BarChart, LogOut, ShieldAlert, Trash2, Eye, Download, X, Ban, UserCheck, Star, TrendingUp, Ticket, Plus, Send, MessageSquare, CheckCircle, Search } from 'lucide-react-native';
 import { supabase } from '../supabaseClient';
 import { useTheme } from '../contexts/ThemeContext';
+import AdminStats from '../components/admin/AdminStats';
+import UsersTable from '../components/admin/UsersTable';
+import SupportSystem from '../components/admin/SupportSystem';
+import NotificationSystem from '../components/admin/NotificationSystem';
+import PromoManager from '../components/admin/PromoManager';
+import AuditLogs from '../components/admin/AuditLogs';
+import AdminSkeleton from '../components/admin/AdminSkeleton';
 
+// Modals
+import UserModals from '../components/admin/modals/UserModals';
+import PromoModals from '../components/admin/modals/PromoModals';
+import NotificationModals from '../components/admin/modals/NotificationModals';
+import SupportModals from '../components/admin/modals/SupportModals';
+
+import useAdminData from '../hooks/useAdminData';
 export default function AdminDashboard() {
   const { colors } = useTheme();
   
-  // States
-  const [stats, setStats] = useState({ totalUsers: 0, totalWorkouts: 0, activeToday: 0 });
-  const [usersList, setUsersList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
-  // Modal State for Delete
-  const [userToDelete, setUserToDelete] = useState(null);
-
-  // Modal State for Detail
-  const [selectedUserDetail, setSelectedUserDetail] = useState(null);
-  const [userWorkouts, setUserWorkouts] = useState([]);
-  const [loadingDetail, setLoadingDetail] = useState(false);
-
-  useEffect(() => {
-    fetchAdminData();
-  }, []);
-
-  const fetchAdminData = async () => {
-    setLoading(true);
-    try {
-      // 1. Ambil data semua user
-      const { data: users, error: userError } = await supabase
-        .from('users_profile')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (userError) throw userError;
-      
-      // 2. Ambil statistik workout (dummy stats for now, can be replaced with actual COUNT query)
-      const { count: workoutCount } = await supabase
-        .from('workout_sessions')
-        .select('*', { count: 'exact', head: true });
-
-      setUsersList(users || []);
-      setStats({
-        totalUsers: users?.length || 0,
-        totalWorkouts: workoutCount || 0,
-        activeToday: Math.floor((users?.length || 0) * 0.3) // Estimasi dummy 30% aktif hari ini
-      });
-      
-    } catch (e) {
-      console.warn('[AdminDashboard] Fetch Error:', e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-  };
-
-  const confirmDeleteUser = async () => {
-    if (!userToDelete) return;
+  const {
+    stats, usersList, searchQuery, setSearchQuery, adminLogs, loading,
+    userToDelete, setUserToDelete, userToToggleStatus, setUserToToggleStatus,
+    selectedUserDetail, setSelectedUserDetail, userWorkouts, loadingDetail,
+    promoCodes, isGeneratingPromo, showPromoModal, setShowPromoModal,
+    newPromoConfig, setNewPromoConfig, promoToDelete, setPromoToDelete,
+    notifications, isSendingNotif, showNotifModal, setShowNotifModal,
+    newNotif, setNewNotif, notifToDelete, setNotifToDelete,
+    supportTickets, selectedTicket, setSelectedTicket, isResolvingTicket, isRefreshing,
     
-    try {
-      // Menghapus data dari users_profile. (Catatan: Auth Supabase mungkin perlu function khusus)
-      const { error } = await supabase
-        .from('users_profile')
-        .delete()
-        .eq('id', userToDelete.id);
-        
-      if (error) throw error;
-      
-      // Update UI
-      setUsersList(usersList.filter(u => u.id !== userToDelete.id));
-      setStats(prev => ({ ...prev, totalUsers: prev.totalUsers - 1 }));
-    } catch (e) {
-      console.warn('[AdminDashboard] Delete Error:', e);
-    } finally {
-      setUserToDelete(null);
-    }
-  };
-
-  const openUserDetails = async (user) => {
-    setSelectedUserDetail(user);
-    setLoadingDetail(true);
-    try {
-      const { data, error } = await supabase
-        .from('workout_sessions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(5); // 5 aktivitas terakhir
-        
-      if (!error && data) {
-        setUserWorkouts(data);
-      } else {
-        setUserWorkouts([]);
-      }
-    } catch (e) {
-      console.warn('[AdminDashboard] Fetch Detail Error:', e);
-    } finally {
-      setLoadingDetail(false);
-    }
-  };
-
-  const handleExportData = () => {
-    if (usersList.length === 0) return;
-    
-    if (Platform.OS !== 'web' || typeof document === 'undefined') {
-      Alert.alert("Perhatian", "Fitur Export CSV hanya didukung di versi Web (PC).");
-      return;
-    }
-    
-    try {
-      let csvContent = "data:text/csv;charset=utf-8,ID,Username,Email,Role,Tanggal Bergabung\n";
-      
-      usersList.forEach(user => {
-        const date = user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : '';
-        const row = `"${user.id}","${user.username || ''}","${user.email || ''}","${user.role || 'user'}","${date}"`;
-        csvContent += row + "\n";
-      });
-      
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `GymVault_Users_${new Date().getTime()}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (e) {
-      console.warn('[AdminDashboard] Export Error:', e);
-    }
-  };
+    handleSignOut, confirmDeleteUser, confirmToggleStatus,
+    openUserDetails, handleExportData, generateRandomCode, handleCreatePromoCode,
+    confirmDeletePromo, handleCreateNotification, confirmDeleteNotif,
+    handleResolveTicket, onRefresh
+  } = useAdminData();
 
   return (
     <View style={styles.container}>
@@ -157,179 +62,111 @@ export default function AdminDashboard() {
         </View>
       </View>
 
-      <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
+      <ScrollView 
+        style={styles.scrollArea} 
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl 
+            refreshing={isRefreshing} 
+            onRefresh={onRefresh} 
+            tintColor="#CCFF00" 
+            colors={['#CCFF00']}
+            progressBackgroundColor="#1A1A1A"
+          />
+        }
+      >
         
         {loading ? (
-          <View style={{ marginTop: 100 }}>
-            <ActivityIndicator size="large" color="#CCFF00" />
-          </View>
+          <AdminSkeleton />
         ) : (
           <>
-            {/* STATS OVERVIEW CARDS */}
-            <View style={styles.statsGrid}>
-              <View style={styles.statCard}>
-                <View style={styles.statIconBox}>
-                  <Users color="#CCFF00" size={24} />
-                </View>
-                <Text style={styles.statValue}>{stats.totalUsers}</Text>
-                <Text style={styles.statLabel}>Total Player / User</Text>
-              </View>
-
-              <View style={styles.statCard}>
-                <View style={styles.statIconBox}>
-                  <Activity color="#CCFF00" size={24} />
-                </View>
-                <Text style={styles.statValue}>{stats.totalWorkouts}</Text>
-                <Text style={styles.statLabel}>Total Sesi Latihan</Text>
-              </View>
-
-              <View style={styles.statCard}>
-                <View style={styles.statIconBox}>
-                  <BarChart color="#CCFF00" size={24} />
-                </View>
-                <Text style={styles.statValue}>{stats.activeToday}</Text>
-                <Text style={styles.statLabel}>Aktif Hari Ini (Est.)</Text>
-              </View>
-            </View>
+            <AdminStats stats={stats} />
 
             {/* USERS DATA TABLE */}
-            <View style={styles.tableSection}>
-              <Text style={styles.sectionTitle}>Database Pengguna</Text>
-              
-              <View style={styles.tableContainer}>
-                {/* Table Header */}
-                <View style={[styles.tableRow, styles.tableHeader]}>
-                  <Text style={[styles.tableCell, styles.cellFlex2, styles.headerText]}>Username</Text>
-                  <Text style={[styles.tableCell, styles.cellFlex2, styles.headerText]}>Email</Text>
-                  <Text style={[styles.tableCell, styles.cellFlex1, styles.headerText]}>Role</Text>
-                  <Text style={[styles.tableCell, styles.cellFlex1, styles.headerText]}>Bergabung</Text>
-                  <Text style={[styles.tableCell, styles.cellAction, styles.headerText, { textAlign: 'right', paddingRight: 24 }]}>Aksi</Text>
-                </View>
+            <UsersTable 
+              usersList={usersList}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              openUserDetails={openUserDetails}
+              setUserToToggleStatus={setUserToToggleStatus}
+              setUserToDelete={setUserToDelete}
+            />
 
-                {/* Table Body */}
-                {usersList.map((user, index) => {
-                  const isEven = index % 2 === 0;
-                  return (
-                    <View key={user.id || index} style={[styles.tableRow, isEven && styles.tableRowEven]}>
-                      <Text style={[styles.tableCell, styles.cellFlex2, styles.cellTextBold]}>
-                        {user.username || user.name || 'Unknown'}
-                      </Text>
-                      <Text style={[styles.tableCell, styles.cellFlex2, styles.cellText]}>
-                        {user.email || '-'}
-                      </Text>
-                      <View style={[styles.tableCell, styles.cellFlex1]}>
-                        <View style={[styles.roleBadge, user.role === 'admin' ? styles.roleAdmin : styles.roleUser]}>
-                          <Text style={[styles.roleText, user.role === 'admin' && styles.roleTextAdmin]}>
-                            {(user.role || 'user').toUpperCase()}
-                          </Text>
-                        </View>
-                      </View>
-                      <Text style={[styles.tableCell, styles.cellFlex1, styles.cellTextMuted]}>
-                        {user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}
-                      </Text>
-                      <View style={[styles.tableCell, styles.cellAction, { flexDirection: 'row', gap: 12, justifyContent: 'flex-end', paddingRight: 24 }]}>
-                        <TouchableOpacity 
-                          style={styles.actionBtnInfo}
-                          onPress={() => openUserDetails(user)}
-                        >
-                          <Eye color="#CCFF00" size={16} />
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity 
-                          style={styles.actionBtn}
-                          onPress={() => setUserToDelete(user)}
-                        >
-                          <Trash2 color="#FF4444" size={16} />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  );
-                })}
+            {/* SUPPORT/FEEDBACK SYSTEM */}
+            <SupportSystem 
+              supportTickets={supportTickets}
+              setSelectedTicket={setSelectedTicket}
+            />
 
-                {usersList.length === 0 && (
-                  <View style={{ padding: 40, alignItems: 'center' }}>
-                    <Text style={styles.cellTextMuted}>Tidak ada data pengguna.</Text>
-                  </View>
-                )}
-              </View>
-            </View>
+            {/* GLOBAL NOTIFICATION SYSTEM */}
+            <NotificationSystem 
+              notifications={notifications}
+              setShowNotifModal={setShowNotifModal}
+              setNotifToDelete={setNotifToDelete}
+            />
+
+            {/* PROMO CODES MANAGER */}
+            <PromoManager 
+              promoCodes={promoCodes}
+              setShowPromoModal={setShowPromoModal}
+              setPromoToDelete={setPromoToDelete}
+            />
+
+            {/* AUDIT LOGS SECTION */}
+            <AuditLogs adminLogs={adminLogs} />
           </>
         )}
       </ScrollView>
 
-      {/* DELETE CONFIRMATION MODAL */}
-      <Modal
-        visible={!!userToDelete}
-        transparent={true}
-        animationType="fade"
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalIconBox}>
-              <ShieldAlert color="#FF4444" size={32} />
-            </View>
-            <Text style={styles.modalTitle}>Hapus Pengguna?</Text>
-            <Text style={styles.modalText}>
-              Anda yakin ingin menghapus <Text style={{ color: '#FFF' }}>{userToDelete?.username || userToDelete?.email}</Text>? Tindakan ini tidak dapat dibatalkan.
-            </Text>
-            
-            <View style={styles.modalActions}>
-              <TouchableOpacity style={styles.modalBtnCancel} onPress={() => setUserToDelete(null)}>
-                <Text style={styles.modalBtnCancelText}>Batal</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalBtnConfirm} onPress={confirmDeleteUser}>
-                <Text style={styles.modalBtnConfirmText}>Ya, Hapus</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* USER MODALS */}
+      <UserModals
+        userToDelete={userToDelete}
+        setUserToDelete={setUserToDelete}
+        confirmDeleteUser={confirmDeleteUser}
+        userToToggleStatus={userToToggleStatus}
+        setUserToToggleStatus={setUserToToggleStatus}
+        confirmToggleStatus={confirmToggleStatus}
+        selectedUserDetail={selectedUserDetail}
+        setSelectedUserDetail={setSelectedUserDetail}
+        userWorkouts={userWorkouts}
+        loadingDetail={loadingDetail}
+      />
 
-      {/* USER DETAIL MODAL */}
-      <Modal
-        visible={!!selectedUserDetail}
-        transparent={true}
-        animationType="fade"
-      >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { width: 500, alignItems: 'stretch' }]}>
-            <View style={styles.detailHeader}>
-              <View>
-                <Text style={styles.modalTitle}>{selectedUserDetail?.username || 'Detail Pengguna'}</Text>
-                <Text style={styles.detailSubtitle}>{selectedUserDetail?.email}</Text>
-              </View>
-              <TouchableOpacity onPress={() => setSelectedUserDetail(null)} style={styles.closeBtn}>
-                <X color="#888" size={24} />
-              </TouchableOpacity>
-            </View>
+      {/* PROMO MODALS */}
+      <PromoModals
+        promoToDelete={promoToDelete}
+        setPromoToDelete={setPromoToDelete}
+        confirmDeletePromo={confirmDeletePromo}
+        showPromoModal={showPromoModal}
+        setShowPromoModal={setShowPromoModal}
+        newPromoConfig={newPromoConfig}
+        setNewPromoConfig={setNewPromoConfig}
+        generateRandomCode={generateRandomCode}
+        handleCreatePromoCode={handleCreatePromoCode}
+        isGeneratingPromo={isGeneratingPromo}
+      />
 
-            <View style={styles.detailBody}>
-              <Text style={styles.detailSectionTitle}>Riwayat Aktivitas Terakhir (Max 5)</Text>
-              
-              {loadingDetail ? (
-                <View style={{ padding: 40, alignItems: 'center' }}>
-                  <ActivityIndicator color="#CCFF00" />
-                </View>
-              ) : userWorkouts.length > 0 ? (
-                userWorkouts.map((session, idx) => (
-                  <View key={session.id || idx} style={styles.workoutItem}>
-                    <Activity color="#666" size={16} />
-                    <View style={{ flex: 1, marginLeft: 12 }}>
-                      <Text style={styles.workoutName}>{session.workout_name || 'Latihan Custom'}</Text>
-                      <Text style={styles.workoutDate}>{new Date(session.created_at).toLocaleString()}</Text>
-                    </View>
-                    <Text style={styles.workoutDuration}>{session.duration ? `${Math.floor(session.duration / 60)} mnt` : '-'}</Text>
-                  </View>
-                ))
-              ) : (
-                <View style={styles.emptyDetailBox}>
-                  <Text style={styles.modalText}>Belum ada riwayat latihan yang tersimpan.</Text>
-                </View>
-              )}
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {/* NOTIFICATION MODALS */}
+      <NotificationModals
+        showNotifModal={showNotifModal}
+        setShowNotifModal={setShowNotifModal}
+        newNotif={newNotif}
+        setNewNotif={setNewNotif}
+        handleCreateNotification={handleCreateNotification}
+        isSendingNotif={isSendingNotif}
+        notifToDelete={notifToDelete}
+        setNotifToDelete={setNotifToDelete}
+        confirmDeleteNotif={confirmDeleteNotif}
+      />
+
+      {/* SUPPORT TICKET MODAL */}
+      <SupportModals
+        selectedTicket={selectedTicket}
+        setSelectedTicket={setSelectedTicket}
+        handleResolveTicket={handleResolveTicket}
+        isResolvingTicket={isResolvingTicket}
+      />
+
     </View>
   );
 }
@@ -453,6 +290,99 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#888888',
   },
+  chartSection: {
+    backgroundColor: '#0A0A0A',
+    borderRadius: 24,
+    padding: 30,
+    borderWidth: 1,
+    borderColor: '#1A1A1A',
+    marginBottom: 40,
+  },
+  chartHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 30,
+  },
+  chartSubtitle: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    color: '#888888',
+    marginTop: 4,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#111',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#222',
+    paddingHorizontal: 12,
+    width: 300,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    color: '#FFF',
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    outlineStyle: 'none',
+  },
+  chartTrend: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: 'rgba(204, 255, 0, 0.3)',
+  },
+  chartTrendText: {
+    color: '#CCFF00',
+    fontFamily: 'Inter_700Bold',
+    fontSize: 14,
+  },
+  chartContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    height: 200,
+    paddingTop: 20,
+  },
+  barCol: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  barValue: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 12,
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  barTrack: {
+    width: 40,
+    height: 140,
+    backgroundColor: '#111111',
+    borderRadius: 8,
+    justifyContent: 'flex-end',
+    overflow: 'hidden',
+  },
+  barFill: {
+    width: '100%',
+    backgroundColor: '#CCFF00',
+    borderRadius: 8,
+  },
+  barLabel: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 12,
+    color: '#888888',
+    marginTop: 12,
+  },
   sectionTitle: {
     fontFamily: 'Inter_700Bold',
     fontSize: 20,
@@ -536,12 +466,45 @@ const styles = StyleSheet.create({
   roleTextAdmin: {
     color: '#CCFF00',
   },
+  statusBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 100,
+    borderWidth: 1,
+  },
+  statusActive: {
+    backgroundColor: 'rgba(204, 255, 0, 0.05)',
+    borderColor: 'rgba(204, 255, 0, 0.2)',
+  },
+  statusSuspended: {
+    backgroundColor: 'rgba(255, 165, 0, 0.05)',
+    borderColor: 'rgba(255, 165, 0, 0.3)',
+  },
+  statusText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 9,
+    letterSpacing: 1,
+  },
+  statusTextActive: {
+    color: '#CCFF00',
+  },
+  statusTextSuspended: {
+    color: '#FFA500',
+  },
   actionBtn: {
     padding: 8,
     backgroundColor: 'rgba(255, 68, 68, 0.1)',
     borderRadius: 8,
     borderWidth: 1,
     borderColor: 'rgba(255, 68, 68, 0.2)',
+  },
+  actionBtnWarning: {
+    padding: 8,
+    backgroundColor: 'rgba(255, 165, 0, 0.1)',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 165, 0, 0.2)',
   },
   actionBtnInfo: {
     padding: 8,
@@ -675,5 +638,54 @@ const styles = StyleSheet.create({
   emptyDetailBox: {
     paddingVertical: 32,
     alignItems: 'center',
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 12,
+    color: '#888888',
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  textInput: {
+    backgroundColor: '#111111',
+    borderWidth: 1,
+    borderColor: '#222222',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    color: '#FFFFFF',
+    fontFamily: 'Inter_500Medium',
+    fontSize: 16,
+    outlineStyle: 'none',
+  },
+  generateBtn: {
+    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(204, 255, 0, 0.3)',
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  generateBtnText: {
+    fontFamily: 'Inter_600SemiBold',
+    color: '#CCFF00',
+    fontSize: 14,
+  },
+  submitBtn: {
+    backgroundColor: '#CCFF00',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  submitBtnText: {
+    fontFamily: 'Inter_700Bold',
+    color: '#000000',
+    fontSize: 16,
   }
 });
