@@ -249,34 +249,6 @@ export default function useAdminData() {
     }
   };
 
-  const handleExportData = () => {
-    if (usersList.length === 0) return;
-    
-    if (Platform.OS !== 'web' || typeof document === 'undefined') {
-      Alert.alert("Perhatian", "Fitur Export CSV hanya didukung di versi Web (PC).");
-      return;
-    }
-    
-    try {
-      let csvContent = "data:text/csv;charset=utf-8,ID,Username,Email,Role,Tanggal Bergabung\n";
-      
-      usersList.forEach(user => {
-        const date = user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : '';
-        const row = `"${user.id}","${user.username || ''}","${user.email || ''}","${user.role || 'user'}","${user.status || 'active'}","${date}"`;
-        csvContent += row + "\n";
-      });
-      
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `GymVault_Users_${new Date().getTime()}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (e) {
-      console.warn('[AdminDashboard] Export Error:', e);
-    }
-  };
 
   const generateRandomCode = () => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
