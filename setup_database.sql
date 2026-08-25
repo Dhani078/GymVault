@@ -322,3 +322,182 @@ BEGIN
   LIMIT 20;
 END;
 $$;
+
+
+-- ====================================================================
+-- 7. PAYMENT REQUESTS TABLE (QRIS DANA 1-CLICK SYSTEM)
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS public.payment_requests (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES public.users_profile(id) ON DELETE CASCADE,
+  user_name TEXT,
+  user_email TEXT,
+  plan TEXT NOT NULL, -- 'monthly' | 'yearly'
+  amount NUMERIC NOT NULL,
+  proof_url TEXT,
+  status TEXT DEFAULT 'pending', -- 'pending' | 'approved' | 'rejected'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  reviewed_at TIMESTAMP WITH TIME ZONE
+);
+
+ALTER TABLE public.payment_requests ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own payment requests" ON public.payment_requests;
+CREATE POLICY "Users can view own payment requests" 
+ON public.payment_requests FOR SELECT 
+TO authenticated 
+USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can insert own payment requests" ON public.payment_requests;
+CREATE POLICY "Users can insert own payment requests" 
+ON public.payment_requests FOR INSERT 
+TO authenticated 
+WITH CHECK (auth.uid() = user_id);
+
+-- Secure RPC to Approve Payment from Telegram Webhook
+CREATE OR REPLACE FUNCTION public.approve_payment_request(request_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  req_record RECORD;
+  interval_period INTERVAL;
+BEGIN
+  SELECT * INTO req_record
+  FROM payment_requests
+  WHERE id = request_id
+  LIMIT 1;
+
+  IF req_record.id IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'message', 'Payment request not found.');
+  END IF;
+
+  IF req_record.status = 'approved' THEN
+    RETURN jsonb_build_object('success', false, 'message', 'Already approved.');
+  END IF;
+
+  IF req_record.plan = 'yearly' THEN
+    interval_period := INTERVAL '1 year';
+  ELSE
+    interval_period := INTERVAL '1 month';
+  END IF;
+
+  UPDATE payment_requests
+  SET status = 'approved',
+      reviewed_at = NOW()
+  WHERE id = request_id;
+
+  UPDATE users_profile
+  SET is_premium = true,
+      premium_plan = req_record.plan,
+      premium_until = NOW() + interval_period
+  WHERE id = req_record.user_id;
+
+  RETURN jsonb_build_object(
+    'success', true, 
+    'message', 'Payment approved and user premium activated!',
+    'user_id', req_record.user_id,
+    'user_name', req_record.user_name,
+    'plan', req_record.plan
+  );
+END;
+$$;
+
+-- Secure RPC to Reject Payment from Telegram Webhook
+CREATE OR REPLACE FUNCTION public.reject_payment_request(request_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  req_record RECORD;
+BEGIN
+  SELECT * INTO req_record
+  FROM payment_requests
+  WHERE id = request_id
+  LIMIT 1;
+
+  IF req_record.id IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'message', 'Payment request not found.');
+  END IF;
+
+  UPDATE payment_requests
+  SET status = 'rejected',
+      reviewed_at = NOW()
+  WHERE id = request_id;
+
+  RETURN jsonb_build_object(
+    'success', true, 
+    'message', 'Payment request rejected.',
+    'user_id', req_record.user_id
+  );
+END;
+$$;
+
+
+-- ====================================================================
+-- 8. PROMO CODES TABLE & ATOMIC REDEEM RPC
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS public.promo_codes (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  code TEXT UNIQUE NOT NULL,
+  is_used BOOLEAN DEFAULT false,
+  used_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.promo_codes ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view only their redeemed codes" ON public.promo_codes;
+CREATE POLICY "Users can view only their redeemed codes" 
+ON public.promo_codes FOR SELECT 
+TO authenticated 
+USING (used_by = auth.uid());
+
+CREATE OR REPLACE FUNCTION public.redeem_promo_code(input_code TEXT)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  target_id UUID;
+  already_used BOOLEAN;
+  current_user_id UUID;
+BEGIN
+  current_user_id := auth.uid();
+  IF current_user_id IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'message', 'Authentication required.');
+  END IF;
+
+  SELECT id, is_used INTO target_id, already_used
+  FROM promo_codes
+  WHERE code = UPPER(TRIM(input_code))
+  LIMIT 1;
+
+  IF target_id IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'message', 'Kode promo tidak valid.');
+  END IF;
+
+  IF already_used THEN
+    RETURN jsonb_build_object('success', false, 'message', 'Kode promo sudah pernah digunakan.');
+  END IF;
+
+  UPDATE promo_codes
+  SET is_used = true,
+      used_by = current_user_id
+  WHERE id = target_id;
+
+  UPDATE users_profile
+  SET is_premium = true,
+      premium_plan = 'lifetime_promo',
+      premium_until = NOW() + INTERVAL '10 years'
+  WHERE id = current_user_id;
+
+  RETURN jsonb_build_object('success', true, 'message', 'Selamat! Akun Anda kini aktif sebagai GymVault Premium.');
+END;
+$$;
+
