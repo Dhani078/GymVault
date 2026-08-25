@@ -475,7 +475,7 @@ export default function LoggerScreen({
         user_id: session.user.id,
         started_at: workoutStartTime || new Date().toISOString(),
         is_completed: true,
-        split_name: workoutData.map(e => e.name).join(', '),
+        split_name: workoutData.map(e => e.name + (e.muscle_group ? ` [${e.muscle_group}]` : '')).join(', '),
       };
 
       const { data: sessionData, error: sessionErr } = await safeInsert('workout_sessions', sessionPayload);
