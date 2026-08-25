@@ -22,6 +22,7 @@ import OfflineSyncBanner from '../components/OfflineSyncBanner';
 import CustomRoutinesWidget from '../components/CustomRoutinesWidget';
 import CommunitySocialFeedWidget from '../components/CommunitySocialFeedWidget';
 import LeaderboardPreviewWidget from '../components/LeaderboardPreviewWidget';
+import { formatShortDate } from '../utils/dateHelpers';
 import { MotiView } from 'moti';
 
 const getLocalDateString = () => {
@@ -132,9 +133,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           else if (i > 0) break;
         }
 
-        const latestD = new Date(sessions[0].started_at);
-        const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const latestWorkoutStr = `${monthsShort[latestD.getMonth()]} ${latestD.getDate()}`;
+        const latestWorkoutStr = formatShortDate(sessions[0].started_at);
 
         setStats({
           totalWorkouts: sessions.length,

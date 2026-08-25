@@ -82,6 +82,17 @@ assert(rec36h.status === 'Recovering' && rec36h.percentage >= 35 && rec36h.perce
 const rec80h = calculateMuscleRecovery(80);
 assert(rec80h.status === 'Fresh' && rec80h.percentage === 100, `80 hours ago = Fresh (100%) [Got: ${rec80h.status} ${rec80h.percentage}%]`);
 
+// 7. Test Date Helpers
+console.log('\n🧪 [Test Suite 7: Date & Time Standardization (WIB)]');
+const { formatShortDate, formatFullWIBDate, formatTime24, isSameDay, getStartOfWeek } = require('../utils/dateHelpers');
+const sampleDate = new Date('2026-08-25T10:30:00');
+assert(formatShortDate(sampleDate).length > 0, `Short date format exists [Got: ${formatShortDate(sampleDate)}]`);
+assert(formatFullWIBDate(sampleDate).includes('2026'), `Full WIB date contains 2026 [Got: ${formatFullWIBDate(sampleDate)}]`);
+assert(formatTime24(sampleDate).includes(':'), `24h time format valid [Got: ${formatTime24(sampleDate)}]`);
+assert(isSameDay(sampleDate, new Date('2026-08-25T18:00:00')), `Same calendar day detection works`);
+assert(!isSameDay(sampleDate, new Date('2026-08-26T10:30:00')), `Different calendar day detection works`);
+assert(getStartOfWeek(sampleDate) instanceof Date, `Start of week returns valid Date object`);
+
 // Summary
 console.log('\n========================================');
 if (failedTests === 0) {

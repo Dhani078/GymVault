@@ -724,3 +724,71 @@ export function matchNutritionDataset(foodName) {
 
   return null;
 }
+
+/**
+ * Custom Foods Storage Management (Local Vault via AsyncStorage)
+ */
+export async function getCustomFoods(userId = 'guest') {
+  try {
+    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+    const json = await AsyncStorage.getItem(`@gymvault_custom_foods_${userId}`);
+    return json ? JSON.parse(json) : [];
+  } catch (e) {
+    console.warn('[NutritionDataset] Error loading custom foods:', e);
+    return [];
+  }
+}
+
+export async function saveCustomFood(userId = 'guest', food) {
+  try {
+    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+    const existing = await getCustomFoods(userId);
+    const newEntry = {
+      id: food.id || `custom_${Date.now()}`,
+      name: food.name,
+      keywords: [food.name.toLowerCase()],
+      cal: Number(food.cal || food.calories) || 0,
+      p: Number(food.p || food.protein) || 0,
+      c: Number(food.c || food.carbs) || 0,
+      f: Number(food.f || food.fats) || 0,
+      unit: food.unit || '1 porsi',
+      isCustom: true,
+      createdAt: new Date().toISOString()
+    };
+    const updated = [newEntry, ...existing.filter(e => e.id !== newEntry.id)];
+    await AsyncStorage.setItem(`@gymvault_custom_foods_${userId}`, JSON.stringify(updated));
+    return newEntry;
+  } catch (e) {
+    console.warn('[NutritionDataset] Error saving custom food:', e);
+    return null;
+  }
+}
+
+export async function deleteCustomFood(userId = 'guest', foodId) {
+  try {
+    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+    const existing = await getCustomFoods(userId);
+    const filtered = existing.filter(f => f.id !== foodId);
+    await AsyncStorage.setItem(`@gymvault_custom_foods_${userId}`, JSON.stringify(filtered));
+    return true;
+  } catch (e) {
+    console.warn('[NutritionDataset] Error deleting custom food:', e);
+    return false;
+  }
+}
+
+/**
+ * Searches built-in dataset AND custom user foods simultaneously
+ */
+export async function searchAllFoods(query, userId = 'guest') {
+  if (!query || typeof query !== 'string') return [];
+  const q = query.toLowerCase().trim();
+  const customFoods = await getCustomFoods(userId);
+  const combined = [...customFoods, ...NUTRITION_DATASET];
+
+  return combined.filter(item => {
+    if (item.name.toLowerCase().includes(q)) return true;
+    return item.keywords?.some(k => k.toLowerCase().includes(q));
+  }).slice(0, 25);
+}
+
