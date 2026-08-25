@@ -31,13 +31,7 @@ const getLocalDateString = () => {
   const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
-const GEMINI_API_KEY = (() => {
-  const envKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-  if (envKey && typeof envKey === 'string' && envKey.trim() !== '' && envKey !== 'undefined' && envKey !== 'null') {
-    return envKey;
-  }
-  return "AIzaSyDVkBIsm2qZx6YwRS62l3qPKtuXqP6d9jU";
-})();
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 export default function DashboardScreen({ onStartWorkout, onStartRoutine, session, dbReady, hasActiveWorkout }) {
   const { t } = useTranslation();

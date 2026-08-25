@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 import { useTheme } from '../contexts/ThemeContext';
 import AdminStats from '../components/admin/AdminStats';
 import UsersTable from '../components/admin/UsersTable';
+import PaymentRequestsTable from '../components/admin/PaymentRequestsTable';
 import SupportSystem from '../components/admin/SupportSystem';
 import NotificationSystem from '../components/admin/NotificationSystem';
 import PromoManager from '../components/admin/PromoManager';
@@ -30,6 +31,7 @@ export default function AdminDashboard() {
     notifications, isSendingNotif, showNotifModal, setShowNotifModal,
     newNotif, setNewNotif, notifToDelete, setNotifToDelete,
     supportTickets, selectedTicket, setSelectedTicket, isResolvingTicket, isRefreshing,
+    paymentRequests, actionLoadingId, handleApprovePayment, handleRejectPayment,
     
     handleSignOut, confirmDeleteUser, confirmToggleStatus,
     openUserDetails, handleExportData, generateRandomCode, handleCreatePromoCode,
@@ -81,6 +83,15 @@ export default function AdminDashboard() {
         ) : (
           <>
             <AdminStats stats={stats} />
+
+            {/* QRIS PAYMENT REQUESTS (DESKTOP & TELEGRAM INTEGRATION) */}
+            <PaymentRequestsTable
+              paymentRequests={paymentRequests}
+              loading={loading}
+              onApprove={handleApprovePayment}
+              onReject={handleRejectPayment}
+              actionLoadingId={actionLoadingId}
+            />
 
             {/* USERS DATA TABLE */}
             <UsersTable 

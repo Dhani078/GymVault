@@ -1,80 +1,999 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { Dumbbell, Activity, Cpu, ShieldCheck } from 'lucide-react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, TextInput, Platform } from 'react-native';
+import {
+  Dumbbell, Activity, Cpu, ShieldCheck, Zap, Flame, Award, ChevronRight,
+  TrendingUp, Sparkles, Smartphone, Check, ArrowRight, Star, Heart,
+  Timer, BarChart2, Layers, QrCode, Crown, CheckCircle2, ChevronDown, ChevronUp,
+  Scale, Calculator, Droplets, Target, Repeat, Sliders, BatteryCharging, Compass
+} from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
+const MUSCLE_DATA = {
+  chest: {
+    name: 'Dada (Pectorals)',
+    fatigue: 85,
+    recoveryHours: 48,
+    cnsStrain: 'Tinggi (Heavy Load)',
+    exercises: ['Barbell Bench Press', 'Incline Dumbbell Press', 'Cable Fly'],
+    advice: 'Kelelahan optimal. Butuh 48 jam istirahat sebelum sesi push berikutnya.'
+  },
+  back: {
+    name: 'Punggung (Lats & Traps)',
+    fatigue: 92,
+    recoveryHours: 54,
+    cnsStrain: 'Sangat Tinggi (Deadlift Stress)',
+    exercises: ['Conventional Deadlift', 'Lat Pulldown', 'Barbell Row'],
+    advice: 'Otot lats mendekati batas adaptasi. Tingkatkan asupan protein dan hidrasi.'
+  },
+  legs: {
+    name: 'Kaki (Quads & Glutes)',
+    fatigue: 95,
+    recoveryHours: 72,
+    cnsStrain: 'Maksimal (High CNS)',
+    exercises: ['Barbell Back Squat', 'Leg Press', 'Romanian Deadlift'],
+    advice: 'Recovery penuh butuh 72 jam. Disarankan active recovery jalan santai.'
+  },
+  shoulders: {
+    name: 'Bahu (Deltoids)',
+    fatigue: 60,
+    recoveryHours: 24,
+    cnsStrain: 'Sedang',
+    exercises: ['Overhead Press', 'Lateral Raises', 'Face Pulls'],
+    advice: 'Kondisi siap untuk volume tambahan atau teknik superset.'
+  },
+  arms: {
+    name: 'Lengan (Biceps & Triceps)',
+    fatigue: 40,
+    recoveryHours: 12,
+    cnsStrain: 'Rendah',
+    exercises: ['Incline Dumbbell Curl', 'Triceps Rope Pushdown'],
+    advice: 'Otot hampir pulih 100%. Siap untuk pump workout intens.'
+  }
+};
+
+const FOOD_PRESETS = [
+  {
+    id: 'nasi_padang',
+    name: 'Nasi Padang Dada Ayam Bakar',
+    calories: 620,
+    protein: 48,
+    carbs: 65,
+    fats: 18,
+    verdict: '✅ Tinggi protein, lemak terkontrol jika tanpa kuah santan kental.'
+  },
+  {
+    id: 'shake',
+    name: 'Whey Protein Oat Shake',
+    calories: 450,
+    protein: 42,
+    carbs: 52,
+    fats: 8,
+    verdict: '🔥 Post-workout sempurna untuk sintesis protein otot cepat.'
+  },
+  {
+    id: 'salmon',
+    name: 'Salmon Bowl & Brown Rice',
+    calories: 580,
+    protein: 45,
+    carbs: 50,
+    fats: 22,
+    verdict: '🥑 Kaya asam lemak Omega-3 untuk meredakan inflamasi sendi.'
+  }
+];
+
+const SPLIT_PROGRAMS = {
+  3: {
+    name: 'Full Body 3x Seminggu',
+    tagline: 'Maksimal Stimulus, Waktu Efisien',
+    days: [
+      { day: 'Senin', focus: 'Full Body A (Squat & Bench Focus)', vol: '18 Sets' },
+      { day: 'Rabu', focus: 'Full Body B (Deadlift & Overhead Press)', vol: '16 Sets' },
+      { day: 'Jumat', focus: 'Full Body C (Leg Press & Incline DB)', vol: '18 Sets' }
+    ]
+  },
+  4: {
+    name: 'Upper / Lower 4x Seminggu',
+    tagline: 'Keseimbangan Hypertrophy & Pemulihan Saraf',
+    days: [
+      { day: 'Senin', focus: 'Upper Power (Heavy Bench & Row)', vol: '18 Sets' },
+      { day: 'Selasa', focus: 'Lower Power (Heavy Squat & RDL)', vol: '16 Sets' },
+      { day: 'Kamis', focus: 'Upper Hypertrophy (DB Press & Lateral)', vol: '20 Sets' },
+      { day: 'Jumat', focus: 'Lower Hypertrophy (Leg Press & Lunges)', vol: '18 Sets' }
+    ]
+  },
+  5: {
+    name: 'Push / Pull / Legs / Upper / Lower (5 Days)',
+    tagline: 'Volume Tinggi untuk Progres Atletis Lanjut',
+    days: [
+      { day: 'Senin', focus: 'Push (Chest, Delts, Triceps)', vol: '18 Sets' },
+      { day: 'Selasa', focus: 'Pull (Lats, Traps, Biceps)', vol: '18 Sets' },
+      { day: 'Rabu', focus: 'Legs (Quads, Hamstrings, Calves)', vol: '16 Sets' },
+      { day: 'Jumat', focus: 'Upper Volume (Compound Focus)', vol: '16 Sets' },
+      { day: 'Sabtu', focus: 'Lower Volume (Hypertrophy)', vol: '16 Sets' }
+    ]
+  },
+  6: {
+    name: 'Push / Pull / Legs (PPL 2x Cycle)',
+    tagline: 'Maksimal Muscle Protein Synthesis',
+    days: [
+      { day: 'Senin & Kamis', focus: 'Push Focus (Heavy & Hypertrophy)', vol: '20 Sets' },
+      { day: 'Selasa & Jumat', focus: 'Pull Focus (Heavy & Hypertrophy)', vol: '20 Sets' },
+      { day: 'Rabu & Sabtu', focus: 'Legs Focus (Heavy & Hypertrophy)', vol: '20 Sets' }
+    ]
+  }
+};
+
+const FAQS = [
+  {
+    q: 'Apakah GymVault bisa digunakan saat gym saya tidak ada sinyal internet?',
+    a: 'Tentu saja! GymVault dibangun dengan arsitektur Offline-First Local Vault. Semua rep, set, dan beban Anda tersimpan instan di memori HP dan otomatis tersinkronisasi ke server Supabase begitu HP Anda terhubung kembali ke Wi-Fi / data.'
+  },
+  {
+    q: 'Bagaimana cara AI Gemini menganalisis makanan saya?',
+    a: 'Cukup foto makanan Anda menggunakan kamera GymVault. Model multimodal Google Gemini 3.7 Vision akan langsung mendeteksi jenis makanan, menghitung estimasi gramatur, kalori, serta makronutrisi (Protein, Karbohidrat, Lemak) dalam hitungan detik.'
+  },
+  {
+    q: 'Apa perbedaan Gym Mode dan Home Mode?',
+    a: 'Saat Anda di gym, Gym Mode mengaktifkan pelacakan beban berat (Barbell/Dumbbell), kalkulator plate, RPE, dan rest timer presisi. Saat di rumah, Home Mode otomatis beralih ke latihan Calisthenics, Resistance Band, dan timer interval HIIT.'
+  },
+  {
+    q: 'Bagaimana cara mengaktifkan akun Pro via QRIS DANA?',
+    a: 'Buka menu pembayaran di aplikasi, scan kode QRIS DANA yang muncul di layar, lalu upload screenshot bukti bayar. Sistem kami yang terhubung ke Bot Telegram & Gemini AI akan memverifikasi dan mengaktifkan akun Anda secara instan!'
+  }
+];
+
 export default function LandingPage({ onLoginPress }) {
+  const isLarge = width >= 1024;
+  const isMedium = width >= 768;
+
+  // Interactive Demo States
+  const [selectedMuscle, setSelectedMuscle] = useState('chest');
+  const [activeMode, setActiveMode] = useState('gym'); // 'gym' | 'home'
+  const [selectedFood, setSelectedFood] = useState(FOOD_PRESETS[0]);
+  const [volumeSlider, setVolumeSlider] = useState(25000);
+  const [openFaq, setOpenFaq] = useState(0);
+
+  // 1RM Calculator States
+  const [oneRmWeight, setOneRmWeight] = useState('100');
+  const [oneRmReps, setOneRmReps] = useState('5');
+
+  // Plate Calculator State
+  const [targetPlateWeight, setTargetPlateWeight] = useState(100);
+
+  // TDEE Calculator States
+  const [tdeeWeight, setTdeeWeight] = useState('70');
+  const [tdeeHeight, setTdeeHeight] = useState('175');
+  const [tdeeAge, setTdeeAge] = useState('24');
+  const [tdeeGoal, setTdeeGoal] = useState('cut'); // 'cut' | 'maintain' | 'bulk'
+
+  // Split Generator State
+  const [splitDays, setSplitDays] = useState(4);
+
+  // Cardio Heart Rate Age
+  const [userAge, setUserAge] = useState(25);
+
+  const muscle = MUSCLE_DATA[selectedMuscle];
+
+  // 1RM Calculation (Brzycki Formula)
+  const calc1RM = () => {
+    const w = parseFloat(oneRmWeight) || 0;
+    const r = Math.min(Math.max(parseInt(oneRmReps) || 1, 1), 12);
+    if (w <= 0) return 0;
+    return Math.round(w / (1.0278 - 0.0278 * r));
+  };
+  const estimated1RM = calc1RM();
+
+  // Plate Calculator Breakdown (20kg bar, pairs per side)
+  const getPlatesPerSide = (totalWeight) => {
+    let weightPerSide = Math.max(0, (totalWeight - 20) / 2);
+    const plates = [
+      { weight: 25, color: '#EF4444', label: '25kg' },
+      { weight: 20, color: '#3B82F6', label: '20kg' },
+      { weight: 15, color: '#EAB308', label: '15kg' },
+      { weight: 10, color: '#10B981', label: '10kg' },
+      { weight: 5, color: '#F3F4F6', label: '5kg', textColor: '#000' },
+      { weight: 2.5, color: '#111827', label: '2.5kg' },
+      { weight: 1.25, color: '#6B7280', label: '1.25kg' },
+    ];
+    const result = [];
+    plates.forEach(p => {
+      while (weightPerSide >= p.weight) {
+        result.push(p);
+        weightPerSide -= p.weight;
+      }
+    });
+    return result;
+  };
+
+  // TDEE Calculation (Mifflin-St Jeor)
+  const calcTDEE = () => {
+    const w = parseFloat(tdeeWeight) || 70;
+    const h = parseFloat(tdeeHeight) || 170;
+    const a = parseFloat(tdeeAge) || 25;
+    const bmr = (10 * w) + (6.25 * h) - (5 * a) + 5;
+    let tdee = bmr * 1.55;
+    if (tdeeGoal === 'cut') tdee -= 500;
+    if (tdeeGoal === 'bulk') tdee += 400;
+    const targetCals = Math.round(tdee);
+    const proteinGrams = Math.round(w * 2.2);
+    const fatsGrams = Math.round((targetCals * 0.25) / 9);
+    const carbsGrams = Math.round((targetCals - (proteinGrams * 4) - (fatsGrams * 9)) / 4);
+    const waterLiters = (w * 0.04).toFixed(1);
+    return { targetCals, proteinGrams, carbsGrams, fatsGrams, waterLiters };
+  };
+  const tdeeResult = calcTDEE();
+
+  // Volume equivalents
+  const getVolumeEquivalent = (vol) => {
+    if (vol < 5000) return { qty: (vol / 500).toFixed(1), item: 'Motor Sport Ninja', icon: '🏍️' };
+    if (vol < 15000) return { qty: (vol / 1500).toFixed(1), item: 'Mobil Sedan City Car', icon: '🚗' };
+    if (vol < 40000) return { qty: (vol / 2500).toFixed(1), item: 'Mobil SUV Listrik', icon: '🚙' };
+    if (vol < 80000) return { qty: (vol / 5000).toFixed(1), item: 'Gajah Sumatra Dewasa', icon: '🐘' };
+    return { qty: (vol / 20000).toFixed(1), item: 'Truk Kontainer Logistik', icon: '🚛' };
+  };
+
+  const equiv = getVolumeEquivalent(volumeSlider);
+  const maxHR = 220 - (parseInt(userAge) || 25);
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
-      {/* HEADER */}
-      <View style={styles.header}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      
+      {/* ─── STICKY NAVBAR ─── */}
+      <View style={[styles.header, { paddingHorizontal: isLarge ? 80 : 24 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Dumbbell color="#CCFF00" size={32} />
-          <Text style={styles.logoText}>GYMVAULT</Text>
+          <View style={styles.logoBadge}>
+            <Dumbbell color="#CCFF00" size={24} />
+          </View>
+          <View>
+            <Text style={styles.logoText}>GYMVAULT</Text>
+            <Text style={styles.logoTagline}>THE ADAPTIVE ENGINE</Text>
+          </View>
         </View>
-        <TouchableOpacity style={styles.loginBtn} onPress={onLoginPress} activeOpacity={0.8}>
-          <Text style={styles.loginBtnText}>Masuk / Login</Text>
-        </TouchableOpacity>
+
+        {isLarge && (
+          <View style={styles.navLinks}>
+            <View style={styles.statusLive}>
+              <View style={styles.statusDot} />
+              <Text style={styles.statusText}>99.9% Uptime • Gemini 3.7 Vision Live</Text>
+            </View>
+          </View>
+        )}
+
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          <TouchableOpacity style={styles.loginBtn} onPress={onLoginPress} activeOpacity={0.8}>
+            <Text style={styles.loginBtnText}>Buka Web App</Text>
+            <ArrowRight color="#000" size={16} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* HERO SECTION */}
-      <View style={styles.heroSection}>
+      {/* ─── HERO SECTION ─── */}
+      <View style={[styles.heroSection, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>ELITE FITNESS ENGINE 2.0</Text>
+          <Sparkles color="#CCFF00" size={14} />
+          <Text style={styles.badgeText}>ELITE FITNESS & ADAPTIVE RECOVERY ENGINE 2.0</Text>
         </View>
-        <Text style={styles.heroTitle}>
-          Train Like A <Text style={{ color: '#CCFF00' }}>Machine.</Text>{'\n'}
-          Recover Like A <Text style={{ color: '#CCFF00' }}>Pro.</Text>
+
+        <Text style={[styles.heroTitle, { fontSize: isLarge ? 68 : isMedium ? 48 : 34, lineHeight: isLarge ? 78 : isMedium ? 56 : 42 }]}>
+          ENGINEERED FOR{'\n'}
+          <Text style={{ color: '#CCFF00' }}>ABSOLUTE PHYSICAL DOMINANCE.</Text>
         </Text>
-        <Text style={styles.heroSubtitle}>
-          GymVault adalah platform pelacakan kebugaran tingkat lanjut dengan AI Meal Planner, 
-          Mesin Pemulihan Otot SVG, dan kapabilitas Offline-Sync tanpa batas.
+
+        <Text style={[styles.heroSubtitle, { maxWidth: isLarge ? 740 : 600 }]}>
+          GymVault memadukan pelacakan latihan berkecepatan 120 FPS Skia GPU, 
+          mesin pemulihan kelelahan otot Central Nervous System (CNS), 
+          dan kecerdasan buatan Google Gemini Vision untuk memecahkan batas rekor fisik Anda.
         </Text>
+
+        {/* Hero CTAs */}
         <View style={styles.ctaContainer}>
           <TouchableOpacity style={styles.primaryCta} onPress={onLoginPress} activeOpacity={0.8}>
-            <Text style={styles.primaryCtaText}>Buka Web App</Text>
+            <Text style={styles.primaryCtaText}>Mulai Latihan Sekarang (Gratis)</Text>
+            <ArrowRight color="#000" size={18} />
           </TouchableOpacity>
-          <View style={styles.secondaryCta}>
-            <Text style={styles.secondaryCtaText}>Tersedia untuk Mobile PWA & Desktop</Text>
+        </View>
+
+        {/* Telemetry Highlights */}
+        <View style={[styles.statsRow, { flexDirection: isMedium ? 'row' : 'column', width: '100%', maxWidth: 900 }]}>
+          <View style={styles.statBox}>
+            <Text style={styles.statNumber}>0.02s</Text>
+            <Text style={styles.statLabel}>Skia GPU Render Latency</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statBox}>
+            <Text style={styles.statNumber}>100%</Text>
+            <Text style={styles.statLabel}>Offline-First Local Vault</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statBox}>
+            <Text style={styles.statNumber}>Gemini 3.7</Text>
+            <Text style={styles.statLabel}>Multimodal Vision AI</Text>
           </View>
         </View>
       </View>
 
-      {/* BENTO GRID FEATURES */}
-      <View style={styles.featuresSection}>
-        <View style={[styles.bentoCard, styles.cardLarge]}>
-          <Activity color="#CCFF00" size={48} style={{ marginBottom: 20 }} />
-          <Text style={styles.cardTitle}>Dynamic Muscle Fatigue</Text>
-          <Text style={styles.cardDesc}>
-            Algoritma visual kami memetakan kelelahan otot Anda pada peta anatomi 2D. 
-            Sistem membaca data latihan Anda dan secara otomatis menghitung waktu pemulihan hingga 100%.
+      {/* ─── INTERACTIVE SECTION 1: LIVE 1-REP MAX (1RM) CALCULATOR ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Calculator color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>SCIENTIFIC 1RM ENGINE</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Kalkulator 1-Rep Max & Strength Tier</Text>
+          <Text style={styles.sectionSub}>
+            Masukkan beban dan repetisi angkatan terberat Anda untuk menghitung batas maksimal 1RM dan estimasi beban kerja persentase.
           </Text>
         </View>
 
-        <View style={[styles.bentoCard, styles.cardMedium]}>
-          <ShieldCheck color="#CCFF00" size={48} style={{ marginBottom: 20 }} />
-          <Text style={styles.cardTitle}>Offline-First Auto Sync</Text>
-          <Text style={styles.cardDesc}>
-            Latihan di gym tanpa sinyal? Tidak masalah. GymVault menyimpan sesi Anda 
-            ke dalam brankas lokal dan menyinkronkannya otomatis ke server Supabase saat online.
-          </Text>
-        </View>
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+          <View style={{ flexDirection: isMedium ? 'row' : 'column', gap: 20, marginBottom: 24 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inputLabel}>BEBAN ANGKATAN (KG)</Text>
+              <TextInput
+                style={styles.textInputStyle}
+                value={oneRmWeight}
+                onChangeText={setOneRmWeight}
+                keyboardType="numeric"
+                placeholder="100"
+                placeholderTextColor="#555"
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inputLabel}>JUMLAH REPETISI (1 - 12)</Text>
+              <TextInput
+                style={styles.textInputStyle}
+                value={oneRmReps}
+                onChangeText={setOneRmReps}
+                keyboardType="numeric"
+                placeholder="5"
+                placeholderTextColor="#555"
+              />
+            </View>
+          </View>
 
-        <View style={[styles.bentoCard, styles.cardMedium]}>
-          <Cpu color="#CCFF00" size={48} style={{ marginBottom: 20 }} />
-          <Text style={styles.cardTitle}>AI Nutrition Planner</Text>
-          <Text style={styles.cardDesc}>
-            Didukung oleh Gemini AI. Hasilkan rencana makan spesifik berdasarkan tinggi, berat, 
-            dan target Anda dalam hitungan detik.
-          </Text>
+          {/* 1RM Result Display */}
+          <View style={styles.oneRmResultBanner}>
+            <View>
+              <Text style={{ color: '#888', fontSize: 12, letterSpacing: 1 }}>ESTIMASI 1-REP MAX (100% 1RM)</Text>
+              <Text style={{ color: '#CCFF00', fontSize: 44, fontWeight: 'bold', marginTop: 4 }}>
+                {estimated1RM} <Text style={{ fontSize: 20, color: '#FFF' }}>kg</Text>
+              </Text>
+            </View>
+            <View style={styles.strengthBadge}>
+              <Award color="#CCFF00" size={20} />
+              <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 13 }}>
+                {estimated1RM >= 140 ? 'ELITE LIFTER' : estimated1RM >= 100 ? 'ADVANCED' : 'INTERMEDIATE'}
+              </Text>
+            </View>
+          </View>
+
+          {/* Percentage Grid */}
+          <Text style={{ color: '#888', fontSize: 11, letterSpacing: 1, marginTop: 24, marginBottom: 12 }}>PERSENTASE BEBAN KERJA HARIAN:</Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+            {[
+              { pct: '95%', reps: '2 reps', val: Math.round(estimated1RM * 0.95) },
+              { pct: '90%', reps: '3-4 reps', val: Math.round(estimated1RM * 0.90) },
+              { pct: '85%', reps: '5-6 reps', val: Math.round(estimated1RM * 0.85) },
+              { pct: '80%', reps: '7-8 reps', val: Math.round(estimated1RM * 0.80) },
+              { pct: '75%', reps: '9-10 reps', val: Math.round(estimated1RM * 0.75) },
+              { pct: '70%', reps: '11-12 reps', val: Math.round(estimated1RM * 0.70) },
+            ].map((item, idx) => (
+              <View key={idx} style={styles.pctBox}>
+                <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold' }}>{item.pct} ({item.reps})</Text>
+                <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }}>{item.val} kg</Text>
+              </View>
+            ))}
+          </View>
         </View>
       </View>
 
-      {/* FOOTER */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>© {new Date().getFullYear()} GymVault. The Adaptive Engine.</Text>
+      {/* ─── INTERACTIVE SECTION 2: OLYMPIC BARBELL PLATE LOADER ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Sliders color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>PLATE LOADING SIMULATOR</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Kalkulator Plate Barbell Olympic</Text>
+          <Text style={styles.sectionSub}>
+            Pilih target beban total pada Barbell Olympic 20kg untuk melihat susunan piringan beban per sisi secara visual.
+          </Text>
+        </View>
+
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+          <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+            {[60, 80, 100, 120, 140, 160, 180, 200, 220].map((w) => (
+              <TouchableOpacity
+                key={w}
+                style={[styles.volPresetBtn, targetPlateWeight === w && styles.volPresetBtnActive]}
+                onPress={() => setTargetPlateWeight(w)}
+              >
+                <Text style={[styles.volPresetText, targetPlateWeight === w && { color: '#000', fontWeight: 'bold' }]}>
+                  {w} kg
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Visual Barbell Shaft */}
+          <View style={styles.barbellVisualArea}>
+            <Text style={{ color: '#888', fontSize: 12, marginBottom: 12, textAlign: 'center' }}>
+              SUSUNAN PLATE PER SISI (BEBAN SISI: {Math.max(0, (targetPlateWeight - 20) / 2)} KG):
+            </Text>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginVertical: 16, minHeight: 90 }}>
+              <View style={styles.barbellCenterBar}>
+                <Text style={{ color: '#000', fontSize: 10, fontWeight: 'bold' }}>BAR 20KG</Text>
+              </View>
+
+              {getPlatesPerSide(targetPlateWeight).map((p, i) => (
+                <View key={i} style={[styles.plateGraphic, { backgroundColor: p.color }]}>
+                  <Text style={[styles.plateGraphicText, p.textColor ? { color: p.textColor } : {}]}>{p.label}</Text>
+                </View>
+              ))}
+
+              <View style={styles.barbellCollar} />
+            </View>
+
+            <Text style={{ color: '#AAA', fontSize: 12, textAlign: 'center', marginTop: 8 }}>
+              Total: 20kg Olympic Bar + {getPlatesPerSide(targetPlateWeight).map(p => p.label).join(' + ') || 'Tanpa Plate'} (x2 Sisi) = <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{targetPlateWeight} kg</Text>
+            </Text>
+          </View>
+        </View>
       </View>
+
+      {/* ─── INTERACTIVE SECTION 3: TDEE & MACRO ARCHITECT ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Scale color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>PRECISION METABOLIC ENGINE</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Kalkulator TDEE & Target Makronutrisi</Text>
+          <Text style={styles.sectionSub}>
+            Hitung kebutuhan kalori harian, target gramatur protein, dan asupan hidrasi air berdasarkan data tubuh Anda.
+          </Text>
+        </View>
+
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+          {/* Inputs Row */}
+          <View style={{ flexDirection: isMedium ? 'row' : 'column', gap: 16, marginBottom: 20 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inputLabel}>BERAT (KG)</Text>
+              <TextInput style={styles.textInputStyle} value={tdeeWeight} onChangeText={setTdeeWeight} keyboardType="numeric" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inputLabel}>TINGGI (CM)</Text>
+              <TextInput style={styles.textInputStyle} value={tdeeHeight} onChangeText={setTdeeHeight} keyboardType="numeric" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inputLabel}>UMUR (TAHUN)</Text>
+              <TextInput style={styles.textInputStyle} value={tdeeAge} onChangeText={setTdeeAge} keyboardType="numeric" />
+            </View>
+          </View>
+
+          {/* Goal Selector */}
+          <Text style={styles.inputLabel}>TUJUAN FISIK (GOAL):</Text>
+          <View style={{ flexDirection: 'row', gap: 10, marginBottom: 24 }}>
+            {[
+              { id: 'cut', label: 'Fat Loss (Cutting -500 kcal)' },
+              { id: 'maintain', label: 'Maintenance (TDEE)' },
+              { id: 'bulk', label: 'Hypertrophy (Bulking +400 kcal)' }
+            ].map((g) => (
+              <TouchableOpacity
+                key={g.id}
+                style={[styles.goalBtn, tdeeGoal === g.id && styles.goalBtnActive]}
+                onPress={() => setTdeeGoal(g.id)}
+              >
+                <Text style={[styles.goalBtnText, tdeeGoal === g.id && { color: '#000', fontWeight: 'bold' }]}>{g.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Target Results Cards */}
+          <View style={{ flexDirection: isMedium ? 'row' : 'column', gap: 12 }}>
+            <View style={[styles.macroItemLarge, { borderColor: '#CCFF00' }]}>
+              <Flame color="#CCFF00" size={24} style={{ marginBottom: 6 }} />
+              <Text style={{ color: '#888', fontSize: 11, fontWeight: 'bold' }}>TARGET KALORI</Text>
+              <Text style={{ color: '#CCFF00', fontSize: 28, fontWeight: 'bold', marginTop: 4 }}>{tdeeResult.targetCals} <Text style={{ fontSize: 14 }}>kcal</Text></Text>
+            </View>
+            <View style={[styles.macroItemLarge, { borderColor: '#10B981' }]}>
+              <Text style={{ color: '#10B981', fontSize: 11, fontWeight: 'bold' }}>PROTEIN HARIAN</Text>
+              <Text style={{ color: '#FFF', fontSize: 28, fontWeight: 'bold', marginTop: 4 }}>{tdeeResult.proteinGrams} <Text style={{ fontSize: 14 }}>gram</Text></Text>
+              <Text style={{ color: '#888', fontSize: 11, marginTop: 4 }}>~2.2g / kg berat</Text>
+            </View>
+            <View style={[styles.macroItemLarge, { borderColor: '#60A5FA' }]}>
+              <Text style={{ color: '#60A5FA', fontSize: 11, fontWeight: 'bold' }}>KARBOHIDRAT</Text>
+              <Text style={{ color: '#FFF', fontSize: 28, fontWeight: 'bold', marginTop: 4 }}>{tdeeResult.carbsGrams} <Text style={{ fontSize: 14 }}>gram</Text></Text>
+              <Text style={{ color: '#888', fontSize: 11, marginTop: 4 }}>Sumber energi otot</Text>
+            </View>
+            <View style={[styles.macroItemLarge, { borderColor: '#38BDF8' }]}>
+              <Droplets color="#38BDF8" size={24} style={{ marginBottom: 6 }} />
+              <Text style={{ color: '#38BDF8', fontSize: 11, fontWeight: 'bold' }}>HIDRASI AIR</Text>
+              <Text style={{ color: '#FFF', fontSize: 28, fontWeight: 'bold', marginTop: 4 }}>{tdeeResult.waterLiters} <Text style={{ fontSize: 14 }}>Liter</Text></Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* ─── INTERACTIVE SECTION 4: WORKOUT SPLIT ARCHITECT ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Compass color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>WEEKLY SPLIT ARCHITECT</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Generator Program Latihan Mingguan</Text>
+          <Text style={styles.sectionSub}>
+            Pilih frekuensi hari latihan Anda dalam seminggu untuk melihat pembagian split otot dan alokasi volume yang optimal.
+          </Text>
+
+          {/* Days Selector */}
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
+            {[3, 4, 5, 6].map((days) => (
+              <TouchableOpacity
+                key={days}
+                style={[styles.volPresetBtn, splitDays === days && styles.volPresetBtnActive]}
+                onPress={() => setSplitDays(days)}
+              >
+                <Text style={[styles.volPresetText, splitDays === days && { color: '#000', fontWeight: 'bold' }]}>
+                  {days} Hari / Minggu
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#222', paddingBottom: 16 }}>
+            <View>
+              <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 18 }}>{SPLIT_PROGRAMS[splitDays].name}</Text>
+              <Text style={{ color: '#888', fontSize: 13, marginTop: 2 }}>{SPLIT_PROGRAMS[splitDays].tagline}</Text>
+            </View>
+            <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
+              <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 12 }}>{splitDays}x Sesi Aktif</Text>
+            </View>
+          </View>
+
+          <View style={{ gap: 12 }}>
+            {SPLIT_PROGRAMS[splitDays].days.map((d, i) => (
+              <View key={i} style={styles.splitDayRow}>
+                <View style={styles.splitDayBadge}>
+                  <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 12 }}>{d.day}</Text>
+                </View>
+                <Text style={{ color: '#FFF', fontSize: 14, fontWeight: 'bold', flex: 1 }}>{d.focus}</Text>
+                <Text style={{ color: '#888', fontSize: 12 }}>{d.vol}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </View>
+
+      {/* ─── INTERACTIVE SECTION 5: CARDIO HEART RATE ZONES ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Heart color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>CARDIOVASCULAR TELEMETRY</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Zona Detak Jantung Latihan (HR Zones)</Text>
+          <Text style={styles.sectionSub}>
+            Ketahui batas BPM detak jantung untuk pembakaran lemak maksimal (Zone 2) dan peningkatan kapasitas VO2 Max (Zone 5).
+          </Text>
+        </View>
+
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+            <Text style={styles.inputLabel}>UMUR ANDA:</Text>
+            <TextInput
+              style={[styles.textInputStyle, { width: 80, textAlign: 'center', height: 44, paddingVertical: 0 }]}
+              value={String(userAge)}
+              onChangeText={setUserAge}
+              keyboardType="numeric"
+            />
+            <Text style={{ color: '#888', fontSize: 13 }}>Max HR Estimasi: <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{maxHR} BPM</Text></Text>
+          </View>
+
+          <View style={{ gap: 10 }}>
+            {[
+              { zone: 'Zone 1 (50-60%)', bpm: `${Math.round(maxHR * 0.5)} - ${Math.round(maxHR * 0.6)} BPM`, desc: 'Active Recovery & Pemanasan', color: '#9CA3AF' },
+              { zone: 'Zone 2 (60-70%)', bpm: `${Math.round(maxHR * 0.6)} - ${Math.round(maxHR * 0.7)} BPM`, desc: 'Maksimal Fat Burning & Mitokondria Base', color: '#10B981' },
+              { zone: 'Zone 3 (70-80%)', bpm: `${Math.round(maxHR * 0.7)} - ${Math.round(maxHR * 0.8)} BPM`, desc: 'Kapasitas Aerobik & Daya Tahan Kardio', color: '#60A5FA' },
+              { zone: 'Zone 4 (80-90%)', bpm: `${Math.round(maxHR * 0.8)} - ${Math.round(maxHR * 0.9)} BPM`, desc: 'Lactate Threshold & Stamina Lari Cepat', color: '#F59E0B' },
+              { zone: 'Zone 5 (90-100%)', bpm: `${Math.round(maxHR * 0.9)} - ${maxHR} BPM`, desc: 'Maksimal VO2 Max & Sprint Interval HIIT', color: '#EF4444' }
+            ].map((z, i) => (
+              <View key={i} style={[styles.hrZoneRow, { borderLeftColor: z.color }]}>
+                <View style={{ width: 140 }}>
+                  <Text style={[styles.hrZoneTitle, { color: z.color }]}>{z.zone}</Text>
+                  <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 13, marginTop: 2 }}>{z.bpm}</Text>
+                </View>
+                <Text style={{ color: '#AAA', fontSize: 13, flex: 1 }}>{z.desc}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </View>
+
+      {/* ─── INTERACTIVE SIMULATOR: LIVE MUSCLE RECOVERY ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Activity color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>INTERACTIVE TELEMETRY</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Simulasi Peta Kelelahan Otot & CNS</Text>
+          <Text style={styles.sectionSub}>
+            Pilih kelompok otot di bawah ini untuk melihat bagaimana algoritma GymVault menghitung kelelahan dan waktu pemulihan optimal Anda secara real-time.
+          </Text>
+        </View>
+
+        <View style={[styles.simulatorWrapper, { flexDirection: isLarge ? 'row' : 'column' }]}>
+          {/* Left: Selector */}
+          <View style={[styles.simSelector, { width: isLarge ? '40%' : '100%' }]}>
+            {Object.keys(MUSCLE_DATA).map((key) => {
+              const item = MUSCLE_DATA[key];
+              const isSelected = selectedMuscle === key;
+              return (
+                <TouchableOpacity
+                  key={key}
+                  style={[styles.simTab, isSelected && styles.simTabActive]}
+                  onPress={() => setSelectedMuscle(key)}
+                  activeOpacity={0.7}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={[styles.simTabTitle, isSelected && { color: '#CCFF00' }]}>{item.name}</Text>
+                    <Text style={[styles.simTabPercent, isSelected ? { color: '#CCFF00' } : { color: '#888' }]}>{item.fatigue}%</Text>
+                  </View>
+                  <View style={styles.simProgressBarBg}>
+                    <View style={[styles.simProgressBarFill, { width: `${item.fatigue}%`, backgroundColor: item.fatigue > 80 ? '#EF4444' : item.fatigue > 50 ? '#F59E0B' : '#CCFF00' }]} />
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {/* Right: Live Telemetry Card */}
+          <View style={[styles.simDisplay, { width: isLarge ? '60%' : '100%' }]}>
+            <View style={styles.telemetryCard}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <View>
+                  <Text style={styles.telemetryTitle}>{muscle.name}</Text>
+                  <Text style={styles.telemetrySubtitle}>Status: {muscle.fatigue >= 80 ? 'Heavy Fatigue (Adaptation Zone)' : 'Ready for Volume'}</Text>
+                </View>
+                <View style={[styles.fatigueBadge, { backgroundColor: muscle.fatigue > 80 ? 'rgba(239,68,68,0.15)' : 'rgba(204,255,0,0.15)' }]}>
+                  <Text style={[styles.fatigueBadgeText, { color: muscle.fatigue > 80 ? '#EF4444' : '#CCFF00' }]}>
+                    {muscle.fatigue}% FATIGUE
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.telemetryMetricsRow}>
+                <View style={styles.metricCard}>
+                  <Timer color="#CCFF00" size={20} style={{ marginBottom: 6 }} />
+                  <Text style={styles.metricLabel}>WAKTU RECOVERY</Text>
+                  <Text style={styles.metricVal}>{muscle.recoveryHours} Jam</Text>
+                </View>
+                <View style={styles.metricCard}>
+                  <Zap color="#CCFF00" size={20} style={{ marginBottom: 6 }} />
+                  <Text style={styles.metricLabel}>CNS STRESS</Text>
+                  <Text style={styles.metricVal}>{muscle.cnsStrain}</Text>
+                </View>
+              </View>
+
+              <View style={styles.exerciseBox}>
+                <Text style={styles.exerciseBoxTitle}>LATIHAN TERKAIT DI DATABASE:</Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                  {muscle.exercises.map((ex, i) => (
+                    <View key={i} style={styles.exTag}>
+                      <Text style={styles.exTagText}>{ex}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              <View style={styles.aiAdviceBox}>
+                <Sparkles color="#CCFF00" size={16} />
+                <Text style={styles.aiAdviceText}>{muscle.advice}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* ─── INTERACTIVE SECTION: ADAPTIVE ENGINE (GYM VS HOME) ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Layers color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>THE ADAPTIVE ENGINE</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Satu Aplikasi, Dua Mode Adaptif</Text>
+          <Text style={styles.sectionSub}>
+            GymVault secara otomatis menyesuaikan tampilan, database latihan, dan algoritma timer berdasarkan lokasi latihan Anda.
+          </Text>
+
+          {/* Switcher Toggle */}
+          <View style={styles.modeToggleContainer}>
+            <TouchableOpacity
+              style={[styles.modeToggleBtn, activeMode === 'gym' && styles.modeToggleBtnActive]}
+              onPress={() => setActiveMode('gym')}
+            >
+              <Dumbbell color={activeMode === 'gym' ? '#000' : '#888'} size={18} />
+              <Text style={[styles.modeToggleText, activeMode === 'gym' && { color: '#000', fontWeight: 'bold' }]}>GYM MODE</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.modeToggleBtn, activeMode === 'home' && styles.modeToggleBtnActive]}
+              onPress={() => setActiveMode('home')}
+            >
+              <Heart color={activeMode === 'home' ? '#000' : '#888'} size={18} />
+              <Text style={[styles.modeToggleText, activeMode === 'home' && { color: '#000', fontWeight: 'bold' }]}>HOME MODE</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={[styles.modeShowcaseCard, { flexDirection: isLarge ? 'row' : 'column' }]}>
+          <View style={{ flex: 1, padding: isLarge ? 40 : 24, justifyContent: 'center' }}>
+            <Text style={styles.modeCardBadge}>{activeMode === 'gym' ? 'HEAVY IRON & BARBELL' : 'CALISTHENICS & HIIT'}</Text>
+            <Text style={styles.modeCardTitle}>
+              {activeMode === 'gym' ? 'Dominasi Beban Berat & Pro Lifter Tracking' : 'Latihan Tanpa Beban Maksimal di Rumah'}
+            </Text>
+            <Text style={styles.modeCardDesc}>
+              {activeMode === 'gym'
+                ? 'Lacak Barbell, Dumbbell, Cable, dan Machine dengan plate calculator otomatis, RPE fatigue logger, dan voice guide audio bilingual.'
+                : 'Program Bodyweight, Resistance Band, dan timer interval HIIT presisi tinggi tanpa memerlukan alat gym komersial sama sekali.'}
+            </Text>
+
+            <View style={{ marginTop: 24, gap: 12 }}>
+              {(activeMode === 'gym'
+                ? ['Kalkulator Barbell Plate Loading Otomatis', 'RPE Rating (Rate of Perceived Exertion)', 'Rest Timer Floating Dynamic Island', 'Audio Coach Bilingual (ID / EN)']
+                : ['HIIT & Tabata Interval Smart Beeper', 'Variasi Gerakan Kalistenik & Band', 'Kalori Terbakar Berdasarkan Metronom', 'Tidak Perlu Alat Gym Mahal']
+              ).map((feat, idx) => (
+                <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <CheckCircle2 color="#CCFF00" size={18} />
+                  <Text style={{ color: '#DDD', fontSize: 14 }}>{feat}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          <View style={{ flex: 1, backgroundColor: '#0D0D0F', padding: 32, justifyContent: 'center', alignItems: 'center', borderLeftWidth: isLarge ? 1 : 0, borderTopWidth: !isLarge ? 1 : 0, borderColor: '#222' }}>
+            <View style={styles.modeMockBox}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#CCFF00' }} />
+                <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 14 }}>
+                  {activeMode === 'gym' ? 'SESI: CHEST & SHOULDER (RPE 9)' : 'SESI: FULL BODY HIIT (30s WORK / 15s REST)'}
+                </Text>
+              </View>
+              <View style={styles.mockRow}>
+                <Text style={{ color: '#888', fontSize: 12 }}>{activeMode === 'gym' ? 'Set 1: Barbell Bench Press' : 'Round 1: Diamond Push Up'}</Text>
+                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{activeMode === 'gym' ? '100 kg × 8 reps' : '20 reps • 45s'}</Text>
+              </View>
+              <View style={styles.mockRow}>
+                <Text style={{ color: '#888', fontSize: 12 }}>{activeMode === 'gym' ? 'Set 2: Overhead Barbell Press' : 'Round 2: Jump Squats'}</Text>
+                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{activeMode === 'gym' ? '60 kg × 10 reps' : '25 reps • 45s'}</Text>
+              </View>
+              <View style={styles.mockRow}>
+                <Text style={{ color: '#888', fontSize: 12 }}>{activeMode === 'gym' ? 'Set 3: Incline Dumbbell Fly' : 'Round 3: Mountain Climbers'}</Text>
+                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{activeMode === 'gym' ? '28 kg × 12 reps' : '40 reps • 45s'}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* ─── INTERACTIVE SECTION: GEMINI AI MULTIMODAL VISION ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Cpu color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>GOOGLE GEMINI 3.7 MULTIMODAL</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Instant AI Nutrition & Meal Scanner</Text>
+          <Text style={styles.sectionSub}>
+            Pilih simulasi makanan di bawah untuk menguji kecepatan Gemini AI dalam membedah makronutrisi dan kalori secara akurat.
+          </Text>
+        </View>
+
+        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
+          {FOOD_PRESETS.map((f) => {
+            const isSel = selectedFood.id === f.id;
+            return (
+              <TouchableOpacity
+                key={f.id}
+                style={[styles.foodChip, isSel && styles.foodChipActive]}
+                onPress={() => setSelectedFood(f)}
+              >
+                <Text style={[styles.foodChipText, isSel && { color: '#000', fontWeight: 'bold' }]}>{f.name}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        <View style={[styles.foodCard, { width: '100%', maxWidth: 800, alignSelf: 'center' }]}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <View>
+              <Text style={{ color: '#888', fontSize: 12, letterSpacing: 1 }}>HASIL DETEKSI GEMINI AI</Text>
+              <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 4 }}>{selectedFood.name}</Text>
+            </View>
+            <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, borderWidth: 1, borderColor: '#CCFF00' }}>
+              <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 22 }}>{selectedFood.calories} <Text style={{ fontSize: 13 }}>kcal</Text></Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
+            <View style={[styles.macroItem, { borderColor: '#10B981' }]}>
+              <Text style={{ color: '#10B981', fontSize: 11, fontWeight: 'bold' }}>PROTEIN</Text>
+              <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 4 }}>{selectedFood.protein}g</Text>
+            </View>
+            <View style={[styles.macroItem, { borderColor: '#60A5FA' }]}>
+              <Text style={{ color: '#60A5FA', fontSize: 11, fontWeight: 'bold' }}>CARBS</Text>
+              <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 4 }}>{selectedFood.carbs}g</Text>
+            </View>
+            <View style={[styles.macroItem, { borderColor: '#F59E0B' }]}>
+              <Text style={{ color: '#F59E0B', fontSize: 11, fontWeight: 'bold' }}>FATS</Text>
+              <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 4 }}>{selectedFood.fats}g</Text>
+            </View>
+          </View>
+
+          <View style={{ backgroundColor: '#16161A', padding: 14, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Sparkles color="#CCFF00" size={16} />
+            <Text style={{ color: '#AAA', fontSize: 13, flex: 1 }}>{selectedFood.verdict}</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* ─── INTERACTIVE SECTION: VOLUME CALCULATOR ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <TrendingUp color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>GAMIFICATION & VIRAL SHARING</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Strava-Style Volume Comparison</Text>
+          <Text style={styles.sectionSub}>
+            Berapa total volume angkatan Anda bulan ini? GymVault secara otomatis mengubah angka kg kering menjadi objek nyata yang bisa langsung dibagikan ke Instagram Story.
+          </Text>
+        </View>
+
+        <View style={[styles.volumeCalcBox, { width: '100%', maxWidth: 700, alignSelf: 'center' }]}>
+          <Text style={{ color: '#888', fontSize: 12, letterSpacing: 1, textAlign: 'center' }}>GESER VOLUME ANGKATAN ANDA (KG):</Text>
+          <Text style={{ color: '#CCFF00', fontSize: 42, fontWeight: 'bold', textAlign: 'center', marginVertical: 12 }}>
+            {volumeSlider.toLocaleString('id-ID')} <Text style={{ fontSize: 20, color: '#FFF' }}>kg</Text>
+          </Text>
+
+          {/* Quick Volume Preset Buttons */}
+          <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+            {[5000, 15000, 25000, 50000, 100000].map((v) => (
+              <TouchableOpacity
+                key={v}
+                style={[styles.volPresetBtn, volumeSlider === v && styles.volPresetBtnActive]}
+                onPress={() => setVolumeSlider(v)}
+              >
+                <Text style={[styles.volPresetText, volumeSlider === v && { color: '#000', fontWeight: 'bold' }]}>
+                  {(v / 1000)}k kg
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Output Card */}
+          <View style={styles.volResultCard}>
+            <Text style={{ fontSize: 48, marginBottom: 8 }}>{equiv.icon}</Text>
+            <Text style={{ color: '#FFF', fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>
+              Setara Mengangkat <Text style={{ color: '#CCFF00' }}>{equiv.qty}x {equiv.item}</Text>!
+            </Text>
+            <Text style={{ color: '#888', fontSize: 12, marginTop: 6, textAlign: 'center' }}>
+              Langsung generate story beresolusi tinggi 4:5 hanya dengan 1-klik di aplikasi.
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* ─── PRICING MATRIX ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Crown color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>TRANSPARENT PRICING</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Investasi Terbaik untuk Fisik Anda</Text>
+          <Text style={styles.sectionSub}>Pilih paket gratis atau nikmati AI tanpa batas via QRIS DANA 1-Click Instant Activation.</Text>
+        </View>
+
+        <View style={[styles.pricingRow, { flexDirection: isLarge ? 'row' : 'column', maxWidth: 900, alignSelf: 'center', width: '100%' }]}>
+          {/* Free Tier */}
+          <View style={[styles.pricingCard, { flex: 1 }]}>
+            <Text style={styles.planName}>STARTER</Text>
+            <Text style={styles.planPrice}>Rp 0 <Text style={styles.planPeriod}>/ selamanya</Text></Text>
+            <Text style={styles.planDesc}>Semua fitur dasar pelacakan latihan & offline vault.</Text>
+            
+            <View style={{ gap: 12, marginVertical: 24 }}>
+              {['Unlimited Workout Sessions', 'Skia 120 FPS Progress Charts', 'Offline-First Local Vault', 'Daily Check-In Scan Limits (15x AI)'].map((p, i) => (
+                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <Check color="#CCFF00" size={16} />
+                  <Text style={{ color: '#CCC', fontSize: 13 }}>{p}</Text>
+                </View>
+              ))}
+            </View>
+
+            <TouchableOpacity style={styles.planBtnSecondary} onPress={onLoginPress}>
+              <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Mulai Gratis</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Pro Tier */}
+          <View style={[styles.pricingCard, styles.pricingCardPro, { flex: 1 }]}>
+            <View style={styles.popularBadge}>
+              <Text style={{ color: '#000', fontSize: 10, fontWeight: 'bold' }}>PALING POPULER</Text>
+            </View>
+            <Text style={[styles.planName, { color: '#CCFF00' }]}>PRO LIFTER</Text>
+            <Text style={styles.planPrice}>Rp 29.900 <Text style={styles.planPeriod}>/ bulan</Text></Text>
+            <Text style={styles.planDesc}>Akses unlimited ke Gemini 3.7 AI Coach & Instant Verifikasi.</Text>
+
+            <View style={{ gap: 12, marginVertical: 24 }}>
+              {[
+                'Semua Fitur Starter',
+                'Unlimited AI Meal Plan & Routine Generator',
+                'Gemini 3.7 Multi-Model Reasoning AI',
+                'Badge Eksklusif Pro Lifter di Global Leaderboard',
+                'QRIS DANA 1-Click Instant Activation'
+              ].map((p, i) => (
+                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  <Check color="#CCFF00" size={16} />
+                  <Text style={{ color: '#FFF', fontSize: 13, fontWeight: 'bold' }}>{p}</Text>
+                </View>
+              ))}
+            </View>
+
+            <TouchableOpacity style={styles.planBtnPrimary} onPress={onLoginPress}>
+              <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 15 }}>Upgrade ke Pro</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
+      {/* ─── FAQS ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionHeading}>Pertanyaan Umum (FAQ)</Text>
+        </View>
+
+        <View style={{ width: '100%', maxWidth: 800, alignSelf: 'center', gap: 12 }}>
+          {FAQS.map((faq, idx) => {
+            const isOpen = openFaq === idx;
+            return (
+              <TouchableOpacity
+                key={idx}
+                style={styles.faqCard}
+                onPress={() => setOpenFaq(isOpen ? null : idx)}
+                activeOpacity={0.8}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text style={styles.faqQ}>{faq.q}</Text>
+                  {isOpen ? <ChevronUp color="#CCFF00" size={20} /> : <ChevronDown color="#888" size={20} />}
+                </View>
+                {isOpen && (
+                  <Text style={styles.faqA}>{faq.a}</Text>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+
+      {/* ─── FOOTER ─── */}
+      <View style={[styles.footer, { paddingHorizontal: isLarge ? 80 : 24 }]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <Dumbbell color="#CCFF00" size={24} />
+          <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18, letterSpacing: 1 }}>GYMVAULT</Text>
+        </View>
+        <Text style={styles.footerText}>
+          © {new Date().getFullYear()} GymVault Inc. Engineered by Dhani078. All Rights Reserved.
+        </Text>
+      </View>
+
     </ScrollView>
   );
 }
@@ -88,140 +1007,713 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: width > 1024 ? 120 : 40,
-    paddingVertical: 30,
+    paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#1A1A1A',
+    backgroundColor: 'rgba(0,0,0,0.9)',
+  },
+  logoBadge: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(204,255,0,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(204,255,0,0.3)',
   },
   logoText: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 24,
+    fontSize: 20,
     color: '#FFFFFF',
-    letterSpacing: -1,
+    letterSpacing: 0.5,
+  },
+  logoTagline: {
+    fontFamily: 'Inter_500Medium',
+    fontSize: 9,
+    color: '#CCFF00',
+    letterSpacing: 2,
+  },
+  navLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusLive: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#10B981',
+  },
+  statusText: {
+    color: '#AAA',
+    fontSize: 12,
   },
   loginBtn: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    backgroundColor: '#111111',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#CCFF00',
     borderRadius: 100,
-    borderWidth: 1,
-    borderColor: '#333333',
+    shadowColor: '#CCFF00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
   loginBtnText: {
-    fontFamily: 'Inter_500Medium',
-    color: '#FFFFFF',
+    fontFamily: 'Inter_700Bold',
+    color: '#000000',
     fontSize: 14,
   },
   heroSection: {
     alignItems: 'center',
-    paddingHorizontal: 20,
-    marginTop: 80,
-    marginBottom: 100,
+    marginTop: 60,
+    marginBottom: 80,
   },
   badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 8,
     backgroundColor: 'rgba(204, 255, 0, 0.1)',
     borderRadius: 100,
     borderWidth: 1,
     borderColor: 'rgba(204, 255, 0, 0.3)',
-    marginBottom: 30,
+    marginBottom: 24,
   },
   badgeText: {
     color: '#CCFF00',
     fontFamily: 'Inter_700Bold',
-    fontSize: 12,
-    letterSpacing: 2,
+    fontSize: 11,
+    letterSpacing: 1.5,
   },
   heroTitle: {
     fontFamily: 'Inter_700Bold',
-    fontSize: width > 768 ? 72 : 48,
     color: '#FFFFFF',
     textAlign: 'center',
-    lineHeight: width > 768 ? 80 : 56,
-    letterSpacing: -2,
-    marginBottom: 30,
+    letterSpacing: -1,
+    marginBottom: 24,
   },
   heroSubtitle: {
     fontFamily: 'Inter_400Regular',
-    fontSize: 18,
-    color: '#888888',
+    fontSize: 16,
+    color: '#A1A1AA',
     textAlign: 'center',
-    maxWidth: 600,
-    lineHeight: 28,
-    marginBottom: 50,
+    lineHeight: 26,
+    marginBottom: 36,
   },
   ctaContainer: {
-    alignItems: 'center',
+    flexDirection: 'row',
     gap: 16,
+    marginBottom: 60,
   },
   primaryCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     backgroundColor: '#CCFF00',
-    paddingHorizontal: 48,
-    paddingVertical: 20,
-    borderRadius: 100,
+    paddingHorizontal: 28,
+    paddingVertical: 16,
+    borderRadius: 14,
     shadowColor: '#CCFF00',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 30,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
   },
   primaryCtaText: {
-    color: '#000000',
     fontFamily: 'Inter_700Bold',
     fontSize: 16,
+    color: '#000000',
+  },
+  statsRow: {
+    backgroundColor: '#0E0E10',
+    borderRadius: 20,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: '#222',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    gap: 20,
+  },
+  statBox: {
+    alignItems: 'center',
+  },
+  statNumber: {
+    color: '#CCFF00',
+    fontSize: 28,
+    fontFamily: 'Inter_700Bold',
+  },
+  statLabel: {
+    color: '#888',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  statDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#222',
+  },
+  sectionContainer: {
+    marginBottom: 100,
+  },
+  sectionHeader: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  miniTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(204,255,0,0.08)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(204,255,0,0.2)',
+    marginBottom: 12,
+  },
+  miniTagText: {
+    color: '#CCFF00',
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
     letterSpacing: 1,
   },
-  secondaryCtaText: {
-    color: '#555555',
-    fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-  },
-  featuresSection: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    paddingHorizontal: width > 1024 ? 120 : 40,
-    gap: 24,
-    maxWidth: 1400,
-    alignSelf: 'center',
-  },
-  bentoCard: {
-    backgroundColor: '#0A0A0A',
-    borderRadius: 30,
-    padding: 40,
-    borderWidth: 1,
-    borderColor: '#1A1A1A',
-  },
-  cardLarge: {
-    width: '100%',
-  },
-  cardMedium: {
-    width: width > 1024 ? '48%' : '100%',
-    flexGrow: 1,
-  },
-  cardTitle: {
+  sectionHeading: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 24,
+    fontSize: 32,
     color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  sectionSub: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 15,
+    color: '#888',
+    textAlign: 'center',
+    maxWidth: 640,
+    lineHeight: 22,
+  },
+  toolCard: {
+    backgroundColor: '#0F0F12',
+    borderRadius: 24,
+    padding: 32,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
+  inputLabel: {
+    color: '#888',
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  textInputStyle: {
+    backgroundColor: '#16161A',
+    color: '#FFF',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    fontFamily: 'Inter_700Bold',
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  oneRmResultBanner: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#16161A',
+    padding: 24,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#333',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  strengthBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(204,255,0,0.1)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(204,255,0,0.3)',
+  },
+  pctBox: {
+    backgroundColor: '#16161A',
+    borderRadius: 12,
+    padding: 14,
+    flex: 1,
+    minWidth: 120,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  barbellVisualArea: {
+    backgroundColor: '#141418',
+    borderRadius: 18,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  barbellCenterBar: {
+    width: 90,
+    height: 18,
+    backgroundColor: '#888',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  plateGraphic: {
+    width: 22,
+    height: 70,
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
+  },
+  plateGraphicText: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#FFF',
+    transform: [{ rotate: '-90deg' }],
+  },
+  barbellCollar: {
+    width: 14,
+    height: 36,
+    backgroundColor: '#444',
+    borderRadius: 4,
+  },
+  goalBtn: {
+    flex: 1,
+    backgroundColor: '#16161A',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+    alignItems: 'center',
+  },
+  goalBtnActive: {
+    backgroundColor: '#CCFF00',
+    borderColor: '#CCFF00',
+  },
+  goalBtnText: {
+    color: '#888',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  macroItemLarge: {
+    flex: 1,
+    backgroundColor: '#16161A',
+    borderRadius: 16,
+    padding: 18,
+    borderLeftWidth: 4,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  splitDayRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#16161A',
+    padding: 16,
+    borderRadius: 14,
+    gap: 16,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  splitDayBadge: {
+    backgroundColor: 'rgba(204,255,0,0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  hrZoneRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#16161A',
+    padding: 16,
+    borderRadius: 14,
+    gap: 16,
+    borderLeftWidth: 4,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  hrZoneTitle: {
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+  },
+  simulatorWrapper: {
+    backgroundColor: '#0F0F12',
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#222',
+    overflow: 'hidden',
+    gap: 24,
+    padding: 24,
+  },
+  simSelector: {
+    gap: 10,
+  },
+  simTab: {
+    backgroundColor: '#16161A',
+    borderRadius: 14,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  simTabActive: {
+    backgroundColor: 'rgba(204,255,0,0.06)',
+    borderColor: '#CCFF00',
+  },
+  simTabTitle: {
+    color: '#FFF',
+    fontSize: 14,
+    fontFamily: 'Inter_700Bold',
+  },
+  simTabPercent: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+  },
+  simProgressBarBg: {
+    height: 6,
+    backgroundColor: '#222',
+    borderRadius: 3,
+    marginTop: 10,
+    overflow: 'hidden',
+  },
+  simProgressBarFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  simDisplay: {
+    justifyContent: 'center',
+  },
+  telemetryCard: {
+    backgroundColor: '#18181C',
+    borderRadius: 18,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  telemetryTitle: {
+    color: '#FFF',
+    fontSize: 20,
+    fontFamily: 'Inter_700Bold',
+  },
+  telemetrySubtitle: {
+    color: '#888',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  fatigueBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  fatigueBadgeText: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+  },
+  telemetryMetricsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginVertical: 18,
+  },
+  metricCard: {
+    flex: 1,
+    backgroundColor: '#101014',
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  metricLabel: {
+    color: '#888',
+    fontSize: 10,
+    letterSpacing: 0.5,
+  },
+  metricVal: {
+    color: '#FFF',
+    fontSize: 18,
+    fontFamily: 'Inter_700Bold',
+    marginTop: 4,
+  },
+  exerciseBox: {
+    backgroundColor: '#121216',
+    borderRadius: 12,
+    padding: 14,
     marginBottom: 16,
   },
-  cardDesc: {
+  exerciseBoxTitle: {
+    color: '#888',
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 0.5,
+  },
+  exTag: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  exTagText: {
+    color: '#DDD',
+    fontSize: 11,
+  },
+  aiAdviceBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: 'rgba(204,255,0,0.06)',
+    borderRadius: 10,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(204,255,0,0.2)',
+  },
+  aiAdviceText: {
+    color: '#CCFF00',
+    fontSize: 12,
+    flex: 1,
+  },
+  modeToggleContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#16161A',
+    borderRadius: 100,
+    padding: 6,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+    marginTop: 24,
+  },
+  modeToggleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 100,
+  },
+  modeToggleBtnActive: {
+    backgroundColor: '#CCFF00',
+  },
+  modeToggleText: {
+    color: '#888',
+    fontSize: 13,
+  },
+  modeShowcaseCard: {
+    backgroundColor: '#121216',
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#222',
+    overflow: 'hidden',
+  },
+  modeCardBadge: {
+    color: '#CCFF00',
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 1.5,
+    marginBottom: 8,
+  },
+  modeCardTitle: {
+    color: '#FFF',
+    fontSize: 24,
+    fontFamily: 'Inter_700Bold',
+    marginBottom: 12,
+  },
+  modeCardDesc: {
+    color: '#888',
+    fontSize: 14,
+    lineHeight: 22,
+  },
+  modeMockBox: {
+    width: '100%',
+    maxWidth: 380,
+    backgroundColor: '#18181C',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  mockRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#222',
+  },
+  foodChip: {
+    backgroundColor: '#16161A',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  foodChipActive: {
+    backgroundColor: '#CCFF00',
+    borderColor: '#CCFF00',
+  },
+  foodChipText: {
+    color: '#888',
+    fontSize: 13,
+  },
+  foodCard: {
+    backgroundColor: '#101014',
+    borderRadius: 20,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  macroItem: {
+    flex: 1,
+    backgroundColor: '#18181C',
+    borderRadius: 12,
+    padding: 14,
+    borderLeftWidth: 3,
+  },
+  volumeCalcBox: {
+    backgroundColor: '#101014',
+    borderRadius: 24,
+    padding: 28,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  volPresetBtn: {
+    backgroundColor: '#18181C',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  volPresetBtnActive: {
+    backgroundColor: '#CCFF00',
+    borderColor: '#CCFF00',
+  },
+  volPresetText: {
+    color: '#888',
+    fontSize: 13,
+  },
+  volResultCard: {
+    backgroundColor: '#18181C',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  pricingRow: {
+    gap: 24,
+  },
+  pricingCard: {
+    backgroundColor: '#101014',
+    borderRadius: 24,
+    padding: 32,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+    position: 'relative',
+  },
+  pricingCardPro: {
+    borderColor: '#CCFF00',
+    backgroundColor: 'rgba(204,255,0,0.03)',
+  },
+  popularBadge: {
+    position: 'absolute',
+    top: -12,
+    right: 24,
+    backgroundColor: '#CCFF00',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  planName: {
+    color: '#888',
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 1.5,
+  },
+  planPrice: {
+    color: '#FFF',
+    fontSize: 34,
+    fontFamily: 'Inter_700Bold',
+    marginVertical: 10,
+  },
+  planPeriod: {
+    color: '#888',
+    fontSize: 14,
     fontFamily: 'Inter_400Regular',
-    fontSize: 16,
-    color: '#888888',
-    lineHeight: 26,
+  },
+  planDesc: {
+    color: '#888',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  planBtnSecondary: {
+    backgroundColor: '#222',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  planBtnPrimary: {
+    backgroundColor: '#CCFF00',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#CCFF00',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  faqCard: {
+    backgroundColor: '#101014',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  faqQ: {
+    color: '#FFF',
+    fontSize: 15,
+    fontFamily: 'Inter_700Bold',
+    flex: 1,
+    paddingRight: 12,
+  },
+  faqA: {
+    color: '#888',
+    fontSize: 13,
+    lineHeight: 20,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#222',
   },
   footer: {
-    marginTop: 100,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 40,
+    paddingVertical: 32,
     borderTopWidth: 1,
     borderTopColor: '#1A1A1A',
+    flexWrap: 'wrap',
+    gap: 16,
   },
   footerText: {
-    color: '#444444',
-    fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-  }
+    color: '#666',
+    fontSize: 12,
+  },
 });

@@ -3,13 +3,7 @@ import { View, TouchableOpacity, Modal, ActivityIndicator, ScrollView, TextInput
 import { X, Sparkles, Flame, Check, RefreshCw, Apple, MessageSquare, ChevronDown } from 'lucide-react-native';
 import { AppText, theme, styles } from '../theme';
 import { supabase } from '../supabaseClient';
-const GEMINI_API_KEY = (() => {
-  const envKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-  if (envKey && typeof envKey === 'string' && envKey.trim() !== '' && envKey !== 'undefined' && envKey !== 'null') {
-    return envKey;
-  }
-  return "AIzaSyDVkBIsm2qZx6YwRS62l3qPKtuXqP6d9jU";
-})();
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 export default function AIMealPlanModal({ visible, onClose, session, userProfile, onApplyTarget }) {
   const [calories, setCalories] = useState('2000');

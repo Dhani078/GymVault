@@ -4,13 +4,7 @@ import { FlashList } from '@shopify/flash-list';
 import { MessageCircle, X, Send, User } from 'lucide-react-native';
 import { AppText, styles, theme } from '../theme';
 import AICoachLogo from '../components/AICoachLogo';
-const GEMINI_API_KEY = (() => {
-  const envKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-  if (envKey && typeof envKey === 'string' && envKey.trim() !== '' && envKey !== 'undefined' && envKey !== 'null') {
-    return envKey;
-  }
-  return "AIzaSyDVkBIsm2qZx6YwRS62l3qPKtuXqP6d9jU";
-})();
+const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 const getLocalDateString = () => {
   const d = new Date();

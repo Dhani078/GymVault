@@ -1,3 +1,4 @@
+@MEMORY.md
 @AGENTS.md
 @GYMVAULT_CONTEXT.md
 # Role: Staff Software Engineer & Lead Architect (GymVault)

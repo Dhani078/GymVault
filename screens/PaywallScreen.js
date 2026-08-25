@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, ScrollView, Image, Modal, Alert, TextInput, Linking } from 'react-native';
-import { Check, Crown, Zap, Star, Shield, X, CreditCard, QrCode, Copy, CheckCircle } from 'lucide-react-native';
+import { View, TouchableOpacity, Image, Modal, Alert, ActivityIndicator } from 'react-native';
+import { Check, Crown, Zap, Star, Shield, X, CreditCard, QrCode, Upload, CheckCircle, Clock } from 'lucide-react-native';
+import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme, styles } from '../theme';
 import GymVaultLogo from '../components/GymVaultLogo';
 import SmoothScrollView from '../components/SmoothScrollView';
+import { supabase } from '../supabaseClient';
 
-// ═══════════════════════════════════════════════════════════
-// 🔴 CONFIG: Ganti dengan data DANA Merchant Anda
-// ═══════════════════════════════════════════════════════════
 const DANA_CONFIG = {
-  merchantName: 'GymVault Premium',
-  // Ganti URL ini dengan link gambar QR DANA Merchant Anda
-  // Upload QR ke imgur.com atau hosting lain, lalu paste URL-nya
-  qrImageUrl: '', // Contoh: 'https://i.imgur.com/xxxxx.png'
-  // Atau gunakan deep link DANA (opsional)
-  danaDeepLink: '', // Contoh: 'https://link.dana.id/qr/xxxxx'
+  merchantName: 'GymVault QRIS DANA',
+  // Masukkan link QRIS DANA Anda jika ada, atau biarkan default
+  qrImageUrl: '',
 };
 
 const PLANS = [
@@ -24,17 +20,19 @@ const PLANS = [
 ];
 
 const FEATURES = [
-  { icon: Zap, text: 'Unlimited Custom Routines', desc: 'Buat routine tanpa batas' },
-  { icon: Star, text: 'AI Coach Tanpa Limit', desc: 'Tanya apa saja ke AI assistant' },
-  { icon: Shield, text: 'Advanced Analytics', desc: 'Grafik & progress tracking lengkap' },
-  { icon: Crown, text: 'Priority Support', desc: 'Bantuan eksklusif & fitur baru pertama' },
+  { icon: Zap, text: 'Unlimited Custom Routines', desc: 'Buat routine latihan tanpa batas' },
+  { icon: Star, text: 'AI Coach & Meal Plan Unlimited', desc: 'Konsultasi dan scan makanan tanpa batas' },
+  { icon: Shield, text: 'Advanced Analytics & CNS Tracking', desc: 'Grafik recovery & fatigue monitoring' },
+  { icon: Crown, text: 'Badge Pro Lifter & Priority Support', desc: 'Tampilan eksklusif dan fitur premium' },
 ];
 
 export default function PaywallScreen({ onSkip, session }) {
   const [selectedPlan, setSelectedPlan] = useState('yearly');
   const [showPayment, setShowPayment] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [transactionId, setTransactionId] = useState('');
+  const [showProofModal, setShowProofModal] = useState(false);
+  const [proofImage, setProofImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
@@ -44,162 +42,200 @@ export default function PaywallScreen({ onSkip, session }) {
   const checkPremium = async () => {
     const userId = session?.user?.id || 'guest';
     const status = await AsyncStorage.getItem(`@premium_status_${userId}`);
-    if (status === 'active') setIsPremium(true);
-  };
-
-  const handleSubscribe = () => {
-    setShowPayment(true);
-  };
-
-  const handleOpenDANA = async () => {
-    if (DANA_CONFIG.danaDeepLink) {
-      try {
-        await Linking.openURL(DANA_CONFIG.danaDeepLink);
-      } catch (e) {
-        Alert.alert('DANA tidak ditemukan', 'Pastikan aplikasi DANA sudah terinstall.');
-      }
-    }
-  };
-
-  const handleConfirmPayment = async () => {
-    if (!transactionId.trim()) {
-      Alert.alert('ID Transaksi Kosong', 'Masukkan 4 digit terakhir ID transaksi DANA Anda sebagai bukti pembayaran.');
+    const isPrem = await AsyncStorage.getItem(`is_premium_${userId}`);
+    if (status === 'active' || isPrem === 'true') {
+      setIsPremium(true);
       return;
     }
 
-    const userId = session?.user?.id || 'guest';
-
-    // Save premium status locally
-    const premiumData = {
-      status: 'active',
-      plan: selectedPlan,
-      activatedAt: new Date().toISOString(),
-      txRef: transactionId.trim(),
-    };
-    await AsyncStorage.setItem(`@premium_status_${userId}`, 'active');
-    await AsyncStorage.setItem(`@premium_data_${userId}`, JSON.stringify(premiumData));
-
-    // Also sync the secondary keys used by other modals
-    const premiumUntil = new Date();
-    if (selectedPlan === 'yearly') {
-      premiumUntil.setFullYear(premiumUntil.getFullYear() + 1);
-    } else {
-      premiumUntil.setMonth(premiumUntil.getMonth() + 1);
-    }
-    await AsyncStorage.setItem(`is_premium_${userId}`, 'true');
-    await AsyncStorage.setItem(`premium_until_${userId}`, premiumUntil.toISOString());
-    await AsyncStorage.setItem(`premium_since_${userId}`, new Date().toISOString());
-
-    // Also save to Supabase if session exists (for cross-device sync)
-    if (session?.user) {
-      try {
-        const { supabase } = require('../supabaseClient');
-        await supabase.from('users_profile').upsert({
-          id: session.user.id,
-          is_premium: true,
-          premium_plan: selectedPlan,
-          premium_activated_at: new Date().toISOString(),
-        }, { onConflict: 'id' });
-      } catch (e) {
-        console.warn('[Paywall] Supabase sync failed:', e.message);
+    if (session?.user?.id) {
+      const { data } = await supabase
+        .from('users_profile')
+        .select('is_premium, premium_until')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (data?.is_premium) {
+        setIsPremium(true);
+        await AsyncStorage.setItem(`is_premium_${userId}`, 'true');
+        await AsyncStorage.setItem(`@premium_status_${userId}`, 'active');
       }
     }
-
-    setShowPayment(false);
-    setShowConfirm(false);
-    setIsPremium(true);
-    Alert.alert('🎉 Premium Aktif!', 'Selamat! Semua fitur premium sudah terbuka.', [
-      { text: 'Mulai Sekarang!', onPress: onSkip }
-    ]);
   };
 
-  // Already premium → skip
+  const handlePickProof = async () => {
+    const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!granted) {
+      Alert.alert('Izin Dibutuhkan', 'Mohon izinkan akses galeri untuk mengunggah screenshot bukti transfer.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 0.7,
+      base64: true,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setProofImage(result.assets[0]);
+    }
+  };
+
+  const handleSendPaymentNotification = async () => {
+    if (!proofImage) {
+      Alert.alert('Bukti Kosong', 'Silakan pilih foto screenshot bukti pembayaran DANA Anda terlebih dahulu.');
+      return;
+    }
+
+    if (!session?.user?.id) {
+      Alert.alert('Perhatian', 'Silakan login terlebih dahulu sebelum melakukan pembayaran.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const plan = PLANS.find(p => p.id === selectedPlan);
+      const payload = {
+        userId: session.user.id,
+        userName: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Athlete',
+        userEmail: session.user.email || '',
+        plan: selectedPlan,
+        amount: plan?.priceNum || 29900,
+        proofImageBase64: proofImage.base64 ? `data:image/jpeg;base64,${proofImage.base64}` : null,
+      };
+
+      // Call our serverless Telegram notifier
+      const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://gymvault.vercel.app';
+      const res = await fetch(`${baseUrl}/api/payment-notify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setIsSubmitted(true);
+        setShowProofModal(false);
+        setShowPayment(false);
+        Alert.alert(
+          'Bukti Terkirim! 🚀',
+          'Bukti transfer Anda telah dikirim langsung ke Admin. Akun Pro Anda akan segera aktif otomatis begitu Admin memverifikasi (1–3 menit).'
+        );
+      } else {
+        throw new Error(json.error || 'Gagal mengirim notifikasi.');
+      }
+    } catch (e) {
+      console.error('Submit Payment Error:', e);
+      Alert.alert('Gagal Mengirim', 'Terjadi kesalahan saat mengirim bukti. Pastikan koneksi internet Anda stabil.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const plan = PLANS.find(p => p.id === selectedPlan);
+
   if (isPremium) {
     return (
       <View style={[styles.screen, { justifyContent: 'center', alignItems: 'center', padding: 32 }]}>
         <GymVaultLogo size={90} />
-        <AppText weight="bold" style={{ fontSize: 24, marginBottom: 8, marginTop: 24 }}>You're Premium! 👑</AppText>
-        <AppText style={{ color: theme.colors.textMuted, textAlign: 'center', marginBottom: 32 }}>Semua fitur sudah aktif.</AppText>
-        <TouchableOpacity style={[styles.btnPrimary, { width: '100%' }]} onPress={onSkip}>
-          <AppText weight="bold" style={styles.btnPrimaryText}>Masuk ke App</AppText>
+        <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(204,255,0,0.15)', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
+          <Crown color="#CCFF00" size={36} />
+        </View>
+        <AppText weight="bold" style={{ fontSize: 24, color: '#CCFF00', textAlign: 'center', marginBottom: 8 }}>
+          Status Premium Aktif! 👑
+        </AppText>
+        <AppText style={{ color: theme.colors.textMuted, textAlign: 'center', fontSize: 14, lineHeight: 20, marginBottom: 32 }}>
+          Anda memiliki akses tanpa batas ke seluruh fitur cerdas GymVault.
+        </AppText>
+        <TouchableOpacity
+          style={{ backgroundColor: '#CCFF00', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 }}
+          onPress={onSkip}
+        >
+          <AppText weight="bold" style={{ color: '#000', fontSize: 16 }}>Mulai Latihan</AppText>
         </TouchableOpacity>
       </View>
     );
   }
 
-  const plan = PLANS.find(p => p.id === selectedPlan);
-
   return (
-    <SmoothScrollView style={styles.screen} contentContainerStyle={{ padding: 24, paddingBottom: 60 }}>
+    <SmoothScrollView contentContainerStyle={{ padding: 24, paddingBottom: 60, minHeight: '100%' }}>
       {/* Header */}
-      <View style={{ alignItems: 'center', marginBottom: 28, marginTop: 12 }}>
-        <GymVaultLogo size={80} />
-        <AppText weight="bold" style={{ fontSize: 26, textAlign: 'center', letterSpacing: -0.5, marginTop: 20 }}>
-          Upgrade ke Premium
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, marginTop: 10 }}>
+        <GymVaultLogo size={44} />
+        <TouchableOpacity onPress={onSkip} style={{ padding: 8 }}>
+          <X color={theme.colors.textMuted} size={24} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Hero Badge */}
+      <View style={{ alignItems: 'center', marginBottom: 24 }}>
+        <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(204,255,0,0.12)', justifyContent: 'center', alignItems: 'center', marginBottom: 12 }}>
+          <Crown color="#CCFF00" size={28} />
+        </View>
+        <AppText weight="bold" style={{ fontSize: 26, color: theme.colors.text, textAlign: 'center' }}>
+          GymVault <AppText weight="bold" style={{ color: '#CCFF00' }}>PRO</AppText>
         </AppText>
-        <AppText style={{ color: theme.colors.textMuted, fontSize: 14, textAlign: 'center', marginTop: 8, lineHeight: 20 }}>
-          Buka semua fitur dan latih tanpa batas
+        <AppText style={{ color: theme.colors.textMuted, fontSize: 13, textAlign: 'center', marginTop: 4 }}>
+          Buka potensi maksimal latihan & nutrisi Anda
         </AppText>
       </View>
 
-      {/* Features */}
-      <View style={{ backgroundColor: theme.colors.card, borderRadius: 16, padding: 20, marginBottom: 24, borderWidth: 1, borderColor: theme.colors.border }}>
-        {FEATURES.map((f, i) => (
-          <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: i < FEATURES.length - 1 ? 18 : 0 }}>
-            <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(204,255,0,0.08)', justifyContent: 'center', alignItems: 'center', marginRight: 14 }}>
-              <f.icon color={theme.colors.primary} size={18} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <AppText weight="bold" style={{ fontSize: 14 }}>{f.text}</AppText>
-              <AppText style={{ fontSize: 12, color: theme.colors.textMuted, marginTop: 1 }}>{f.desc}</AppText>
-            </View>
-            <Check color="#10B981" size={18} />
+      {/* Submitted Status Banner */}
+      {isSubmitted && (
+        <View style={{ backgroundColor: 'rgba(204,255,0,0.08)', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#CCFF00', marginBottom: 24, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <Clock color="#CCFF00" size={24} />
+          <View style={{ flex: 1 }}>
+            <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 14 }}>Menunggu Verifikasi Admin</AppText>
+            <AppText style={{ color: theme.colors.textMuted, fontSize: 12, marginTop: 2 }}>
+              Bukti pembayaran Anda sudah diterima. Akun akan otomatis aktif dalam 1–3 menit.
+            </AppText>
           </View>
-        ))}
+        </View>
+      )}
+
+      {/* Features List */}
+      <View style={{ backgroundColor: theme.colors.card, borderRadius: 16, padding: 16, marginBottom: 24, borderWidth: 1, borderColor: theme.colors.border }}>
+        {FEATURES.map((f, i) => {
+          const Icon = f.icon;
+          return (
+            <View key={i} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: i < FEATURES.length - 1 ? 1 : 0, borderBottomColor: theme.colors.border }}>
+              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(204,255,0,0.1)', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+                <Icon color="#CCFF00" size={18} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 14 }}>{f.text}</AppText>
+                <AppText style={{ color: theme.colors.textMuted, fontSize: 11 }}>{f.desc}</AppText>
+              </View>
+              <Check color="#CCFF00" size={16} />
+            </View>
+          );
+        })}
       </View>
 
-      {/* Plan Selector */}
-      <View style={{ gap: 10, marginBottom: 24 }}>
-        {PLANS.map(p => {
+      {/* Pricing Plans */}
+      <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
+        {PLANS.map((p) => {
           const isSelected = selectedPlan === p.id;
           return (
             <TouchableOpacity
               key={p.id}
-              activeOpacity={0.8}
-              onPress={() => setSelectedPlan(p.id)}
               style={{
-                flexDirection: 'row', alignItems: 'center',
-                padding: 16, borderRadius: 14,
-                backgroundColor: isSelected ? 'rgba(204,255,0,0.06)' : theme.colors.card,
-                borderWidth: 1.5,
-                borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+                flex: 1, backgroundColor: isSelected ? 'rgba(204,255,0,0.06)' : theme.colors.card,
+                borderRadius: 16, padding: 16, borderWidth: 2,
+                borderColor: isSelected ? '#CCFF00' : theme.colors.border,
+                position: 'relative',
               }}
+              onPress={() => setSelectedPlan(p.id)}
             >
-              {/* Radio */}
-              <View style={{
-                width: 22, height: 22, borderRadius: 11, borderWidth: 2,
-                borderColor: isSelected ? theme.colors.primary : '#333',
-                justifyContent: 'center', alignItems: 'center', marginRight: 14,
-              }}>
-                {isSelected && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: theme.colors.primary }} />}
-              </View>
-
-              <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <AppText weight="bold" style={{ fontSize: 16 }}>{p.label}</AppText>
-                  {p.popular && (
-                    <View style={{ backgroundColor: theme.colors.primary, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }}>
-                      <AppText weight="bold" style={{ fontSize: 9, color: '#000' }}>BEST VALUE</AppText>
-                    </View>
-                  )}
+              {p.popular && (
+                <View style={{ position: 'absolute', top: -10, right: 12, backgroundColor: '#CCFF00', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
+                  <AppText weight="bold" style={{ color: '#000', fontSize: 10 }}>{p.save || 'POPULER'}</AppText>
                 </View>
-                {p.save && <AppText style={{ fontSize: 12, color: '#10B981', marginTop: 2 }}>{p.save}</AppText>}
-              </View>
-
-              <View style={{ alignItems: 'flex-end' }}>
-                <AppText weight="bold" style={{ fontSize: 18, color: isSelected ? theme.colors.primary : theme.colors.text }}>{p.price}</AppText>
-                <AppText style={{ fontSize: 11, color: theme.colors.textMuted }}>{p.period}</AppText>
-              </View>
+              )}
+              <AppText weight="bold" style={{ fontSize: 14, color: isSelected ? '#CCFF00' : theme.colors.text, marginBottom: 4 }}>{p.label}</AppText>
+              <AppText weight="bold" style={{ fontSize: 18, color: isSelected ? '#CCFF00' : theme.colors.text }}>{p.price}</AppText>
+              <AppText style={{ fontSize: 11, color: theme.colors.textMuted }}>{p.period}</AppText>
             </TouchableOpacity>
           );
         })}
@@ -208,18 +244,18 @@ export default function PaywallScreen({ onSkip, session }) {
       {/* CTA */}
       <TouchableOpacity
         style={{
-          backgroundColor: theme.colors.primary, borderRadius: 14, paddingVertical: 16,
+          backgroundColor: '#CCFF00', borderRadius: 14, paddingVertical: 16,
           flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10,
-          shadowColor: theme.colors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
+          shadowColor: '#CCFF00', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
         }}
-        onPress={handleSubscribe}
+        onPress={() => setShowPayment(true)}
       >
         <CreditCard color="#000" size={20} />
-        <AppText weight="bold" style={{ color: '#000', fontSize: 16 }}>Bayar via DANA ({plan?.price})</AppText>
+        <AppText weight="bold" style={{ color: '#000', fontSize: 16 }}>Bayar via QRIS DANA ({plan?.price})</AppText>
       </TouchableOpacity>
 
       <AppText style={{ color: theme.colors.textMuted, textAlign: 'center', marginTop: 12, fontSize: 11, lineHeight: 16 }}>
-        Pembayaran aman via DANA. Hubungi support jika ada kendala.
+        100% Bebas Biaya Transaksi • Verifikasi Cepat via Telegram Admin
       </AppText>
 
       {/* Skip */}
@@ -231,11 +267,10 @@ export default function PaywallScreen({ onSkip, session }) {
       <Modal visible={showPayment} transparent animationType="slide">
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'flex-end' }}>
           <View style={{ backgroundColor: theme.colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, maxHeight: '85%', borderWidth: 1, borderColor: theme.colors.border }}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {/* Header */}
+            <SmoothScrollView showsVerticalScrollIndicator={false}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <View>
-                  <AppText weight="bold" style={{ fontSize: 20, color: theme.colors.text }}>Pembayaran DANA</AppText>
+                  <AppText weight="bold" style={{ fontSize: 20, color: theme.colors.text }}>Pembayaran QRIS DANA</AppText>
                   <AppText style={{ color: theme.colors.textMuted, fontSize: 12, marginTop: 2 }}>{plan?.label} - {plan?.price}</AppText>
                 </View>
                 <TouchableOpacity onPress={() => setShowPayment(false)} style={{ padding: 4 }}>
@@ -243,101 +278,110 @@ export default function PaywallScreen({ onSkip, session }) {
                 </TouchableOpacity>
               </View>
 
-              {/* QR Code Section */}
-              <View style={{
-                backgroundColor: '#FFF', borderRadius: 16, padding: 20, alignItems: 'center', marginBottom: 20,
-              }}>
-                {DANA_CONFIG.qrImageUrl ? (
-                  <Image source={{ uri: DANA_CONFIG.qrImageUrl }} style={{ width: 220, height: 220, borderRadius: 8 }} resizeMode="contain" />
-                ) : (
-                  <View style={{ width: 220, height: 220, borderRadius: 12, backgroundColor: '#F0F0F0', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#DDD', borderStyle: 'dashed' }}>
-                    <QrCode color="#1A8CFF" size={64} />
-                    <AppText weight="bold" style={{ color: '#333', fontSize: 14, marginTop: 12 }}>QR DANA</AppText>
-                    <AppText style={{ color: '#999', fontSize: 11, marginTop: 4, textAlign: 'center', paddingHorizontal: 20 }}>
-                      Set qrImageUrl di PaywallScreen.js
-                    </AppText>
-                  </View>
-                )}
-                <AppText weight="bold" style={{ color: '#1A8CFF', fontSize: 16, marginTop: 12 }}>
-                  {DANA_CONFIG.merchantName}
+              {/* QR Code */}
+              <View style={{ backgroundColor: '#FFF', borderRadius: 16, padding: 16, alignItems: 'center', marginBottom: 20 }}>
+                <Image
+                  source={require('../assets/qris.jpg')}
+                  style={{ width: 240, height: 280, borderRadius: 12 }}
+                  resizeMode="contain"
+                />
+                <AppText weight="bold" style={{ color: '#1A8CFF', fontSize: 16, marginTop: 8 }}>
+                  GymVault QRIS DANA
+                </AppText>
+                <AppText style={{ color: '#666', fontSize: 11, marginTop: 2, textAlign: 'center' }}>
+                  Support: DANA, BCA, GoPay, OVO, ShopeePay, Mandiri, dll
                 </AppText>
               </View>
 
-              {/* Instructions */}
+              {/* Steps */}
               <View style={{ backgroundColor: theme.colors.card, borderRadius: 12, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: theme.colors.border }}>
-                <AppText weight="bold" style={{ fontSize: 14, marginBottom: 12, color: theme.colors.text }}>Cara Bayar:</AppText>
+                <AppText weight="bold" style={{ fontSize: 14, marginBottom: 12, color: theme.colors.text }}>Cara Bayar & Aktivasi:</AppText>
                 {[
-                  'Buka aplikasi DANA di HP Anda',
-                  'Tap "Scan" dan arahkan ke QR di atas',
-                  `Masukkan nominal: ${plan?.price}`,
-                  'Selesaikan pembayaran',
-                  'Catat 4 digit terakhir ID Transaksi',
+                  'Buka aplikasi DANA / BCA / Gopay / OVO di HP Anda',
+                  'Scan kode QRIS di atas',
+                  `Transfer nominal tepat: ${plan?.price}`,
+                  'Screenshot (tangkapan layar) bukti transfer berhasil',
+                  'Upload screenshot bukti transfer di bawah ini',
                 ].map((step, i) => (
                   <View key={i} style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, gap: 10 }}>
                     <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(204,255,0,0.12)', justifyContent: 'center', alignItems: 'center', marginTop: 1 }}>
-                      <AppText weight="bold" style={{ fontSize: 11, color: theme.colors.primary }}>{i + 1}</AppText>
+                      <AppText weight="bold" style={{ fontSize: 11, color: '#CCFF00' }}>{i + 1}</AppText>
                     </View>
                     <AppText style={{ color: theme.colors.text, fontSize: 13, flex: 1, lineHeight: 18 }}>{step}</AppText>
                   </View>
                 ))}
               </View>
 
-              {/* Open DANA Button */}
-              {DANA_CONFIG.danaDeepLink ? (
-                <TouchableOpacity
-                  style={{ backgroundColor: '#1A8CFF', borderRadius: 12, paddingVertical: 14, alignItems: 'center', marginBottom: 16, flexDirection: 'row', justifyContent: 'center', gap: 8 }}
-                  onPress={handleOpenDANA}
-                >
-                  <AppText weight="bold" style={{ color: '#FFF', fontSize: 15 }}>Buka Aplikasi DANA</AppText>
-                </TouchableOpacity>
-              ) : null}
-
-              {/* Confirm Payment */}
+              {/* Upload Proof Button */}
               <TouchableOpacity
                 style={{ backgroundColor: '#10B981', borderRadius: 12, paddingVertical: 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 }}
-                onPress={() => setShowConfirm(true)}
+                onPress={() => {
+                  setShowPayment(false);
+                  setShowProofModal(true);
+                }}
               >
-                <CheckCircle color="#FFF" size={18} />
-                <AppText weight="bold" style={{ color: '#FFF', fontSize: 15 }}>Saya Sudah Bayar</AppText>
+                <Upload color="#FFF" size={18} />
+                <AppText weight="bold" style={{ color: '#FFF', fontSize: 15 }}>Upload Bukti Pembayaran</AppText>
               </TouchableOpacity>
-            </ScrollView>
+            </SmoothScrollView>
           </View>
         </View>
       </Modal>
 
-      {/* ═══ Confirm Modal ═══ */}
-      <Modal visible={showConfirm} transparent animationType="fade">
+      {/* ═══ Proof Upload Modal ═══ */}
+      <Modal visible={showProofModal} transparent animationType="fade">
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 24 }}>
           <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
-            <AppText weight="bold" style={{ fontSize: 18, marginBottom: 8, color: theme.colors.text }}>Konfirmasi Pembayaran</AppText>
-            <AppText style={{ color: theme.colors.textMuted, fontSize: 13, marginBottom: 20, lineHeight: 18 }}>
-              Masukkan 4 digit terakhir ID Transaksi DANA Anda sebagai verifikasi.
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.text }}>Kirim Bukti Transfer</AppText>
+              <TouchableOpacity onPress={() => setShowProofModal(false)}>
+                <X color={theme.colors.textMuted} size={20} />
+              </TouchableOpacity>
+            </View>
+
+            <AppText style={{ color: theme.colors.textMuted, fontSize: 13, marginBottom: 16, lineHeight: 18 }}>
+              Pilih foto screenshot bukti transfer DANA sebesar <AppText weight="bold" style={{ color: '#CCFF00' }}>{plan?.price}</AppText>.
             </AppText>
 
-            <View style={{ backgroundColor: theme.colors.inputBg, borderRadius: 12, borderWidth: 1, borderColor: theme.colors.border, paddingHorizontal: 16, marginBottom: 20 }}>
-              <TextInput
-                style={{ color: theme.colors.text, fontSize: 20, paddingVertical: 16, textAlign: 'center', letterSpacing: 8 }}
-                placeholder="• • • •"
-                placeholderTextColor={theme.colors.textMuted}
-                value={transactionId}
-                onChangeText={(t) => setTransactionId(t.replace(/[^0-9]/g, '').slice(0, 4))}
-                keyboardType="number-pad"
-                maxLength={4}
-              />
-            </View>
+            {/* Image Preview Box */}
+            <TouchableOpacity
+              onPress={handlePickProof}
+              style={{
+                width: '100%', height: 180, borderRadius: 12, backgroundColor: theme.colors.inputBg,
+                borderWidth: 1.5, borderColor: proofImage ? '#CCFF00' : theme.colors.border, borderStyle: proofImage ? 'solid' : 'dashed',
+                justifyContent: 'center', alignItems: 'center', marginBottom: 20, overflow: 'hidden'
+              }}
+            >
+              {proofImage ? (
+                <Image source={{ uri: proofImage.uri }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
+              ) : (
+                <View style={{ alignItems: 'center' }}>
+                  <Upload color="#CCFF00" size={32} style={{ marginBottom: 8 }} />
+                  <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 13 }}>Pilih Screenshot dari Galeri</AppText>
+                  <AppText style={{ color: theme.colors.textMuted, fontSize: 11, marginTop: 4 }}>Format JPG / PNG</AppText>
+                </View>
+              )}
+            </TouchableOpacity>
 
             <View style={{ flexDirection: 'row', gap: 12 }}>
               <TouchableOpacity
                 style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: theme.colors.inputBg, justifyContent: 'center', alignItems: 'center' }}
-                onPress={() => setShowConfirm(false)}
+                onPress={() => setShowProofModal(false)}
+                disabled={isSubmitting}
               >
                 <AppText weight="bold" style={{ color: theme.colors.textMuted }}>Batal</AppText>
               </TouchableOpacity>
+
               <TouchableOpacity
-                style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#10B981', justifyContent: 'center', alignItems: 'center' }}
-                onPress={handleConfirmPayment}
+                style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#CCFF00', justifyContent: 'center', alignItems: 'center' }}
+                onPress={handleSendPaymentNotification}
+                disabled={isSubmitting}
               >
-                <AppText weight="bold" style={{ color: '#FFF' }}>Aktivasi Premium</AppText>
+                {isSubmitting ? (
+                  <ActivityIndicator size="small" color="#000" />
+                ) : (
+                  <AppText weight="bold" style={{ color: '#000' }}>Kirim ke Admin</AppText>
+                )}
               </TouchableOpacity>
             </View>
           </View>

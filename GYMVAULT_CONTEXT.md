@@ -1,6 +1,7 @@
+@MEMORY.md
 # GymVault — Project Context & Architecture Map
 
-> **Note for AI Coding Assistants:** Read this file first to understand the GymVault codebase. Do not ask the user for basic context. Respect the core guidelines and database structures documented below.
+> **Note for AI Coding Assistants:** Read this file and `MEMORY.md` first to understand the GymVault codebase. Do not ask the user for basic context. Respect the core guidelines and database structures documented below.
 
 ---
 
@@ -37,6 +38,10 @@ GymVault is an elite, high-performance fitness mobile application designed for t
    * `height`: REAL
    * `cns_fatigue`: INT (Default 0)
    * `custom_routines`: JSONB (Default `[]` - list of user's custom-built routines)
+   * `role`: TEXT ('admin' | 'user')
+   * `is_premium`: BOOLEAN (Default false)
+   * `premium_plan`: TEXT
+   * `premium_until`: TIMESTAMP WITH TIME ZONE
    * `created_at`: TIMESTAMP WITH TIME ZONE
 
 2. **`public.exercises`** (Public read, reference table for movements)
@@ -78,7 +83,15 @@ GymVault is an elite, high-performance fitness mobile application designed for t
    * `weight_kg`: NUMERIC
    * `created_at`: TIMESTAMP WITH TIME ZONE
 
+7. **`public.promo_codes`**
+   * `id`: UUID (Primary Key)
+   * `code`: TEXT (Unique, uppercase)
+   * `is_used`: BOOLEAN (Default false)
+   * `used_by`: UUID (References Auth.users)
+   * `created_at`: TIMESTAMP WITH TIME ZONE
+
 ### Custom Database Functions & RPCs
+* `redeem_promo_code(input_code TEXT) -> JSONB`: Validates code, assigns user, and provisions premium status in a single atomic transaction under `SECURITY DEFINER`.
 * `get_email_by_username(lookup_username TEXT) -> TEXT`: Returns email from `users_profile` for a given username (used in secure authentication flow).
 * `get_global_leaderboard() -> TABLE(...)`: Bypasses RLS to query aggregated totals (volume, workout count, active streak) to return a descending leaderboard.
 * `search_users(search_query TEXT) -> TABLE(...)`: Returns users based on search queries containing matching names or usernames, along with their training volume and current streaks.
