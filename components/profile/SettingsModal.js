@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, Modal, ScrollView, Switch, Platform, Alert } from 'react-native';
 import {
   X, ChevronRight, Globe, Zap, Activity, Target, Moon, Bell, Shield,
-  Settings, Award, Download, Trash2, Camera, User, Lock, LogOut
+  Settings, Award, Download, Trash2, Camera, User, Lock, LogOut, Crown
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { AppText, theme } from '../../theme';
@@ -56,6 +56,7 @@ export default function SettingsModal({
   handleResetPassword,
   handleSignOut,
   handleExportData,
+  onOpenPaywall,
   onOpenRedeemModal,
   onOpenEditModal,
   showToast,
@@ -169,8 +170,17 @@ export default function SettingsModal({
               />
             </View>
 
-            <AppText weight="bold" style={{ fontSize: 14, color: textMuted, letterSpacing: 1, marginBottom: 8 }}>PREMIUM & SUPPORT</AppText>
+            <AppText weight="bold" style={{ fontSize: 14, color: textMuted, letterSpacing: 1, marginBottom: 8 }}>PREMIUM & LANGGANAN</AppText>
             <View style={{ backgroundColor: cardColor, borderRadius: 16, paddingHorizontal: 16, borderWidth: 1, borderColor: borderColor, marginBottom: 24 }}>
+              <SettingItem
+                icon={Crown}
+                title="Langganan GymVault Pro"
+                value={profile?.is_premium ? 'PRO LIFTER' : 'UPGRADE'}
+                onPress={() => {
+                  onClose();
+                  if (onOpenPaywall) onOpenPaywall();
+                }}
+              />
               <SettingItem
                 icon={Award}
                 title="Redeem Premium Code"
