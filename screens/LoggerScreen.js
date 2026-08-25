@@ -475,7 +475,7 @@ export default function LoggerScreen({
         user_id: session.user.id,
         started_at: workoutStartTime || new Date().toISOString(),
         is_completed: true,
-        split_name: workoutData.map(e => e.name).slice(0, 3).join(', '),
+        split_name: workoutData.map(e => e.name).join(', '),
       };
 
       const { data: sessionData, error: sessionErr } = await safeInsert('workout_sessions', sessionPayload);
@@ -514,11 +514,13 @@ export default function LoggerScreen({
         return;
       }
 
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       const setRows = [];
       workoutData.forEach((ex) => {
+        const validExId = (ex.id && uuidRegex.test(ex.id)) ? ex.id : null;
         ex.sets.forEach((s, setIdx) => {
           if (s.completed) {
-            setRows.push({ session_id: sessionData.id, exercise_id: null, weight_kg: s.kg, reps: s.reps, set_index: setIdx + 1, is_checked: true });
+            setRows.push({ session_id: sessionData.id, exercise_id: validExId, weight_kg: s.kg, reps: s.reps, set_index: setIdx + 1, is_checked: true });
           }
         });
       });

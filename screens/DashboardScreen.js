@@ -88,7 +88,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
       }
 
       const { data: sessions, error: sessErr } = await safeSelect('workout_sessions', {
-        columns: 'id, started_at, workout_sets(weight_kg, reps, is_checked, exercises(name, muscle_group))',
+        columns: 'id, started_at, split_name, workout_sets(weight_kg, reps, is_checked, exercises(name, muscle_group))',
         filters: { user_id: session.user.id, is_completed: true },
         order: { column: 'started_at', ascending: false },
       });
