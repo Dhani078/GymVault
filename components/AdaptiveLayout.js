@@ -1,9 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { View, useWindowDimensions, StyleSheet, ActivityIndicator } from 'react-native';
 import { supabase } from '../supabaseClient';
 import { useTheme } from '../contexts/ThemeContext';
-import LandingPage from '../screens/LandingPage';
-import AdminDashboard from '../screens/AdminDashboard';
+
+// High-Performance Dynamic Code Splitting for Desktop Views
+const LandingPage = lazy(() => import('../screens/LandingPage'));
+const AdminDashboard = lazy(() => import('../screens/AdminDashboard'));
+
+function DesktopFallbackLoader() {
+  return (
+    <View style={[styles.center, { backgroundColor: '#000000' }]}>
+      <ActivityIndicator size="large" color="#CCFF00" />
+    </View>
+  );
+}
 
 export default function AdaptiveLayout({ children, session }) {
   const { width } = useWindowDimensions();
@@ -19,7 +29,6 @@ export default function AdaptiveLayout({ children, session }) {
 
   useEffect(() => {
     // 🛡️ ANTI-HACK: Fetch role directly from Supabase DB on server-side
-    // This ensures no one can tamper with local state to become an admin.
     const fetchUserRole = async () => {
       if (session?.user?.id && isDesktop) {
         setLoadingRole(true);
@@ -54,7 +63,7 @@ export default function AdaptiveLayout({ children, session }) {
 
   if (loadingRole) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
+      <View style={[styles.center, { backgroundColor: colors.background || '#000000' }]}>
         <ActivityIndicator size="large" color="#CCFF00" />
       </View>
     );
@@ -72,13 +81,21 @@ export default function AdaptiveLayout({ children, session }) {
         </View>
       );
     }
-    // Jika tidak, tampilkan Cinematic Landing Page
-    return <LandingPage onLoginPress={() => setShowLogin(true)} />;
+    // Jika tidak, tampilkan Cinematic Landing Page with Suspense
+    return (
+      <Suspense fallback={<DesktopFallbackLoader />}>
+        <LandingPage onLoginPress={() => setShowLogin(true)} />
+      </Suspense>
+    );
   }
 
   // 3. ADMIN PC (Sudah Login & Role = 'admin')
   if (session && role === 'admin') {
-    return <AdminDashboard />;
+    return (
+      <Suspense fallback={<DesktopFallbackLoader />}>
+        <AdminDashboard />
+      </Suspense>
+    );
   }
 
   // 4. REGULAR USER PC (Sudah Login & Role != 'admin')
@@ -102,7 +119,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // Memberikan background gelap premium di luar area HP
   },
   mobileMockupFrame: {
     width: 450,
@@ -112,7 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     overflow: 'hidden',
     borderWidth: 8,
-    borderColor: '#1A1A1A', // Border abu-abu gelap menyerupai frame HP
+    borderColor: '#1A1A1A',
     shadowColor: '#CCFF00',
     shadowOffset: { width: 0, height: 20 },
     shadowOpacity: 0.1,

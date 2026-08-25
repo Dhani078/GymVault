@@ -6,6 +6,7 @@ import { Shield, Zap, Activity, Info, Calendar, X } from 'lucide-react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useDynamicIsland } from '../contexts/DynamicIslandContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { detectMuscleGroups, calculateMuscleRecovery } from '../utils/fitnessMath';
 
 // Anatomical SVG Paths mapped to viewBox="50 10 170 190" (Center = 135)
 const FRONT_MUSCLE_PATHS = [
@@ -313,96 +314,16 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
         // Extract text from split_name AND workout_sets
         const splitText = (session.split_name || '').toLowerCase();
         const sets = session.workout_sets || [];
-        
-        const detectMuscleGroups = (text) => {
-          const targetGroups = [];
-          if (
-            text.includes('trapezius') || text.includes('trap') || text.includes('pundak') || text.includes('leher') ||
-            text.includes('shrug') || text.includes('upright row') || text.includes('farmer')
-          ) targetGroups.push('traps');
-          
-          if (
-            text.includes('chest') || text.includes('pec') || text.includes('dada') ||
-            text.includes('bench press') || text.includes('chest press') || text.includes('push up') || text.includes('push-up') || text.includes('fly') || text.includes('cable crossover') || text.includes('pec deck') || text.includes('dip') || text.includes('push')
-          ) targetGroups.push('chest');
-          
-          if (
-            text.includes('lower back') || text.includes('erector') || text.includes('punggung bawah') || text.includes('pinggang') ||
-            text.includes('deadlift') || text.includes('hyperextension') || text.includes('good morning') || text.includes('back extension')
-          ) targetGroups.push('lower_back');
-          
-          if (
-            text.includes('middle back') || text.includes('upper back') || text.includes('back') || text.includes('lats') || text.includes('latissimus') || text.includes('sayap') || text.includes('punggung') || text.includes('pull') ||
-            text.includes('row') || text.includes('pull up') || text.includes('pull-up') || text.includes('pulldown') || text.includes('t-bar') || text.includes('lat pull') || text.includes('chin-up') || text.includes('chin up')
-          ) targetGroups.push('lats');
-          
-          if (
-            text.includes('deltoid') || text.includes('shoulder') || text.includes('delt') || text.includes('bahu') ||
-            text.includes('shoulder press') || text.includes('lateral raise') || text.includes('front raise') || text.includes('overhead press') || text.includes('military press') || text.includes('arnold press') || text.includes('face pull') || text.includes('upright row')
-          ) targetGroups.push('shoulders');
-          
-          if (
-            text.includes('forearm') || text.includes('lengan bawah') || text.includes('brachioradialis') || text.includes('wrist') ||
-            text.includes('wrist curl') || text.includes('reverse curl') || text.includes('grip') || text.includes('plate pinch') || text.includes('deadhang')
-          ) targetGroups.push('forearms');
-          
-          if (
-            text.includes('biceps') || text.includes('bicep') || text.includes('bisep') || text.includes('brachialis') || text.includes('pull') ||
-            text.includes('curl') || text.includes('chin-up') || text.includes('chin up') || text.includes('preacher') || text.includes('hammer') || text.includes('pulldown') || text.includes('row')
-          ) targetGroups.push('biceps');
-          
-          if (
-            text.includes('triceps') || text.includes('tricep') || text.includes('trisep') ||
-            text.includes('extension') || text.includes('dip') || text.includes('skull crusher') || text.includes('pushdown') || text.includes('kickback') || text.includes('french press') || text.includes('close-grip') || text.includes('close grip')
-          ) targetGroups.push('triceps');
-          
-          if (
-            text.includes('quadriceps') || text.includes('quad') || text.includes('thigh') || text.includes('paha depan') || text.includes('leg') ||
-            text.includes('squat') || text.includes('leg press') || text.includes('leg extension') || text.includes('lunge') || text.includes('hack squat') || text.includes('split squat') || text.includes('step up')
-          ) targetGroups.push('quads');
-          
-          if (
-            text.includes('gluteus') || text.includes('glute') || text.includes('bokong') || text.includes('pantat') ||
-            text.includes('hip thrust') || text.includes('glute kickback') || text.includes('bridge') || text.includes('cable pull through')
-          ) targetGroups.push('glutes');
-          
-          if (
-            text.includes('gastrocnemius') || text.includes('soleus') || text.includes('calf') || text.includes('calves') || text.includes('betis') ||
-            text.includes('calf raise') || text.includes('jinjit')
-          ) targetGroups.push('calves');
-          
-          if (
-            text.includes('hamstring') || text.includes('paha belakang') ||
-            text.includes('leg curl') || text.includes('romanian deadlift') || text.includes('rdl') || text.includes('stiff leg')
-          ) targetGroups.push('hamstrings');
-          
-          if (
-            text.includes('abdominal') || text.includes('abs') || text.includes('core') || text.includes('oblique') || text.includes('perut') ||
-            text.includes('crunch') || text.includes('plank') || text.includes('sit up') || text.includes('sit-up') || text.includes('leg raise') || text.includes('russian twist') || text.includes('ab wheel')
-          ) targetGroups.push('core');
-          
-          return targetGroups;
-        };
 
         const applyFatigue = (groups) => {
           groups.forEach(tg => {
-            if (hoursAgo < states[tg].hoursAgo) {
-              states[tg].hoursAgo = hoursAgo;
-              
-              let percentage = 100;
-              if (hoursAgo < 24) {
-                percentage = Math.round(15 + (hoursAgo / 24) * 20); // 15% to 35% (Fatigued)
-              } else if (hoursAgo < 48) {
-                percentage = Math.round(35 + ((hoursAgo - 24) / 24) * 35); // 35% to 70% (Recovering)
-              } else if (hoursAgo < 72) {
-                percentage = Math.round(70 + ((hoursAgo - 48) / 24) * 25); // 70% to 95% (Almost Fresh)
-              }
-
-              let status = 'Fresh';
-              if (percentage < 40) status = 'Fatigued';
-              else if (percentage < 75) status = 'Recovering';
-
-              states[tg] = { status, percentage, hoursAgo };
+            if (states[tg] && hoursAgo < states[tg].hoursAgo) {
+              const recovery = calculateMuscleRecovery(hoursAgo);
+              states[tg] = {
+                status: recovery.status,
+                percentage: recovery.percentage,
+                hoursAgo: hoursAgo
+              };
             }
           });
         };
