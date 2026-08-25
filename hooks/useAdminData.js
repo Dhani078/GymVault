@@ -40,6 +40,10 @@ export default function useAdminData() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [isResolvingTicket, setIsResolvingTicket] = useState(false);
 
+  // QRIS Payment Requests State
+  const [paymentRequests, setPaymentRequests] = useState([]);
+  const [actionLoadingId, setActionLoadingId] = useState(null);
+
   // Refresh State
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -152,11 +156,52 @@ export default function useAdminData() {
           setSupportTickets(tickets);
         }
       } catch (err) {}
+
+      // 7. Fetch QRIS Payment Requests
+      try {
+        const { data: payReqs, error: payError } = await supabase
+          .from('payment_requests')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (!payError && payReqs) {
+          setPaymentRequests(payReqs);
+        }
+      } catch (err) {}
       
     } catch (e) {
       console.warn('[AdminDashboard] Fetch Error:', e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleApprovePayment = async (requestId) => {
+    setActionLoadingId(requestId);
+    try {
+      const { data, error } = await supabase.rpc('approve_payment_request', { request_id: requestId });
+      if (!error) {
+        setPaymentRequests(prev => prev.map(p => p.id === requestId ? { ...p, status: 'approved' } : p));
+        // Refresh users list so pro status is reflected
+        fetchAdminData();
+      }
+    } catch (e) {
+      console.warn('[AdminDashboard] Approve Payment Error:', e);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleRejectPayment = async (requestId) => {
+    setActionLoadingId(requestId);
+    try {
+      const { data, error } = await supabase.rpc('reject_payment_request', { request_id: requestId });
+      if (!error) {
+        setPaymentRequests(prev => prev.map(p => p.id === requestId ? { ...p, status: 'rejected' } : p));
+      }
+    } catch (e) {
+      console.warn('[AdminDashboard] Reject Payment Error:', e);
+    } finally {
+      setActionLoadingId(null);
     }
   };
 
@@ -517,6 +562,8 @@ export default function useAdminData() {
     supportTickets,
     selectedTicket, setSelectedTicket,
     isResolvingTicket,
+    paymentRequests,
+    actionLoadingId,
     isRefreshing,
 
     fetchAdminData,
@@ -531,6 +578,8 @@ export default function useAdminData() {
     handleCreateNotification,
     confirmDeleteNotif,
     handleResolveTicket,
+    handleApprovePayment,
+    handleRejectPayment,
     onRefresh
   };
 }
