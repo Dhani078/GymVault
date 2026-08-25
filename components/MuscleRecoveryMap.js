@@ -305,82 +305,97 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
 
     if (completedSessions && completedSessions.length > 0) {
       completedSessions.forEach(session => {
-        const sessionDate = new Date(session.started_at);
-        const hoursAgo = (now - sessionDate) / (1000 * 60 * 60);
+        const sessionDate = new Date((session.started_at || '').replace(' ', 'T'));
+        const hoursAgo = Math.max(0, (now - sessionDate) / (1000 * 60 * 60));
 
         if (hoursAgo > 168) return; // Ignore workouts older than 7 days
 
+        // Extract text from split_name AND workout_sets
+        const splitText = (session.split_name || '').toLowerCase();
         const sets = session.workout_sets || [];
-        sets.forEach(set => {
-          const rawMuscle = (set.muscle_group || set.exercises?.muscle_group || '').toLowerCase();
-          const exName = (set.exercises?.name || '').toLowerCase();
+        
+        const detectMuscleGroups = (text) => {
           const targetGroups = [];
-
           if (
-            rawMuscle.includes('traps') || rawMuscle.includes('trapezius') || rawMuscle.includes('pundak') || rawMuscle.includes('leher') ||
-            exName.includes('shrug') || exName.includes('upright row') || exName.includes('farmer') || exName.includes('deadlift')
+            text.includes('trap') || text.includes('pundak') || text.includes('leher') ||
+            text.includes('shrug') || text.includes('upright row') || text.includes('farmer')
           ) targetGroups.push('traps');
+          
           if (
-            rawMuscle.includes('chest') || rawMuscle.includes('pec') || rawMuscle.includes('dada') ||
-            exName.includes('bench press') || exName.includes('chest press') || exName.includes('push up') || exName.includes('push-up') || exName.includes('fly') || exName.includes('cable crossover') || exName.includes('pec deck') || exName.includes('dip')
+            text.includes('chest') || text.includes('pec') || text.includes('dada') ||
+            text.includes('bench press') || text.includes('chest press') || text.includes('push up') || text.includes('push-up') || text.includes('fly') || text.includes('cable crossover') || text.includes('pec deck') || text.includes('dip') || text.includes('push')
           ) targetGroups.push('chest');
+          
           if (
-            rawMuscle.includes('lower back') || rawMuscle.includes('erector') || rawMuscle.includes('punggung bawah') || rawMuscle.includes('pinggang') ||
-            exName.includes('deadlift') || exName.includes('hyperextension') || exName.includes('good morning') || exName.includes('back extension') || exName.includes('row')
+            text.includes('lower back') || text.includes('erector') || text.includes('punggung bawah') || text.includes('pinggang') ||
+            text.includes('deadlift') || text.includes('hyperextension') || text.includes('good morning') || text.includes('back extension')
           ) targetGroups.push('lower_back');
+          
           if (
-            rawMuscle.includes('back') || rawMuscle.includes('lats') || rawMuscle.includes('sayap') || rawMuscle.includes('punggung') ||
-            exName.includes('row') || exName.includes('pull up') || exName.includes('pull-up') || exName.includes('pulldown') || exName.includes('t-bar') || exName.includes('lat pull') || exName.includes('chin-up') || exName.includes('chin up')
+            text.includes('back') || text.includes('lats') || text.includes('sayap') || text.includes('punggung') || text.includes('pull') ||
+            text.includes('row') || text.includes('pull up') || text.includes('pull-up') || text.includes('pulldown') || text.includes('t-bar') || text.includes('lat pull') || text.includes('chin-up') || text.includes('chin up')
           ) targetGroups.push('lats');
+          
           if (
-            rawMuscle.includes('shoulder') || rawMuscle.includes('delt') || rawMuscle.includes('bahu') ||
-            exName.includes('shoulder press') || exName.includes('lateral raise') || exName.includes('front raise') || exName.includes('overhead press') || exName.includes('military press') || exName.includes('arnold press') || exName.includes('face pull') || exName.includes('bench press') || exName.includes('push up') || exName.includes('upright row')
+            text.includes('shoulder') || text.includes('delt') || text.includes('bahu') ||
+            text.includes('shoulder press') || text.includes('lateral raise') || text.includes('front raise') || text.includes('overhead press') || text.includes('military press') || text.includes('arnold press') || text.includes('face pull') || text.includes('upright row')
           ) targetGroups.push('shoulders');
+          
           if (
-            rawMuscle.includes('forearm') || rawMuscle.includes('lengan bawah') || rawMuscle.includes('brachioradialis') ||
-            exName.includes('wrist curl') || exName.includes('reverse curl') || exName.includes('grip') || exName.includes('plate pinch') || exName.includes('deadlift') || exName.includes('farmer') || exName.includes('pull up') || exName.includes('row')
+            text.includes('forearm') || text.includes('lengan bawah') || text.includes('brachioradialis') ||
+            text.includes('wrist curl') || text.includes('reverse curl') || text.includes('grip') || text.includes('plate pinch') || text.includes('deadhang')
           ) targetGroups.push('forearms');
+          
           if (
-            rawMuscle.includes('bicep') || rawMuscle.includes('bisep') ||
-            exName.includes('curl') || exName.includes('chin-up') || exName.includes('chin up') || exName.includes('preacher') || exName.includes('pull up') || exName.includes('pull-up') || exName.includes('row') || exName.includes('pulldown')
+            text.includes('bicep') || text.includes('bisep') || text.includes('pull') ||
+            text.includes('curl') || text.includes('chin-up') || text.includes('chin up') || text.includes('preacher') || text.includes('hammer') || text.includes('pulldown') || text.includes('row')
           ) targetGroups.push('biceps');
+          
           if (
-            rawMuscle.includes('tricep') || rawMuscle.includes('trisep') ||
-            exName.includes('extension') || exName.includes('dip') || exName.includes('skull crusher') || exName.includes('pushdown') || exName.includes('kickback') || exName.includes('french press') || exName.includes('bench press') || exName.includes('push up') || exName.includes('shoulder press') || exName.includes('overhead press')
+            text.includes('tricep') || text.includes('trisep') ||
+            text.includes('extension') || text.includes('dip') || text.includes('skull crusher') || text.includes('pushdown') || text.includes('kickback') || text.includes('french press') || text.includes('close-grip') || text.includes('close grip')
           ) targetGroups.push('triceps');
+          
           if (
-            rawMuscle.includes('quad') || rawMuscle.includes('thigh') || rawMuscle.includes('paha depan') ||
-            exName.includes('squat') || exName.includes('leg press') || exName.includes('leg extension') || exName.includes('lunge') || exName.includes('hack squat') || exName.includes('split squat') || exName.includes('step up')
+            text.includes('quad') || text.includes('thigh') || text.includes('paha depan') || text.includes('leg') ||
+            text.includes('squat') || text.includes('leg press') || text.includes('leg extension') || text.includes('lunge') || text.includes('hack squat') || text.includes('split squat') || text.includes('step up')
           ) targetGroups.push('quads');
+          
           if (
-            rawMuscle.includes('glute') || rawMuscle.includes('bokong') || rawMuscle.includes('pantat') ||
-            exName.includes('hip thrust') || exName.includes('glute kickback') || exName.includes('butt') || exName.includes('bridge') || exName.includes('cable pull through') || exName.includes('squat') || exName.includes('deadlift') || exName.includes('lunge') || exName.includes('split squat')
+            text.includes('glute') || text.includes('bokong') || text.includes('pantat') ||
+            text.includes('hip thrust') || text.includes('glute kickback') || text.includes('bridge') || text.includes('cable pull through')
           ) targetGroups.push('glutes');
+          
           if (
-            rawMuscle.includes('calf') || rawMuscle.includes('calves') || rawMuscle.includes('betis') ||
-            exName.includes('calf raise') || exName.includes('jinjit') || exName.includes('soleus')
+            text.includes('calf') || text.includes('calves') || text.includes('betis') ||
+            text.includes('calf raise') || text.includes('jinjit') || text.includes('soleus')
           ) targetGroups.push('calves');
+          
           if (
-            rawMuscle.includes('hamstring') || rawMuscle.includes('paha belakang') ||
-            exName.includes('leg curl') || exName.includes('romanian deadlift') || exName.includes('rdl') || exName.includes('stiff leg') || exName.includes('deadlift') || exName.includes('squat') || exName.includes('lunge')
+            text.includes('hamstring') || text.includes('paha belakang') ||
+            text.includes('leg curl') || text.includes('romanian deadlift') || text.includes('rdl') || text.includes('stiff leg')
           ) targetGroups.push('hamstrings');
+          
           if (
-            rawMuscle.includes('abs') || rawMuscle.includes('core') || rawMuscle.includes('abdominal') || rawMuscle.includes('perut') ||
-            exName.includes('crunch') || exName.includes('plank') || exName.includes('sit up') || exName.includes('sit-up') || exName.includes('leg raise') || exName.includes('russian twist') || exName.includes('ab wheel')
+            text.includes('abs') || text.includes('core') || text.includes('abdominal') || text.includes('perut') ||
+            text.includes('crunch') || text.includes('plank') || text.includes('sit up') || text.includes('sit-up') || text.includes('leg raise') || text.includes('russian twist') || text.includes('ab wheel')
           ) targetGroups.push('core');
+          
+          return targetGroups;
+        };
 
-          targetGroups.forEach(tg => {
+        const applyFatigue = (groups) => {
+          groups.forEach(tg => {
             if (hoursAgo < states[tg].hoursAgo) {
               states[tg].hoursAgo = hoursAgo;
               
-              // Auto-recovery calculation:
               let percentage = 100;
               if (hoursAgo < 24) {
-                percentage = Math.round(10 + (hoursAgo / 24) * 20); // 10% to 30%
+                percentage = Math.round(15 + (hoursAgo / 24) * 20); // 15% to 35% (Fatigued)
               } else if (hoursAgo < 48) {
-                percentage = Math.round(30 + ((hoursAgo - 24) / 24) * 40); // 30% to 70%
+                percentage = Math.round(35 + ((hoursAgo - 24) / 24) * 35); // 35% to 70% (Recovering)
               } else if (hoursAgo < 72) {
-                percentage = Math.round(70 + ((hoursAgo - 48) / 24) * 25); // 70% to 95%
+                percentage = Math.round(70 + ((hoursAgo - 48) / 24) * 25); // 70% to 95% (Almost Fresh)
               }
 
               let status = 'Fresh';
@@ -390,6 +405,21 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
               states[tg] = { status, percentage, hoursAgo };
             }
           });
+        };
+
+        // 1. Check split_name (e.g. "Pull Day", "Lat Pulldown, Bicep Curl")
+        if (splitText) {
+          applyFatigue(detectMuscleGroups(splitText));
+        }
+
+        // 2. Check each set in workout_sets
+        sets.forEach(set => {
+          const rawMuscle = (set.muscle_group || set.exercises?.muscle_group || '').toLowerCase();
+          const exName = (set.exercises?.name || '').toLowerCase();
+          const combined = `${rawMuscle} ${exName}`;
+          if (combined.trim()) {
+            applyFatigue(detectMuscleGroups(combined));
+          }
         });
       });
     }
