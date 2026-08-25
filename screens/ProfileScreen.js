@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Image, Alert, Platform } from 'react-native';
+import { View, TouchableOpacity, Image, Alert, Platform, Modal } from 'react-native';
 import {
   User, Target, Activity, Zap, TrendingUp, AlertTriangle, CheckCircle,
   XCircle, Settings, Clock, Flame, Award, ChevronRight, Crown
