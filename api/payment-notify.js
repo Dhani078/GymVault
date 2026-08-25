@@ -136,7 +136,33 @@ export default async function handler(req, res) {
       aiReport = await analyzeReceiptWithGemini(proofImageBase64, targetAmount);
     }
 
-    // 2. Insert into Supabase payment_requests
+    // 2. Upload to Supabase Storage (if available) for long-term audit trail
+    let uploadedProofUrl = null;
+    if (proofImageBase64) {
+      try {
+        const cleanBase64 = proofImageBase64.replace(/^data:image\/[a-z]+;base64,/, '');
+        const imageBuffer = Buffer.from(cleanBase64, 'base64');
+        const fileName = `proofs/${userId}_${Date.now()}.jpg`;
+
+        const { data: uploadData, error: uploadErr } = await supabase.storage
+          .from('payment_receipts')
+          .upload(fileName, imageBuffer, {
+            contentType: 'image/jpeg',
+            upsert: true
+          });
+
+        if (!uploadErr && uploadData) {
+          const { data: publicUrlData } = supabase.storage
+            .from('payment_receipts')
+            .getPublicUrl(fileName);
+          uploadedProofUrl = publicUrlData?.publicUrl || null;
+        }
+      } catch (storageErr) {
+        console.warn('[payment-notify] Storage upload skip/fallback:', storageErr.message);
+      }
+    }
+
+    // 3. Insert into Supabase payment_requests
     const { data: payReq, error: dbError } = await supabase
       .from('payment_requests')
       .insert({
@@ -145,6 +171,7 @@ export default async function handler(req, res) {
         user_email: userEmail || '',
         plan: plan,
         amount: targetAmount,
+        proof_url: uploadedProofUrl,
         status: 'pending'
       })
       .select()

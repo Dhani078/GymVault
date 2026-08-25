@@ -7,6 +7,7 @@ import {
   Scale, Calculator, Droplets, Target, Repeat, Sliders, BatteryCharging, Compass,
   Eye, Shield, Radio, PlayCircle, BarChart, FileText, CheckCircle
 } from 'lucide-react-native';
+import { calculate1RM, calculatePlateBreakdown, calculateTDEE, calculateHeartRateZones } from '../utils/fitnessMath';
 
 const { width } = Dimensions.get('window');
 
@@ -180,53 +181,18 @@ export default function LandingPage({ onLoginPress }) {
   const muscle = MUSCLE_DATA[selectedMuscle];
 
   // 1RM Calculation (Brzycki Formula)
-  const calc1RM = () => {
-    const w = parseFloat(oneRmWeight) || 0;
-    const r = Math.min(Math.max(parseInt(oneRmReps) || 1, 1), 12);
-    if (w <= 0) return 0;
-    return Math.round(w / (1.0278 - 0.0278 * r));
-  };
-  const estimated1RM = calc1RM();
+  const estimated1RM = calculate1RM(oneRmWeight, oneRmReps);
 
   // Plate Calculator Breakdown (20kg bar, pairs per side)
-  const getPlatesPerSide = (totalWeight) => {
-    let weightPerSide = Math.max(0, (totalWeight - 20) / 2);
-    const plates = [
-      { weight: 25, color: '#EF4444', label: '25kg' },
-      { weight: 20, color: '#3B82F6', label: '20kg' },
-      { weight: 15, color: '#EAB308', label: '15kg' },
-      { weight: 10, color: '#10B981', label: '10kg' },
-      { weight: 5, color: '#F3F4F6', label: '5kg', textColor: '#000' },
-      { weight: 2.5, color: '#111827', label: '2.5kg' },
-      { weight: 1.25, color: '#6B7280', label: '1.25kg' },
-    ];
-    const result = [];
-    plates.forEach(p => {
-      while (weightPerSide >= p.weight) {
-        result.push(p);
-        weightPerSide -= p.weight;
-      }
-    });
-    return result;
-  };
+  const plateResult = calculatePlateBreakdown(targetPlateWeight, 20);
 
   // TDEE Calculation (Mifflin-St Jeor)
-  const calcTDEE = () => {
-    const w = parseFloat(tdeeWeight) || 70;
-    const h = parseFloat(tdeeHeight) || 170;
-    const a = parseFloat(tdeeAge) || 25;
-    const bmr = (10 * w) + (6.25 * h) - (5 * a) + 5;
-    let tdee = bmr * 1.55;
-    if (tdeeGoal === 'cut') tdee -= 500;
-    if (tdeeGoal === 'bulk') tdee += 400;
-    const targetCals = Math.round(tdee);
-    const proteinGrams = Math.round(w * 2.2);
-    const fatsGrams = Math.round((targetCals * 0.25) / 9);
-    const carbsGrams = Math.round((targetCals - (proteinGrams * 4) - (fatsGrams * 9)) / 4);
-    const waterLiters = (w * 0.04).toFixed(1);
-    return { targetCals, proteinGrams, carbsGrams, fatsGrams, waterLiters };
-  };
-  const tdeeResult = calcTDEE();
+  const tdeeResult = calculateTDEE({
+    weightKg: tdeeWeight,
+    heightCm: tdeeHeight,
+    ageYears: tdeeAge,
+    goal: tdeeGoal,
+  });
 
   // Volume equivalents
   const getVolumeEquivalent = (vol) => {
@@ -558,7 +524,7 @@ export default function LandingPage({ onLoginPress }) {
                 <Text style={{ color: '#000', fontSize: 10, fontWeight: 'bold' }}>BAR 20KG</Text>
               </View>
 
-              {getPlatesPerSide(targetPlateWeight).map((p, i) => (
+              {plateResult.platesPerSide.map((p, i) => (
                 <View key={i} style={[styles.plateGraphic, { backgroundColor: p.color }]}>
                   <Text style={[styles.plateGraphicText, p.textColor ? { color: p.textColor } : {}]}>{p.label}</Text>
                 </View>
@@ -568,7 +534,7 @@ export default function LandingPage({ onLoginPress }) {
             </View>
 
             <Text style={{ color: '#AAA', fontSize: 12, textAlign: 'center', marginTop: 8 }}>
-              Total: 20kg Olympic Bar + {getPlatesPerSide(targetPlateWeight).map(p => p.label).join(' + ') || 'Tanpa Plate'} (x2 Sisi) = <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{targetPlateWeight} kg</Text>
+              Total: 20kg Olympic Bar + {plateResult.platesPerSide.map(p => p.label).join(' + ') || 'Tanpa Plate'} (x2 Sisi) = <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{targetPlateWeight} kg</Text>
             </Text>
           </View>
         </View>
