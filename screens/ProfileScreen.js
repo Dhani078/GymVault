@@ -15,7 +15,6 @@ import { useDynamicIsland } from '../contexts/DynamicIslandContext';
 import SmoothScrollView from '../components/SmoothScrollView';
 import DummyAdBanner from '../components/DummyAdBanner';
 
-// Subcomponents
 import DailyCheckInCard from '../components/profile/DailyCheckInCard';
 import TrophyCabinet from '../components/profile/TrophyCabinet';
 import ShareVolumeModal from '../components/profile/ShareVolumeModal';
@@ -23,6 +22,7 @@ import RedeemCodeModal from '../components/profile/RedeemCodeModal';
 import TdeeCalculatorModal from '../components/profile/TdeeCalculatorModal';
 import EditProfileModal from '../components/profile/EditProfileModal';
 import SettingsModal from '../components/profile/SettingsModal';
+import PaywallScreen from './PaywallScreen';
 
 const parseLocalDate = (dateStr) => {
   if (!dateStr || typeof dateStr !== 'string') return new Date();
@@ -101,6 +101,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
 
   const [toast, setToast] = useState({ visible: false, type: '', message: '' });
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const [paywallVisible, setPaywallVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [redeemModalVisible, setRedeemModalVisible] = useState(false);
   const [tdeeModalVisible, setTdeeModalVisible] = useState(false);
@@ -379,6 +380,42 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
           </TouchableOpacity>
         </View>
 
+        {/* Upgrade to Pro Banner (If not pro) */}
+        {!isPremium && (
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => setPaywallVisible(true)}
+            style={{
+              backgroundColor: '#121208',
+              borderWidth: 1,
+              borderColor: '#CCFF00',
+              borderRadius: 16,
+              padding: 16,
+              marginBottom: 20,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              shadowColor: '#CCFF00',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.15,
+              shadowRadius: 8,
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, flex: 1 }}>
+              <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(204, 255, 0, 0.15)', justifyContent: 'center', alignItems: 'center' }}>
+                <Crown color="#CCFF00" size={22} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <AppText weight="bold" style={{ color: '#FFFFFF', fontSize: 15 }}>Upgrade ke GymVault Pro</AppText>
+                <AppText style={{ color: '#CCFF00', fontSize: 11, marginTop: 2 }}>Scan QRIS Otomatis • Bebas Iklan • AI Unlimited</AppText>
+              </View>
+            </View>
+            <View style={{ backgroundColor: '#CCFF00', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
+              <AppText weight="bold" style={{ color: '#000000', fontSize: 12 }}>UPGRADE</AppText>
+            </View>
+          </TouchableOpacity>
+        )}
+
         {/* Body Metrics */}
         <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
           <TouchableOpacity
@@ -515,6 +552,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         handleResetPassword={handleResetPassword}
         handleSignOut={handleSignOut}
         handleExportData={handleExportData}
+        onOpenPaywall={() => setPaywallVisible(true)}
         onOpenRedeemModal={() => setRedeemModalVisible(true)}
         onOpenEditModal={() => setEditModalVisible(true)}
         showToast={showToast}
@@ -524,6 +562,19 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         textColor={textColor}
         textMuted={textMuted}
       />
+
+      {/* Paywall Screen Modal */}
+      <Modal
+        visible={paywallVisible}
+        animationType="slide"
+        presentationStyle="fullScreen"
+        onRequestClose={() => setPaywallVisible(false)}
+      >
+        <PaywallScreen
+          session={session}
+          onSkip={() => setPaywallVisible(false)}
+        />
+      </Modal>
 
       <EditProfileModal
         visible={editModalVisible}
