@@ -106,7 +106,9 @@ export default function PaywallScreen({ onSkip, session }) {
       };
 
       // Call our serverless Telegram notifier
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://gymvault.vercel.app';
+      const baseUrl = typeof window !== 'undefined' && window.location?.origin 
+        ? window.location.origin 
+        : 'https://gymvault-app.vercel.app';
       const res = await fetch(`${baseUrl}/api/payment-notify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -4,7 +4,8 @@ import {
   Dumbbell, Activity, Cpu, ShieldCheck, Zap, Flame, Award, ChevronRight,
   TrendingUp, Sparkles, Smartphone, Check, ArrowRight, Star, Heart,
   Timer, BarChart2, Layers, QrCode, Crown, CheckCircle2, ChevronDown, ChevronUp,
-  Scale, Calculator, Droplets, Target, Repeat, Sliders, BatteryCharging, Compass
+  Scale, Calculator, Droplets, Target, Repeat, Sliders, BatteryCharging, Compass,
+  Eye, Shield, Radio, PlayCircle, BarChart, FileText, CheckCircle
 } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -60,16 +61,16 @@ const FOOD_PRESETS = [
     protein: 48,
     carbs: 65,
     fats: 18,
-    verdict: '✅ Tinggi protein, lemak terkontrol jika tanpa kuah santan kental.'
+    verdict: 'Tinggi protein murni, lemak terkontrol jika tanpa kuah gulai kental.'
   },
   {
     id: 'shake',
-    name: 'Whey Protein Oat Shake',
+    name: 'Whey Protein Oat Banana Shake',
     calories: 450,
     protein: 42,
     carbs: 52,
     fats: 8,
-    verdict: '🔥 Post-workout sempurna untuk sintesis protein otot cepat.'
+    verdict: 'Post-workout ideal untuk sintesis protein otot cepat.'
   },
   {
     id: 'salmon',
@@ -78,14 +79,14 @@ const FOOD_PRESETS = [
     protein: 45,
     carbs: 50,
     fats: 22,
-    verdict: '🥑 Kaya asam lemak Omega-3 untuk meredakan inflamasi sendi.'
+    verdict: 'Kaya asam lemak Omega-3 untuk percepatan pemulihan inflamasi sendi.'
   }
 ];
 
 const SPLIT_PROGRAMS = {
   3: {
     name: 'Full Body 3x Seminggu',
-    tagline: 'Maksimal Stimulus, Waktu Efisien',
+    tagline: 'Maksimal Stimulus Frekuensi, Waktu Sangat Efisien',
     days: [
       { day: 'Senin', focus: 'Full Body A (Squat & Bench Focus)', vol: '18 Sets' },
       { day: 'Rabu', focus: 'Full Body B (Deadlift & Overhead Press)', vol: '16 Sets' },
@@ -96,10 +97,10 @@ const SPLIT_PROGRAMS = {
     name: 'Upper / Lower 4x Seminggu',
     tagline: 'Keseimbangan Hypertrophy & Pemulihan Saraf',
     days: [
-      { day: 'Senin', focus: 'Upper Power (Heavy Bench & Row)', vol: '18 Sets' },
+      { day: 'Senin', focus: 'Upper Power (Heavy Bench & Barbell Row)', vol: '18 Sets' },
       { day: 'Selasa', focus: 'Lower Power (Heavy Squat & RDL)', vol: '16 Sets' },
-      { day: 'Kamis', focus: 'Upper Hypertrophy (DB Press & Lateral)', vol: '20 Sets' },
-      { day: 'Jumat', focus: 'Lower Hypertrophy (Leg Press & Lunges)', vol: '18 Sets' }
+      { day: 'Kamis', focus: 'Upper Hypertrophy (Incline DB & Lateral Raises)', vol: '20 Sets' },
+      { day: 'Jumat', focus: 'Lower Hypertrophy (Leg Press & Calves)', vol: '18 Sets' }
     ]
   },
   5: {
@@ -109,13 +110,13 @@ const SPLIT_PROGRAMS = {
       { day: 'Senin', focus: 'Push (Chest, Delts, Triceps)', vol: '18 Sets' },
       { day: 'Selasa', focus: 'Pull (Lats, Traps, Biceps)', vol: '18 Sets' },
       { day: 'Rabu', focus: 'Legs (Quads, Hamstrings, Calves)', vol: '16 Sets' },
-      { day: 'Jumat', focus: 'Upper Volume (Compound Focus)', vol: '16 Sets' },
+      { day: 'Jumat', focus: 'Upper Volume (Compound Lifts)', vol: '16 Sets' },
       { day: 'Sabtu', focus: 'Lower Volume (Hypertrophy)', vol: '16 Sets' }
     ]
   },
   6: {
     name: 'Push / Pull / Legs (PPL 2x Cycle)',
-    tagline: 'Maksimal Muscle Protein Synthesis',
+    tagline: 'Maksimal Muscle Protein Synthesis untuk Pro Lifter',
     days: [
       { day: 'Senin & Kamis', focus: 'Push Focus (Heavy & Hypertrophy)', vol: '20 Sets' },
       { day: 'Selasa & Jumat', focus: 'Pull Focus (Heavy & Hypertrophy)', vol: '20 Sets' },
@@ -139,13 +140,16 @@ const FAQS = [
   },
   {
     q: 'Bagaimana cara mengaktifkan akun Pro via QRIS DANA?',
-    a: 'Buka menu pembayaran di aplikasi, scan kode QRIS DANA yang muncul di layar, lalu upload screenshot bukti bayar. Sistem kami yang terhubung ke Bot Telegram & Gemini AI akan memverifikasi dan mengaktifkan akun Anda secara instan!'
+    a: 'Buka menu pembayaran di aplikasi, scan kode QRIS DANA yang muncul di layar, lalu upload screenshot bukti bayar. Sistem kami yang terhubung ke Bot Telegram & Gemini AI akan memverifikasi dan mengaktifkan akun Anda secara instan 24/7!'
   }
 ];
 
 export default function LandingPage({ onLoginPress }) {
   const isLarge = width >= 1024;
   const isMedium = width >= 768;
+
+  // Interactive Screen Mockup Preview Tab
+  const [mockupTab, setMockupTab] = useState('logger'); // 'logger' | 'heatmap' | 'ai'
 
   // Interactive Demo States
   const [selectedMuscle, setSelectedMuscle] = useState('chest');
@@ -226,20 +230,20 @@ export default function LandingPage({ onLoginPress }) {
 
   // Volume equivalents
   const getVolumeEquivalent = (vol) => {
-    if (vol < 5000) return { qty: (vol / 500).toFixed(1), item: 'Motor Sport Ninja', icon: '🏍️' };
-    if (vol < 15000) return { qty: (vol / 1500).toFixed(1), item: 'Mobil Sedan City Car', icon: '🚗' };
-    if (vol < 40000) return { qty: (vol / 2500).toFixed(1), item: 'Mobil SUV Listrik', icon: '🚙' };
-    if (vol < 80000) return { qty: (vol / 5000).toFixed(1), item: 'Gajah Sumatra Dewasa', icon: '🐘' };
-    return { qty: (vol / 20000).toFixed(1), item: 'Truk Kontainer Logistik', icon: '🚛' };
+    if (vol < 5000) return { qty: (vol / 500).toFixed(1), item: 'Motor Sport Ninja' };
+    if (vol < 15000) return { qty: (vol / 1500).toFixed(1), item: 'Mobil Sedan City Car' };
+    if (vol < 40000) return { qty: (vol / 2500).toFixed(1), item: 'Mobil SUV Listrik' };
+    if (vol < 80000) return { qty: (vol / 5000).toFixed(1), item: 'Gajah Sumatra Dewasa' };
+    return { qty: (vol / 20000).toFixed(1), item: 'Truk Kontainer Logistik' };
   };
 
   const equiv = getVolumeEquivalent(volumeSlider);
   const maxHR = 220 - (parseInt(userAge) || 25);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 140 }} showsVerticalScrollIndicator={false}>
       
-      {/* ─── STICKY NAVBAR ─── */}
+      {/* ─── STICKY GLASSMORPHIC NAVBAR ─── */}
       <View style={[styles.header, { paddingHorizontal: isLarge ? 80 : 24 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <View style={styles.logoBadge}>
@@ -255,7 +259,7 @@ export default function LandingPage({ onLoginPress }) {
           <View style={styles.navLinks}>
             <View style={styles.statusLive}>
               <View style={styles.statusDot} />
-              <Text style={styles.statusText}>99.9% Uptime • Gemini 3.7 Vision Live</Text>
+              <Text style={styles.statusText}>99.9% Uptime • Gemini 3.7 Multi-Model Cascade</Text>
             </View>
           </View>
         )}
@@ -268,22 +272,22 @@ export default function LandingPage({ onLoginPress }) {
         </View>
       </View>
 
-      {/* ─── HERO SECTION ─── */}
+      {/* ─── HERO SECTION (CINEMATIC WIDE 2-LINE) ─── */}
       <View style={[styles.heroSection, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.badge}>
           <Sparkles color="#CCFF00" size={14} />
           <Text style={styles.badgeText}>ELITE FITNESS & ADAPTIVE RECOVERY ENGINE 2.0</Text>
         </View>
 
-        <Text style={[styles.heroTitle, { fontSize: isLarge ? 68 : isMedium ? 48 : 34, lineHeight: isLarge ? 78 : isMedium ? 56 : 42 }]}>
+        <Text style={[styles.heroTitle, { fontSize: isLarge ? 64 : isMedium ? 44 : 32, lineHeight: isLarge ? 74 : isMedium ? 52 : 40 }]}>
           ENGINEERED FOR{'\n'}
           <Text style={{ color: '#CCFF00' }}>ABSOLUTE PHYSICAL DOMINANCE.</Text>
         </Text>
 
-        <Text style={[styles.heroSubtitle, { maxWidth: isLarge ? 740 : 600 }]}>
+        <Text style={[styles.heroSubtitle, { maxWidth: isLarge ? 760 : 600 }]}>
           GymVault memadukan pelacakan latihan berkecepatan 120 FPS Skia GPU, 
           mesin pemulihan kelelahan otot Central Nervous System (CNS), 
-          dan kecerdasan buatan Google Gemini Vision untuk memecahkan batas rekor fisik Anda.
+          dan kecerdasan buatan Google Gemini Multimodal untuk memecahkan batas rekor fisik Anda.
         </Text>
 
         {/* Hero CTAs */}
@@ -295,7 +299,7 @@ export default function LandingPage({ onLoginPress }) {
         </View>
 
         {/* Telemetry Highlights */}
-        <View style={[styles.statsRow, { flexDirection: isMedium ? 'row' : 'column', width: '100%', maxWidth: 900 }]}>
+        <View style={[styles.statsRow, { flexDirection: isMedium ? 'row' : 'column', width: '100%', maxWidth: 940 }]}>
           <View style={styles.statBox}>
             <Text style={styles.statNumber}>0.02s</Text>
             <Text style={styles.statLabel}>Skia GPU Render Latency</Text>
@@ -310,6 +314,133 @@ export default function LandingPage({ onLoginPress }) {
             <Text style={styles.statNumber}>Gemini 3.7</Text>
             <Text style={styles.statLabel}>Multimodal Vision AI</Text>
           </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statBox}>
+            <Text style={styles.statNumber}>1-Click</Text>
+            <Text style={styles.statLabel}>Instant QRIS Activation</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* ─── INTERACTIVE APP SCREEN SHOWCASE PREVIEW ─── */}
+      <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
+        <View style={styles.sectionHeader}>
+          <View style={styles.miniTag}>
+            <Smartphone color="#CCFF00" size={14} />
+            <Text style={styles.miniTagText}>LIVE INTERACTIVE INTERFACE</Text>
+          </View>
+          <Text style={styles.sectionHeading}>Eksplorasi Antarmuka Aplikasi</Text>
+          <Text style={styles.sectionSub}>
+            Pilih modul di bawah untuk melihat simulasi antarmuka live dari fitur-fitur unggulan GymVault.
+          </Text>
+
+          {/* Tab Switcher */}
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
+            {[
+              { id: 'logger', label: 'Zero-Friction Live Logger', icon: PlayCircle },
+              { id: 'heatmap', label: '12-Group CNS Heatmap', icon: Activity },
+              { id: 'ai', label: 'Gemini 3.7 AI Coach', icon: Cpu }
+            ].map(tab => {
+              const IconComponent = tab.icon;
+              const isSel = mockupTab === tab.id;
+              return (
+                <TouchableOpacity
+                  key={tab.id}
+                  style={[styles.mockupTabBtn, isSel && styles.mockupTabBtnActive]}
+                  onPress={() => setMockupTab(tab.id)}
+                >
+                  <IconComponent color={isSel ? '#000' : '#888'} size={16} />
+                  <Text style={[styles.mockupTabBtnText, isSel && { color: '#000', fontWeight: 'bold' }]}>{tab.label}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Mockup Display Box */}
+        <View style={[styles.mockupDisplayCard, { width: '100%', maxWidth: 880, alignSelf: 'center' }]}>
+          {mockupTab === 'logger' && (
+            <View style={{ gap: 14 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View>
+                  <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>SESI LATIHAN AKTIF</Text>
+                  <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Heavy Push Day (Barbell Focus)</Text>
+                </View>
+                <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
+                  <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 13 }}>00:42:18</Text>
+                </View>
+              </View>
+
+              <View style={styles.loggerSetRow}>
+                <Text style={{ color: '#888', fontWeight: 'bold', width: 50 }}>SET 1</Text>
+                <Text style={{ color: '#FFF', fontWeight: 'bold', flex: 1 }}>Barbell Bench Press</Text>
+                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>100 kg × 8 reps</Text>
+                <View style={styles.checkPill}><Check color="#000" size={14} /></View>
+              </View>
+
+              <View style={styles.loggerSetRow}>
+                <Text style={{ color: '#888', fontWeight: 'bold', width: 50 }}>SET 2</Text>
+                <Text style={{ color: '#FFF', fontWeight: 'bold', flex: 1 }}>Incline Dumbbell Press</Text>
+                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>36 kg × 10 reps</Text>
+                <View style={styles.checkPill}><Check color="#000" size={14} /></View>
+              </View>
+
+              <View style={styles.loggerSetRow}>
+                <Text style={{ color: '#888', fontWeight: 'bold', width: 50 }}>SET 3</Text>
+                <Text style={{ color: '#FFF', fontWeight: 'bold', flex: 1 }}>Overhead Barbell Press</Text>
+                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>60 kg × 8 reps</Text>
+                <View style={styles.checkPill}><Check color="#000" size={14} /></View>
+              </View>
+            </View>
+          )}
+
+          {mockupTab === 'heatmap' && (
+            <View style={{ gap: 14 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View>
+                  <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>CNS FATIGUE ENGINE</Text>
+                  <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Peta Pemulihan 12 Kelompok Otot</Text>
+                </View>
+                <Text style={{ color: '#10B981', fontWeight: 'bold', fontSize: 13 }}>Status: Optimal</Text>
+              </View>
+
+              <View style={{ flexDirection: 'row', gap: 12 }}>
+                <View style={styles.heatmapMetricBox}>
+                  <Text style={{ color: '#888', fontSize: 11 }}>DADA & TRICEPS</Text>
+                  <Text style={{ color: '#EF4444', fontSize: 18, fontWeight: 'bold', marginTop: 4 }}>85% Kelelahan</Text>
+                  <Text style={{ color: '#888', fontSize: 11, marginTop: 2 }}>Sisa Rest: 36 Jam</Text>
+                </View>
+                <View style={styles.heatmapMetricBox}>
+                  <Text style={{ color: '#888', fontSize: 11 }}>PUNGGUNG & BICEPS</Text>
+                  <Text style={{ color: '#10B981', fontSize: 18, fontWeight: 'bold', marginTop: 4 }}>100% Pulih</Text>
+                  <Text style={{ color: '#888', fontSize: 11, marginTop: 2 }}>Siap Latihan Berat</Text>
+                </View>
+                <View style={styles.heatmapMetricBox}>
+                  <Text style={{ color: '#888', fontSize: 11 }}>KAKI (QUADS & GLUTES)</Text>
+                  <Text style={{ color: '#F59E0B', fontSize: 18, fontWeight: 'bold', marginTop: 4 }}>60% Kelelahan</Text>
+                  <Text style={{ color: '#888', fontSize: 11, marginTop: 2 }}>Sisa Rest: 18 Jam</Text>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {mockupTab === 'ai' && (
+            <View style={{ gap: 14 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View>
+                  <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>GOOGLE GEMINI 3.7 COACH</Text>
+                  <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Analisis Beban & Progresi Otomatis</Text>
+                </View>
+              </View>
+
+              <View style={styles.aiChatBubbleBox}>
+                <Sparkles color="#CCFF00" size={18} />
+                <Text style={{ color: '#DDD', fontSize: 13, flex: 1, lineHeight: 20 }}>
+                  "Volume Bench Press Anda minggu ini meningkat 12% menjadi 8.400 kg. CNS fatigue pada pectorals berada di zona adaptasi optimal. Disarankan menambah 2.5 kg pada sesi berikutnya untuk progressive overload."
+                </Text>
+              </View>
+            </View>
+          )}
         </View>
       </View>
 
@@ -326,7 +457,7 @@ export default function LandingPage({ onLoginPress }) {
           </Text>
         </View>
 
-        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 880, alignSelf: 'center' }]}>
           <View style={{ flexDirection: isMedium ? 'row' : 'column', gap: 20, marginBottom: 24 }}>
             <View style={{ flex: 1 }}>
               <Text style={styles.inputLabel}>BEBAN ANGKATAN (KG)</Text>
@@ -401,7 +532,7 @@ export default function LandingPage({ onLoginPress }) {
           </Text>
         </View>
 
-        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 880, alignSelf: 'center' }]}>
           <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
             {[60, 80, 100, 120, 140, 160, 180, 200, 220].map((w) => (
               <TouchableOpacity
@@ -456,7 +587,7 @@ export default function LandingPage({ onLoginPress }) {
           </Text>
         </View>
 
-        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 880, alignSelf: 'center' }]}>
           {/* Inputs Row */}
           <View style={{ flexDirection: isMedium ? 'row' : 'column', gap: 16, marginBottom: 20 }}>
             <View style={{ flex: 1 }}>
@@ -545,7 +676,7 @@ export default function LandingPage({ onLoginPress }) {
           </View>
         </View>
 
-        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 880, alignSelf: 'center' }]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#222', paddingBottom: 16 }}>
             <View>
               <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 18 }}>{SPLIT_PROGRAMS[splitDays].name}</Text>
@@ -583,7 +714,7 @@ export default function LandingPage({ onLoginPress }) {
           </Text>
         </View>
 
-        <View style={[styles.toolCard, { width: '100%', maxWidth: 850, alignSelf: 'center' }]}>
+        <View style={[styles.toolCard, { width: '100%', maxWidth: 880, alignSelf: 'center' }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 24 }}>
             <Text style={styles.inputLabel}>UMUR ANDA:</Text>
             <TextInput
@@ -811,7 +942,7 @@ export default function LandingPage({ onLoginPress }) {
           })}
         </View>
 
-        <View style={[styles.foodCard, { width: '100%', maxWidth: 800, alignSelf: 'center' }]}>
+        <View style={[styles.foodCard, { width: '100%', maxWidth: 880, alignSelf: 'center' }]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <View>
               <Text style={{ color: '#888', fontSize: 12, letterSpacing: 1 }}>HASIL DETEKSI GEMINI AI</Text>
@@ -857,7 +988,7 @@ export default function LandingPage({ onLoginPress }) {
           </Text>
         </View>
 
-        <View style={[styles.volumeCalcBox, { width: '100%', maxWidth: 700, alignSelf: 'center' }]}>
+        <View style={[styles.volumeCalcBox, { width: '100%', maxWidth: 740, alignSelf: 'center' }]}>
           <Text style={{ color: '#888', fontSize: 12, letterSpacing: 1, textAlign: 'center' }}>GESER VOLUME ANGKATAN ANDA (KG):</Text>
           <Text style={{ color: '#CCFF00', fontSize: 42, fontWeight: 'bold', textAlign: 'center', marginVertical: 12 }}>
             {volumeSlider.toLocaleString('id-ID')} <Text style={{ fontSize: 20, color: '#FFF' }}>kg</Text>
@@ -880,8 +1011,7 @@ export default function LandingPage({ onLoginPress }) {
 
           {/* Output Card */}
           <View style={styles.volResultCard}>
-            <Text style={{ fontSize: 48, marginBottom: 8 }}>{equiv.icon}</Text>
-            <Text style={{ color: '#FFF', fontSize: 24, fontWeight: 'bold', textAlign: 'center' }}>
+            <Text style={{ color: '#FFF', fontSize: 22, fontWeight: 'bold', textAlign: 'center' }}>
               Setara Mengangkat <Text style={{ color: '#CCFF00' }}>{equiv.qty}x {equiv.item}</Text>!
             </Text>
             <Text style={{ color: '#888', fontSize: 12, marginTop: 6, textAlign: 'center' }}>
@@ -902,7 +1032,7 @@ export default function LandingPage({ onLoginPress }) {
           <Text style={styles.sectionSub}>Pilih paket gratis atau nikmati AI tanpa batas via QRIS DANA 1-Click Instant Activation.</Text>
         </View>
 
-        <View style={[styles.pricingRow, { flexDirection: isLarge ? 'row' : 'column', maxWidth: 900, alignSelf: 'center', width: '100%' }]}>
+        <View style={[styles.pricingRow, { flexDirection: isLarge ? 'row' : 'column', maxWidth: 920, alignSelf: 'center', width: '100%' }]}>
           {/* Free Tier */}
           <View style={[styles.pricingCard, { flex: 1 }]}>
             <Text style={styles.planName}>STARTER</Text>
@@ -960,7 +1090,7 @@ export default function LandingPage({ onLoginPress }) {
           <Text style={styles.sectionHeading}>Pertanyaan Umum (FAQ)</Text>
         </View>
 
-        <View style={{ width: '100%', maxWidth: 800, alignSelf: 'center', gap: 12 }}>
+        <View style={{ width: '100%', maxWidth: 880, alignSelf: 'center', gap: 12 }}>
           {FAQS.map((faq, idx) => {
             const isOpen = openFaq === idx;
             return (
@@ -1205,6 +1335,68 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: 640,
     lineHeight: 22,
+  },
+  mockupTabBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#16161A',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  mockupTabBtnActive: {
+    backgroundColor: '#CCFF00',
+    borderColor: '#CCFF00',
+  },
+  mockupTabBtnText: {
+    color: '#888',
+    fontSize: 13,
+  },
+  mockupDisplayCard: {
+    backgroundColor: '#0F0F12',
+    borderRadius: 24,
+    padding: 28,
+    borderWidth: 1,
+    borderColor: '#222',
+  },
+  loggerSetRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#16161A',
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+    gap: 12,
+  },
+  checkPill: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#CCFF00',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  heatmapMetricBox: {
+    flex: 1,
+    backgroundColor: '#16161A',
+    borderRadius: 14,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#2A2A2A',
+  },
+  aiChatBubbleBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    backgroundColor: 'rgba(204,255,0,0.06)',
+    padding: 18,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(204,255,0,0.2)',
   },
   toolCard: {
     backgroundColor: '#0F0F12',

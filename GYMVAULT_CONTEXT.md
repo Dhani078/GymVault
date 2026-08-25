@@ -219,7 +219,7 @@ To ensure GymVault meets the "Anti-Slop" High-End standard and functions flawles
 ---
 
 ## 10. Multi-Platform Architecture: Single URL (Vercel) Adaptive Strategy (HP + PC)
-GymVault maintains a single unified deployment domain (e.g. `gymvault.vercel.app`) with ZERO URL fragmentation across devices:
+GymVault maintains a single unified deployment domain (e.g. `https://gymvault-app.vercel.app`) with ZERO URL fragmentation across devices:
 * **Mobile (HP) Viewport (< 768px)**:
   * Serves the full-featured mobile PWA / app experience.
   * Preserves exact AMOLED mobile UX, authentication, logger, and bottom tabs without any visual disruption.
