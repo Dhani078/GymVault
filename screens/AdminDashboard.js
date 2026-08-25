@@ -11,6 +11,7 @@ import NotificationSystem from '../components/admin/NotificationSystem';
 import PromoManager from '../components/admin/PromoManager';
 import AuditLogs from '../components/admin/AuditLogs';
 import AdminSkeleton from '../components/admin/AdminSkeleton';
+import SystemHealthWidget from '../components/admin/SystemHealthWidget';
 
 // Modals
 import UserModals from '../components/admin/modals/UserModals';
@@ -39,6 +40,10 @@ export default function AdminDashboard() {
     handleResolveTicket, onRefresh
   } = useAdminData();
 
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'payments' | 'users' | 'promos' | 'notifications' | 'support' | 'audit'
+
+  const pendingPaymentsCount = paymentRequests.filter(p => p.status === 'pending').length;
+
   return (
     <View style={styles.container}>
       {/* HEADER NAVBAR */}
@@ -47,7 +52,7 @@ export default function AdminDashboard() {
           <ShieldAlert color="#CCFF00" size={28} />
           <Text style={styles.headerTitle}>CONTROL PANEL</Text>
           <View style={styles.adminBadge}>
-            <Text style={styles.adminBadgeText}>ADMIN</Text>
+            <Text style={styles.adminBadgeText}>ADMIN SUITE</Text>
           </View>
         </View>
         
@@ -62,6 +67,38 @@ export default function AdminDashboard() {
             <Text style={styles.signOutText}>Keluar</Text>
           </TouchableOpacity>
         </View>
+      </View>
+
+      {/* ─── INTERACTIVE MODULE NAVIGATION TABS ─── */}
+      <View style={styles.navTabsBar}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navTabsScroll}>
+          {[
+            { key: 'overview', label: '🚀 Overview', count: null },
+            { key: 'payments', label: '💳 Verifikasi QRIS', count: pendingPaymentsCount > 0 ? pendingPaymentsCount : null },
+            { key: 'users', label: '👥 Database Lifter', count: usersList.length },
+            { key: 'promos', label: '🎟️ Promo Engine', count: promoCodes.length },
+            { key: 'notifications', label: '📢 Broadcast Push', count: notifications.length },
+            { key: 'support', label: '💬 Support Desk', count: supportTickets.filter(t => t.status === 'open').length || null },
+            { key: 'audit', label: '📜 Audit Logs', count: null },
+          ].map(tab => (
+            <TouchableOpacity
+              key={tab.key}
+              style={[styles.navTabBtn, activeTab === tab.key && styles.navTabBtnActive]}
+              onPress={() => setActiveTab(tab.key)}
+            >
+              <Text style={[styles.navTabText, activeTab === tab.key && styles.navTabTextActive]}>
+                {tab.label}
+              </Text>
+              {tab.count !== null && (
+                <View style={[styles.navTabBadge, activeTab === tab.key && styles.navTabBadgeActive]}>
+                  <Text style={[styles.navTabBadgeText, activeTab === tab.key && { color: '#000' }]}>
+                    {tab.count}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </View>
 
       <ScrollView 
@@ -82,49 +119,86 @@ export default function AdminDashboard() {
           <AdminSkeleton />
         ) : (
           <>
-            <AdminStats stats={stats} />
+            {/* OVERVIEW MODULE */}
+            {activeTab === 'overview' && (
+              <>
+                <AdminStats stats={stats} />
+                <SystemHealthWidget onPing={onRefresh} />
+                <PaymentRequestsTable
+                  paymentRequests={paymentRequests}
+                  loading={loading}
+                  onApprove={handleApprovePayment}
+                  onReject={handleRejectPayment}
+                  actionLoadingId={actionLoadingId}
+                />
+                <UsersTable 
+                  usersList={usersList}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  openUserDetails={openUserDetails}
+                  setUserToToggleStatus={setUserToToggleStatus}
+                  setUserToDelete={setUserToDelete}
+                />
+                <AuditLogs adminLogs={adminLogs} />
+              </>
+            )}
 
-            {/* QRIS PAYMENT REQUESTS (DESKTOP & TELEGRAM INTEGRATION) */}
-            <PaymentRequestsTable
-              paymentRequests={paymentRequests}
-              loading={loading}
-              onApprove={handleApprovePayment}
-              onReject={handleRejectPayment}
-              actionLoadingId={actionLoadingId}
-            />
+            {/* PAYMENTS MODULE */}
+            {activeTab === 'payments' && (
+              <PaymentRequestsTable
+                paymentRequests={paymentRequests}
+                loading={loading}
+                onApprove={handleApprovePayment}
+                onReject={handleRejectPayment}
+                actionLoadingId={actionLoadingId}
+              />
+            )}
 
-            {/* USERS DATA TABLE */}
-            <UsersTable 
-              usersList={usersList}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              openUserDetails={openUserDetails}
-              setUserToToggleStatus={setUserToToggleStatus}
-              setUserToDelete={setUserToDelete}
-            />
+            {/* USERS MODULE */}
+            {activeTab === 'users' && (
+              <UsersTable 
+                usersList={usersList}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                openUserDetails={openUserDetails}
+                setUserToToggleStatus={setUserToToggleStatus}
+                setUserToDelete={setUserToDelete}
+              />
+            )}
 
-            {/* SUPPORT/FEEDBACK SYSTEM */}
-            <SupportSystem 
-              supportTickets={supportTickets}
-              setSelectedTicket={setSelectedTicket}
-            />
+            {/* PROMO MODULE */}
+            {activeTab === 'promos' && (
+              <PromoManager 
+                promoCodes={promoCodes}
+                setShowPromoModal={setShowPromoModal}
+                setPromoToDelete={setPromoToDelete}
+              />
+            )}
 
-            {/* GLOBAL NOTIFICATION SYSTEM */}
-            <NotificationSystem 
-              notifications={notifications}
-              setShowNotifModal={setShowNotifModal}
-              setNotifToDelete={setNotifToDelete}
-            />
+            {/* NOTIFICATIONS MODULE */}
+            {activeTab === 'notifications' && (
+              <NotificationSystem 
+                notifications={notifications}
+                setShowNotifModal={setShowNotifModal}
+                setNotifToDelete={setNotifToDelete}
+              />
+            )}
 
-            {/* PROMO CODES MANAGER */}
-            <PromoManager 
-              promoCodes={promoCodes}
-              setShowPromoModal={setShowPromoModal}
-              setPromoToDelete={setPromoToDelete}
-            />
+            {/* SUPPORT MODULE */}
+            {activeTab === 'support' && (
+              <SupportSystem 
+                supportTickets={supportTickets}
+                setSelectedTicket={setSelectedTicket}
+              />
+            )}
 
-            {/* AUDIT LOGS SECTION */}
-            <AuditLogs adminLogs={adminLogs} />
+            {/* AUDIT & TELEMETRY MODULE */}
+            {activeTab === 'audit' && (
+              <>
+                <SystemHealthWidget onPing={onRefresh} />
+                <AuditLogs adminLogs={adminLogs} />
+              </>
+            )}
           </>
         )}
       </ScrollView>
@@ -197,6 +271,55 @@ const styles = StyleSheet.create({
     backgroundColor: '#0A0A0A',
     borderBottomWidth: 1,
     borderBottomColor: '#1A1A1A',
+  },
+  navTabsBar: {
+    backgroundColor: '#0E0E14',
+    borderBottomWidth: 1,
+    borderBottomColor: '#1E1E28',
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+  },
+  navTabsScroll: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
+  navTabBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#14141E',
+    borderWidth: 1,
+    borderColor: '#222230',
+  },
+  navTabBtnActive: {
+    backgroundColor: 'rgba(204, 255, 0, 0.15)',
+    borderColor: '#CCFF00',
+  },
+  navTabText: {
+    color: '#8E8E9F',
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  navTabTextActive: {
+    color: '#CCFF00',
+  },
+  navTabBadge: {
+    backgroundColor: 'rgba(204, 255, 0, 0.2)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  navTabBadgeActive: {
+    backgroundColor: '#CCFF00',
+  },
+  navTabBadgeText: {
+    color: '#CCFF00',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   headerLeft: {
     flexDirection: 'row',

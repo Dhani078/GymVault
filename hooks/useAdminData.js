@@ -157,16 +157,32 @@ export default function useAdminData() {
         }
       } catch (err) {}
 
-      // 7. Fetch QRIS Payment Requests
+      // 7. Fetch QRIS Payment Requests & Compute Financial Telemetry
+      let fetchedPayReqs = [];
       try {
         const { data: payReqs, error: payError } = await supabase
           .from('payment_requests')
           .select('*')
           .order('created_at', { ascending: false });
         if (!payError && payReqs) {
+          fetchedPayReqs = payReqs;
           setPaymentRequests(payReqs);
         }
       } catch (err) {}
+
+      // Calculate Total Revenue from Approved Payments
+      const totalRevenue = fetchedPayReqs
+        .filter(p => p.status === 'approved')
+        .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+      const proCVR = users?.length ? Math.round((premiumCount / users.length) * 100) : 0;
+
+      setStats(prev => ({
+        ...prev,
+        totalRevenue,
+        pendingPaymentsCount: fetchedPayReqs.filter(p => p.status === 'pending').length,
+        proConversionRate: proCVR
+      }));
       
     } catch (e) {
       console.warn('[AdminDashboard] Fetch Error:', e);
