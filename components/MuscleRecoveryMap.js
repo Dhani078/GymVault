@@ -317,7 +317,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
         const detectMuscleGroups = (text) => {
           const targetGroups = [];
           if (
-            text.includes('trap') || text.includes('pundak') || text.includes('leher') ||
+            text.includes('trapezius') || text.includes('trap') || text.includes('pundak') || text.includes('leher') ||
             text.includes('shrug') || text.includes('upright row') || text.includes('farmer')
           ) targetGroups.push('traps');
           
@@ -332,43 +332,43 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
           ) targetGroups.push('lower_back');
           
           if (
-            text.includes('back') || text.includes('lats') || text.includes('sayap') || text.includes('punggung') || text.includes('pull') ||
+            text.includes('middle back') || text.includes('upper back') || text.includes('back') || text.includes('lats') || text.includes('latissimus') || text.includes('sayap') || text.includes('punggung') || text.includes('pull') ||
             text.includes('row') || text.includes('pull up') || text.includes('pull-up') || text.includes('pulldown') || text.includes('t-bar') || text.includes('lat pull') || text.includes('chin-up') || text.includes('chin up')
           ) targetGroups.push('lats');
           
           if (
-            text.includes('shoulder') || text.includes('delt') || text.includes('bahu') ||
+            text.includes('deltoid') || text.includes('shoulder') || text.includes('delt') || text.includes('bahu') ||
             text.includes('shoulder press') || text.includes('lateral raise') || text.includes('front raise') || text.includes('overhead press') || text.includes('military press') || text.includes('arnold press') || text.includes('face pull') || text.includes('upright row')
           ) targetGroups.push('shoulders');
           
           if (
-            text.includes('forearm') || text.includes('lengan bawah') || text.includes('brachioradialis') ||
+            text.includes('forearm') || text.includes('lengan bawah') || text.includes('brachioradialis') || text.includes('wrist') ||
             text.includes('wrist curl') || text.includes('reverse curl') || text.includes('grip') || text.includes('plate pinch') || text.includes('deadhang')
           ) targetGroups.push('forearms');
           
           if (
-            text.includes('bicep') || text.includes('bisep') || text.includes('pull') ||
+            text.includes('biceps') || text.includes('bicep') || text.includes('bisep') || text.includes('brachialis') || text.includes('pull') ||
             text.includes('curl') || text.includes('chin-up') || text.includes('chin up') || text.includes('preacher') || text.includes('hammer') || text.includes('pulldown') || text.includes('row')
           ) targetGroups.push('biceps');
           
           if (
-            text.includes('tricep') || text.includes('trisep') ||
+            text.includes('triceps') || text.includes('tricep') || text.includes('trisep') ||
             text.includes('extension') || text.includes('dip') || text.includes('skull crusher') || text.includes('pushdown') || text.includes('kickback') || text.includes('french press') || text.includes('close-grip') || text.includes('close grip')
           ) targetGroups.push('triceps');
           
           if (
-            text.includes('quad') || text.includes('thigh') || text.includes('paha depan') || text.includes('leg') ||
+            text.includes('quadriceps') || text.includes('quad') || text.includes('thigh') || text.includes('paha depan') || text.includes('leg') ||
             text.includes('squat') || text.includes('leg press') || text.includes('leg extension') || text.includes('lunge') || text.includes('hack squat') || text.includes('split squat') || text.includes('step up')
           ) targetGroups.push('quads');
           
           if (
-            text.includes('glute') || text.includes('bokong') || text.includes('pantat') ||
+            text.includes('gluteus') || text.includes('glute') || text.includes('bokong') || text.includes('pantat') ||
             text.includes('hip thrust') || text.includes('glute kickback') || text.includes('bridge') || text.includes('cable pull through')
           ) targetGroups.push('glutes');
           
           if (
-            text.includes('calf') || text.includes('calves') || text.includes('betis') ||
-            text.includes('calf raise') || text.includes('jinjit') || text.includes('soleus')
+            text.includes('gastrocnemius') || text.includes('soleus') || text.includes('calf') || text.includes('calves') || text.includes('betis') ||
+            text.includes('calf raise') || text.includes('jinjit')
           ) targetGroups.push('calves');
           
           if (
@@ -377,7 +377,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
           ) targetGroups.push('hamstrings');
           
           if (
-            text.includes('abs') || text.includes('core') || text.includes('abdominal') || text.includes('perut') ||
+            text.includes('abdominal') || text.includes('abs') || text.includes('core') || text.includes('oblique') || text.includes('perut') ||
             text.includes('crunch') || text.includes('plank') || text.includes('sit up') || text.includes('sit-up') || text.includes('leg raise') || text.includes('russian twist') || text.includes('ab wheel')
           ) targetGroups.push('core');
           

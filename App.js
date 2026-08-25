@@ -226,6 +226,7 @@ function AppContent() {
       return {
         id: makeId(),
         name: ex.name,
+        muscle_group: ex.muscle_group || '',
         image: ex.image,
         sets: sets
       };
@@ -249,6 +250,9 @@ function AppContent() {
       const newItem = {
         id: makeId(),
         name: ex.name,
+        muscle_group: ex.muscle_group || ex.primaryMuscles?.[0] || '',
+        secondary_muscles: ex.secondary_muscles || ex.secondaryMuscles || [],
+        equipment_type: ex.equipment_type || ex.equipment || '',
         image: ex.thumbnail_url || ex.image || '',
         sets: [{ id: makeId(), kg: 0, reps: 0, completed: false }],
       };
