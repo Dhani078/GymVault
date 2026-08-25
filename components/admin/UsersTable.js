@@ -8,7 +8,8 @@ export default function UsersTable({
   setSearchQuery, 
   openUserDetails, 
   setUserToToggleStatus, 
-  setUserToDelete 
+  setUserToDelete,
+  onTogglePro
 }) {
   const [filterRole, setFilterRole] = useState('all'); // 'all' | 'pro' | 'free' | 'suspended'
 
@@ -140,7 +141,16 @@ export default function UsersTable({
                 </Text>
 
                 {/* Actions */}
-                <View style={[styles.tableCell, styles.cellAction, { flexDirection: 'row', gap: 8, justifyContent: 'flex-end', paddingRight: 16 }]}>
+                <View style={[styles.tableCell, styles.cellAction, { flexDirection: 'row', gap: 6, justifyContent: 'flex-end', paddingRight: 16 }]}>
+                  {/* Toggle Pro */}
+                  <TouchableOpacity 
+                    style={[styles.actionBtnStar, isPro && styles.actionBtnStarActive]}
+                    onPress={() => onTogglePro && onTogglePro(user)}
+                    title={isPro ? 'Revoke Pro' : 'Grant Pro'}
+                  >
+                    <Star color={isPro ? '#CCFF00' : '#888'} size={14} fill={isPro ? '#CCFF00' : 'transparent'} />
+                  </TouchableOpacity>
+
                   <TouchableOpacity 
                     style={styles.actionBtnInfo}
                     onPress={() => openUserDetails(user)}
@@ -359,6 +369,20 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 68, 68, 0.25)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  actionBtnStar: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: '#222230',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  actionBtnStarActive: {
+    backgroundColor: 'rgba(204, 255, 0, 0.15)',
+    borderColor: '#CCFF00',
   },
   actionBtnInfo: {
     width: 30,

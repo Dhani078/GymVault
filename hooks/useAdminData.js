@@ -554,6 +554,34 @@ export default function useAdminData() {
     }
   };
 
+  const handleTogglePro = async (user) => {
+    if (!user) return;
+    const newIsPro = !user.is_premium;
+    const newPlan = newIsPro ? 'admin_granted' : null;
+    const newUntil = newIsPro ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null;
+
+    try {
+      const { error } = await supabase
+        .from('users_profile')
+        .update({
+          is_premium: newIsPro,
+          premium_plan: newPlan,
+          premium_until: newUntil
+        })
+        .eq('id', user.id);
+
+      if (!error) {
+        setUsersList(prev => prev.map(u => u.id === user.id ? { ...u, is_premium: newIsPro, premium_plan: newPlan, premium_until: newUntil } : u));
+        setStats(prev => ({
+          ...prev,
+          premiumUsers: newIsPro ? (prev.premiumUsers + 1) : Math.max(0, prev.premiumUsers - 1)
+        }));
+      }
+    } catch (e) {
+      console.warn('[AdminDashboard] Toggle Pro Error:', e);
+    }
+  };
+
   return {
     stats,
     usersList,
@@ -586,6 +614,7 @@ export default function useAdminData() {
     handleSignOut,
     confirmDeleteUser,
     confirmToggleStatus,
+    handleTogglePro,
     openUserDetails,
     handleExportData,
     generateRandomCode,
