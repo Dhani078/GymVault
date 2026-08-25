@@ -34,7 +34,7 @@ export default function AdminDashboard() {
     supportTickets, selectedTicket, setSelectedTicket, isResolvingTicket, isRefreshing,
     paymentRequests, actionLoadingId, handleApprovePayment, handleRejectPayment,
     
-    handleSignOut, confirmDeleteUser, confirmToggleStatus,
+    handleSignOut, confirmDeleteUser, confirmToggleStatus, handleTogglePro,
     openUserDetails, handleExportData, generateRandomCode, handleCreatePromoCode,
     confirmDeletePromo, handleCreateNotification, confirmDeleteNotif,
     handleResolveTicket, onRefresh
@@ -138,6 +138,7 @@ export default function AdminDashboard() {
                   openUserDetails={openUserDetails}
                   setUserToToggleStatus={setUserToToggleStatus}
                   setUserToDelete={setUserToDelete}
+                  onTogglePro={handleTogglePro}
                 />
                 <AuditLogs adminLogs={adminLogs} />
               </>
@@ -163,6 +164,7 @@ export default function AdminDashboard() {
                 openUserDetails={openUserDetails}
                 setUserToToggleStatus={setUserToToggleStatus}
                 setUserToDelete={setUserToDelete}
+                onTogglePro={handleTogglePro}
               />
             )}
 
