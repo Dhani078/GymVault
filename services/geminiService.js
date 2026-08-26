@@ -86,3 +86,10 @@ export async function generateWithGeminiCascade({
 
   throw lastError || new Error('All Gemini cascade models failed to respond.');
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    GEMINI_MODELS_CASCADE,
+    generateWithGeminiCascade
+  };
+}
