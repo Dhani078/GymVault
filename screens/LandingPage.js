@@ -150,7 +150,7 @@ export default function LandingPage({ onLoginPress }) {
   const isMedium = width >= 768;
 
   // Interactive Screen Mockup Preview Tab
-  const [mockupTab, setMockupTab] = useState('logger'); // 'logger' | 'heatmap' | 'ai'
+  const [mockupTab, setMockupTab] = useState('logger'); // 'logger' | 'heatmap' | 'ai' | 'fridge' | 'voice'
 
   // Interactive Demo States
   const [selectedMuscle, setSelectedMuscle] = useState('chest');
@@ -158,6 +158,14 @@ export default function LandingPage({ onLoginPress }) {
   const [selectedFood, setSelectedFood] = useState(FOOD_PRESETS[0]);
   const [volumeSlider, setVolumeSlider] = useState(25000);
   const [openFaq, setOpenFaq] = useState(0);
+
+  // Interactive Fridge Chef Playground State
+  const [fridgeSelectedIngredients, setFridgeSelectedIngredients] = useState(['3 Butir Telur', '1 Papan Tempe', '1 Centong Nasi']);
+  const [fridgeTargetCal, setFridgeTargetCal] = useState('650');
+
+  // Interactive Voice Logger Simulator State
+  const [voiceSimCommand, setVoiceSimCommand] = useState('Coach, catat 80 kilo 8 repetisi');
+  const [voiceSimActiveSet, setVoiceSimActiveSet] = useState({ weight: '80', reps: '8', completed: true, restTimer: 180 });
 
   // 1RM Calculator States
   const [oneRmWeight, setOneRmWeight] = useState('100');
@@ -304,6 +312,8 @@ export default function LandingPage({ onLoginPress }) {
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
             {[
               { id: 'logger', label: 'Zero-Friction Live Logger', icon: PlayCircle },
+              { id: 'voice', label: '🎙️ Voice Hands-Free Logger', icon: Radio },
+              { id: 'fridge', label: '🍳 Fridge-to-Macro Chef', icon: Apple },
               { id: 'heatmap', label: '12-Group CNS Heatmap', icon: Activity },
               { id: 'ai', label: 'Gemini 3.7 AI Coach', icon: Cpu }
             ].map(tab => {
@@ -356,6 +366,130 @@ export default function LandingPage({ onLoginPress }) {
                 <Text style={{ color: '#FFF', fontWeight: 'bold', flex: 1 }}>Overhead Barbell Press</Text>
                 <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>60 kg × 8 reps</Text>
                 <View style={styles.checkPill}><Check color="#000" size={14} /></View>
+              </View>
+            </View>
+          )}
+
+          {mockupTab === 'voice' && (
+            <View style={{ gap: 14 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View>
+                  <Text style={{ color: '#38BDF8', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>VOICE HANDS-FREE WORKOUT LOGGER</Text>
+                  <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Catat Beban Sambil Mengangkat Barbell</Text>
+                </View>
+                <View style={{ backgroundColor: 'rgba(56,189,248,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(56,189,248,0.3)' }}>
+                  <Text style={{ color: '#38BDF8', fontWeight: 'bold', fontSize: 12 }}>🎙️ LIVE MIC ACTIVE</Text>
+                </View>
+              </View>
+
+              <Text style={{ color: '#888', fontSize: 12 }}>Klik contoh ucapan suara atlet di bawah untuk menguji simulasi pencatatan otomatis:</Text>
+              <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                {[
+                  { cmd: 'Coach, catat 80 kilo 8 repetisi', w: '80', r: '8', t: 180 },
+                  { cmd: '75kg 10 rep', w: '75', r: '10', t: 120 },
+                  { cmd: 'beban 25 kilo repetisi 12', w: '25', r: '12', t: 60 }
+                ].map((item, idx) => {
+                  const isSel = voiceSimCommand === item.cmd;
+                  return (
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={() => {
+                        setVoiceSimCommand(item.cmd);
+                        setVoiceSimActiveSet({ weight: item.w, reps: item.r, completed: true, restTimer: item.t });
+                      }}
+                      style={{
+                        backgroundColor: isSel ? '#38BDF8' : 'rgba(56,189,248,0.1)',
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: isSel ? '#38BDF8' : 'rgba(56,189,248,0.25)'
+                      }}
+                    >
+                      <Text style={{ color: isSel ? '#000' : '#38BDF8', fontSize: 12, fontWeight: 'bold' }}>
+                        🗣️ "{item.cmd}"
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {/* Output Live Voice Result Box */}
+              <View style={{ backgroundColor: '#0B132B', padding: 16, borderRadius: 14, borderWidth: 1, borderColor: '#38BDF8', marginTop: 6 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <Text style={{ color: '#38BDF8', fontSize: 12, fontWeight: 'bold' }}>✔ SET BERHASIL DICATAT OTOMATIS:</Text>
+                  <View style={{ backgroundColor: 'rgba(239,68,68,0.2)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
+                    <Text style={{ color: '#EF4444', fontSize: 11, fontWeight: 'bold' }}>⏱️ Rest Timer: {voiceSimActiveSet.restTimer}s</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text style={{ color: '#FFF', fontSize: 18, fontWeight: 'bold' }}>Barbell Bench Press (Set 1)</Text>
+                  <Text style={{ color: '#38BDF8', fontSize: 20, fontWeight: 'bold' }}>{voiceSimActiveSet.weight} kg × {voiceSimActiveSet.reps} reps</Text>
+                </View>
+                <Text style={{ color: '#94A3B8', fontSize: 12, marginTop: 8, fontStyle: 'italic' }}>
+                  🗣️ AI Audio Response: "Set 1 dicatat, {voiceSimActiveSet.weight} kilogram {voiceSimActiveSet.reps} repetisi. Istirahat {voiceSimActiveSet.restTimer} detik dimulai!"
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {mockupTab === 'fridge' && (
+            <View style={{ gap: 14 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View>
+                  <Text style={{ color: '#F59E0B', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>FRIDGE-TO-MACRO SMART CHEF</Text>
+                  <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Racik Menu Presisi dari Bahan Kulkas</Text>
+                </View>
+                <View style={{ backgroundColor: 'rgba(245,158,11,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(245,158,11,0.3)' }}>
+                  <Text style={{ color: '#F59E0B', fontWeight: 'bold', fontSize: 12 }}>🍳 AI CHEF ACTIVE</Text>
+                </View>
+              </View>
+
+              <Text style={{ color: '#888', fontSize: 12 }}>Pilih bahan yang tersedia di dapur kulkas Anda saat ini:</Text>
+              <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                {['3 Butir Telur', '1 Papan Tempe', '1 Centong Nasi', '150g Dada Ayam', '1 Ikat Bayam'].map((ing, idx) => {
+                  const isChecked = fridgeSelectedIngredients.includes(ing);
+                  return (
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={() => {
+                        if (isChecked) {
+                          setFridgeSelectedIngredients(prev => prev.filter(x => x !== ing));
+                        } else {
+                          setFridgeSelectedIngredients(prev => [...prev, ing]);
+                        }
+                      }}
+                      style={{
+                        backgroundColor: isChecked ? '#F59E0B' : 'rgba(255,255,255,0.06)',
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: isChecked ? '#F59E0B' : '#333'
+                      }}
+                    >
+                      <Text style={{ color: isChecked ? '#000' : '#DDD', fontSize: 12, fontWeight: 'bold' }}>
+                        {isChecked ? '✔ ' : '+ '}{ing}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {/* Output Live Recipe Simulation */}
+              <View style={{ backgroundColor: '#1A1305', padding: 16, borderRadius: 14, borderWidth: 1, borderColor: '#F59E0B', marginTop: 6 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <Text style={{ color: '#F59E0B', fontSize: 14, fontWeight: 'bold' }}>🍳 Tumis Tempe Telur Gurih & Nasi Hangat</Text>
+                  <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold' }}>{fridgeTargetCal} kcal</Text>
+                </View>
+                <View style={{ flexDirection: 'row', gap: 12, marginVertical: 8 }}>
+                  <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold' }}>P: 42g Protein</Text>
+                  <Text style={{ color: '#60A5FA', fontSize: 12, fontWeight: 'bold' }}>C: 58g Karbo</Text>
+                  <Text style={{ color: '#F59E0B', fontSize: 12, fontWeight: 'bold' }}>F: 16g Lemak</Text>
+                </View>
+                <Text style={{ color: '#94A3B8', fontSize: 12, lineHeight: 17 }}>
+                  👨‍🍳 <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Takaran Presisi:</Text> 3 butir telur (150g), 100g tempe dipotong dadu, 1 centong nasi putih (100g). Pas memenuhi 650 kcal target makan siang!
+                </Text>
               </View>
             </View>
           )}
