@@ -5,7 +5,7 @@ import {
   TrendingUp, Sparkles, Smartphone, Check, ArrowRight, Star, Heart,
   Timer, BarChart2, Layers, QrCode, Crown, CheckCircle2, ChevronDown, ChevronUp,
   Scale, Calculator, Droplets, Target, Repeat, Sliders, BatteryCharging, Compass,
-  Eye, Shield, Radio, PlayCircle, BarChart, FileText, CheckCircle
+  Eye, Shield, Radio, PlayCircle, BarChart, FileText, CheckCircle, Utensils, Mic
 } from 'lucide-react-native';
 import { calculate1RM, calculatePlateBreakdown, calculateTDEE, calculateHeartRateZones } from '../utils/fitnessMath';
 
@@ -312,8 +312,8 @@ export default function LandingPage({ onLoginPress }) {
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
             {[
               { id: 'logger', label: 'Zero-Friction Live Logger', icon: PlayCircle },
-              { id: 'voice', label: '🎙️ Voice Hands-Free Logger', icon: Radio },
-              { id: 'fridge', label: '🍳 Fridge-to-Macro Chef', icon: Apple },
+              { id: 'voice', label: '🎙️ Voice Hands-Free Logger', icon: Mic },
+              { id: 'fridge', label: '🍳 Fridge-to-Macro Chef', icon: Utensils },
               { id: 'heatmap', label: '12-Group CNS Heatmap', icon: Activity },
               { id: 'ai', label: 'Gemini 3.7 AI Coach', icon: Cpu }
             ].map(tab => {
