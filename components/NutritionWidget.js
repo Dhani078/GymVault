@@ -8,6 +8,8 @@ import SkiaProgressRing from './SkiaProgressRing';
 import AIMealPlanModal from '../screens/AIMealPlanModal';
 import { useDynamicIsland } from '../contexts/DynamicIslandContext';
 
+import { generateWithGeminiCascade } from '../services/geminiService';
+
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 export default function NutritionWidget({ session, userProfile, refreshTrigger }) {
@@ -115,19 +117,14 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
     if (!aiFoodInput.trim()) return;
     setAiLoading(true);
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: "Anda adalah asisten nutrisi. Ekstrak data makanan dari input pengguna ke format JSON: {\"food\": \"Nama Makanan\", \"cal\": 123, \"p\": 12, \"c\": 34, \"f\": 5}. Jika protein, karbo, atau lemak tidak disebutkan, buat estimasi kasar secara logis berdasarkan database gizi umum. Kembalikan HANYA JSON valid tanpa markdown." }]
-          },
-          contents: [{ role: 'user', parts: [{ text: aiFoodInput }] }]
-        })
+      const prompt = `Anda adalah asisten nutrisi kelas dunia. Ekstrak data makanan berikut: "${aiFoodInput}" ke format JSON: {"food": "Nama Makanan", "cal": 123, "p": 12, "c": 34, "f": 5}. Jika protein, karbo, atau lemak tidak disebutkan, buat estimasi kasar secara logis berdasarkan database gizi umum. Kembalikan HANYA JSON valid tanpa markdown.`;
+      
+      const { text: aiText, modelUsed } = await generateWithGeminiCascade({
+        prompt,
+        responseMimeType: 'application/json'
       });
-      const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
-      const aiText = data.candidates[0].content.parts[0].text;
+      console.log(`[Nutrition Log] Parsed using ${modelUsed}`);
+
       const cleanJson = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleanJson);
       
@@ -143,7 +140,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
       showNotification({
         type: 'success',
         title: 'AI Parse Success 🥗',
-        subtitle: `Form terisi otomatis untuk: ${parsed.food || 'Makanan'}`,
+        subtitle: `Form terisi otomatis (${modelUsed}): ${parsed.food || 'Makanan'}`,
         duration: 2500,
       });
     } catch (e) {

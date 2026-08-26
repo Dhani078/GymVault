@@ -4,6 +4,7 @@ import { X, Zap, MessageCircle, Award } from 'lucide-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme, styles } from '../theme';
 import AICoachLogo from './AICoachLogo';
+import { generateWithGeminiCascade } from '../services/geminiService';
 
 const getLocalDateString = (date = new Date()) => {
   const year = date.getFullYear();
@@ -89,19 +90,13 @@ Format strictly:
 }
 Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises.`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: { response_mime_type: "application/json" }
-        })
+      const { text: rawText, modelUsed } = await generateWithGeminiCascade({
+        prompt,
+        responseMimeType: 'application/json'
       });
+      console.log(`[AI Routine] Generated using ${modelUsed}`);
 
-      const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
-
-      let text = data.candidates[0].content.parts[0].text.trim();
+      let text = rawText.trim();
       text = text.replace(/```(?:json)?\s*([\s\S]*?)```/g, '$1').trim();
       const jsonStart = text.indexOf('{');
       const jsonEnd = text.lastIndexOf('}');
