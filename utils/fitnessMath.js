@@ -184,3 +184,138 @@ export function calculateMuscleRecovery(hoursAgo) {
 
   return { percentage, status, hoursAgo: h };
 }
+
+// 7. AI Smart Progressive Overload Engine
+export function calculateProgressiveOverload(exerciseName = '', pastSets = [], baseWeight = 0, baseReps = 0) {
+  const name = String(exerciseName).toLowerCase();
+  
+  // Classify movement category
+  const isLowerCompound = name.includes('squat') || name.includes('deadlift') || name.includes('leg press');
+  const isUpperCompound = name.includes('bench') || name.includes('overhead') || name.includes('press') || name.includes('row') || name.includes('pull up') || name.includes('chin up') || name.includes('dip');
+  const isCompound = isLowerCompound || isUpperCompound;
+
+  // Determine current baseline from pastSets if not explicitly passed
+  let lastWeight = parseFloat(baseWeight) || 0;
+  let lastReps = parseInt(baseReps, 10) || 0;
+
+  if (Array.isArray(pastSets) && pastSets.length > 0) {
+    const validSets = pastSets.filter(s => (parseFloat(s.weight_kg) || parseFloat(s.weight) || 0) > 0);
+    if (validSets.length > 0) {
+      const topSet = validSets[0];
+      lastWeight = parseFloat(topSet.weight_kg) || parseFloat(topSet.weight) || lastWeight;
+      lastReps = parseInt(topSet.reps, 10) || lastReps;
+    }
+  }
+
+  if (lastWeight <= 0 && lastReps <= 0) {
+    return {
+      recommendedWeightKg: isCompound ? 40 : 10,
+      recommendedReps: isCompound ? 8 : 12,
+      rationale: 'Baseline awal untuk membangun form & adaptasi neuromuskular.',
+      deltaPercent: 0,
+      isDeloadRecommended: false,
+      movementType: isCompound ? 'compound' : 'isolation'
+    };
+  }
+
+  let recommendedWeightKg = lastWeight;
+  let recommendedReps = lastReps;
+  let rationale = '';
+  let deltaPercent = 0;
+
+  if (isLowerCompound) {
+    if (lastReps >= 8) {
+      recommendedWeightKg = Math.round((lastWeight + 5.0) * 10) / 10;
+      recommendedReps = Math.max(6, lastReps - 2);
+      deltaPercent = Math.round(((recommendedWeightKg - lastWeight) / lastWeight) * 100);
+      rationale = `Target repetisi tercapai. Naikkan beban +5kg untuk memicu adaptasi kekuatan ekstrem.`;
+    } else {
+      recommendedReps = lastReps + 1;
+      rationale = `Pertahankan beban ${lastWeight}kg dan tambah +1 rep untuk efisiensi biomekanik.`;
+    }
+  } else if (isUpperCompound) {
+    if (lastReps >= 8) {
+      recommendedWeightKg = Math.round((lastWeight + 2.5) * 10) / 10;
+      recommendedReps = Math.max(6, lastReps - 2);
+      deltaPercent = Math.round(((recommendedWeightKg - lastWeight) / lastWeight) * 100);
+      rationale = `Target repetisi tercapai. Tambah micro-load +2.5kg untuk overreach terukur.`;
+    } else {
+      recommendedReps = lastReps + 1;
+      rationale = `Pertahankan beban ${lastWeight}kg dan capai +1 rep sebelum menaikkan beban.`;
+    }
+  } else {
+    // Isolation exercise (Curls, Extensions, Raises)
+    if (lastReps >= 12) {
+      recommendedWeightKg = Math.round((lastWeight + 1.25) * 10) / 10;
+      recommendedReps = 10;
+      deltaPercent = Math.round(((recommendedWeightKg - lastWeight) / lastWeight) * 100);
+      rationale = `Hipertrofi isolation optimal. Tambah micro-load +1.25kg pada repetisi 10.`;
+    } else {
+      recommendedReps = lastReps + 1;
+      rationale = `Kumpulkan volume repetisi hingga 12 reps sebelum menaikkan beban isolasi.`;
+    }
+  }
+
+  return {
+    recommendedWeightKg,
+    recommendedReps,
+    rationale,
+    deltaPercent,
+    isDeloadRecommended: false,
+    movementType: isCompound ? 'compound' : 'isolation'
+  };
+}
+
+// 8. Scientific Hypertrophy Volume Landmarks (MEV / MAV / MRV)
+export const VOLUME_LANDMARK_STANDARDS = {
+  chest: { mev: 8, mavMin: 12, mavMax: 20, mrv: 22 },
+  back: { mev: 10, mavMin: 14, mavMax: 22, mrv: 25 },
+  lats: { mev: 10, mavMin: 14, mavMax: 22, mrv: 25 },
+  traps: { mev: 6, mavMin: 10, mavMax: 16, mrv: 20 },
+  quads: { mev: 8, mavMin: 12, mavMax: 18, mrv: 20 },
+  hamstrings: { mev: 6, mavMin: 10, mavMax: 16, mrv: 20 },
+  glutes: { mev: 6, mavMin: 10, mavMax: 16, mrv: 20 },
+  shoulders: { mev: 8, mavMin: 16, mavMax: 22, mrv: 26 },
+  biceps: { mev: 6, mavMin: 10, mavMax: 16, mrv: 20 },
+  triceps: { mev: 6, mavMin: 10, mavMax: 16, mrv: 20 },
+  forearms: { mev: 4, mavMin: 8, mavMax: 14, mrv: 18 },
+  calves: { mev: 6, mavMin: 10, mavMax: 16, mrv: 20 },
+  core: { mev: 4, mavMin: 8, mavMax: 14, mrv: 18 },
+};
+
+export function calculateVolumeLandmarks(muscleGroup = 'chest', weeklySets = 0) {
+  const key = String(muscleGroup).toLowerCase();
+  const benchmark = VOLUME_LANDMARK_STANDARDS[key] || VOLUME_LANDMARK_STANDARDS.chest;
+  const sets = Math.max(0, parseInt(weeklySets, 10) || 0);
+
+  let status = 'optimal_mav';
+  let adviceText = 'Volume latihan berada di zona hipertrofi optimal (MAV). Pertahankan!';
+  let badgeColor = '#CCFF00'; // Electric Green
+
+  if (sets < benchmark.mev) {
+    status = 'under_mev';
+    adviceText = `Volume di bawah MEV (${benchmark.mev} set). Tambahkan ${benchmark.mev - sets} set lagi untuk memicu pertumbuhan otot.`;
+    badgeColor = '#94A3B8'; // Slate Gray
+  } else if (sets > benchmark.mrv) {
+    status = 'over_mrv';
+    adviceText = `Volume melebihi MRV (${benchmark.mrv} set). Risiko overtraining tinggi, disarankan deload atau kurangi set.`;
+    badgeColor = '#EF4444'; // Red
+  } else if (sets >= benchmark.mavMax) {
+    status = 'approaching_mrv';
+    adviceText = `Mendekati ambang MRV (${benchmark.mrv} set). Pantau rasa lelah persendian dan kualitas tidur Anda.`;
+    badgeColor = '#F59E0B'; // Amber
+  }
+
+  return {
+    muscleGroup: key,
+    currentSets: sets,
+    mev: benchmark.mev,
+    mavMin: benchmark.mavMin,
+    mavMax: benchmark.mavMax,
+    mrv: benchmark.mrv,
+    status,
+    adviceText,
+    badgeColor
+  };
+}
+
