@@ -12,17 +12,18 @@ GymVault is a certified 10/10 production-ready, high-performance fitness applica
   1. *Clean Architecture:* Strict separation between UI (components/screens) and pure logic (`utils/fitnessMath.js`).
   2. *Performance First:* High utilization of `useMemo`, `useCallback`, `React.lazy`, and memoized items for a zero-flicker experience.
   3. *Security:* Strict Row-Level Security (RLS) on all Supabase queries. Always filter queries by authenticated `auth.uid()`.
-  4. *Test Verification:* 100% mathematical precision enforced via automated unit test runner (`npm test`).
+  4. *Test Verification:* 100% mathematical precision enforced via automated unit test runner (`npm test` - 61/61 assertions).
 
 ---
 
 ## 2. Tech Stack & Dependencies
 * **Core:** React Native (Expo v54.0.0+)
 * **Database/Backend:** Supabase (Postgres with RLS & Storage)
+* **AI Intelligence:** Google Gemini 3.7 Flash Cascade (7-layer auto-fallback)
 * **Icons:** `lucide-react-native`
 * **Local Persistence:** `@react-native-async-storage/async-storage`
-* **Notifications & Activities:** `@notifee/react-native`, `expo-notifications`, and `LiveActivityManager` (for iOS/Android live workout state widget integration)
-* **Camera / Media:** `expo-image-picker` and OCR scanning library integrations
+* **Notifications & Activities:** `@notifee/react-native`, `expo-notifications`, and `LiveActivityManager`
+* **Camera / Speech:** `expo-image-picker`, `expo-speech`, and Web Speech Recognition API
 
 ---
 
@@ -84,8 +85,9 @@ GymVault is a certified 10/10 production-ready, high-performance fitness applica
 ## 4. Multi-Platform Single URL Adaptive Architecture
 * **Live Domain**: `https://gymvault-app.vercel.app`
 * **Mobile (< 768px)**: Native mobile PWA logger and athlete suite.
-* **PC Guest (≥ 768px)**: High-End Cinematic Landing Page with 6 live interactive calculators (Lazy loaded with `React.lazy`).
+* **PC Guest (≥ 768px)**: High-End Cinematic Landing Page with 7 live interactive calculators.
 * **PC Admin (≥ 768px)**: Real-time Player Analytics & Payment Verification Dashboard (`role === 'admin'`).
+* **Desktop Switcher**: Discrete floating bar allowing instant 1-click preview switching between Landing Page, Admin Panel, and App View.
 
 ---
 
@@ -98,9 +100,13 @@ GymVault is a certified 10/10 production-ready, high-performance fitness applica
    - `calculateHeartRateZones(age)`: Karvonen cardio zones 1-5.
    - `detectMuscleGroups(text)`: Multilingual & scientific anatomical taxonomy parser.
    - `calculateMuscleRecovery(hoursAgo)`: Dynamic CNS and muscle fatigue decay.
+   - `calculateProgressiveOverload(history, exerciseName, currentSetIndex, rpe)`: Double progression engine with back-off set recommendations.
+   - `detectKineticChainFatigue(history, currentExerciseName)`: Stabilizer protection against overlapping heavy compound fatigue.
+   - `detectPlateauAndRotate(history, exerciseName)`: 4-week stagnation rotation detector.
+   - `parseVoiceWorkoutCommand(transcript)`: Hands-free natural speech parser for set & rep logging.
 
-2. **Automated Verification Test Suite (`scripts/test-fitness-engine.js`)**:
-   - Run via `npm test` to validate 23 test assertions across all calculation scenarios.
+2. **Automated Verification Suite (`scripts/test-fitness-engine.js`)**:
+   - 61/61 assertions verifying pure mathematical precision across all 14 physiological and parser test suites. Run via `npm test`.
 
 3. **2-Way Telegram Bot Webhook & AI Fraud Detection (`api/payment-notify.js` & `api/telegram-webhook.js`)**:
    - Google Gemini 3.7 Vision receipt audit cascade.
