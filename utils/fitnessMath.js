@@ -185,9 +185,10 @@ export function calculateMuscleRecovery(hoursAgo) {
   return { percentage, status, hoursAgo: h };
 }
 
-// 7. AI Smart Progressive Overload Engine (Equipment & Experience-Adaptive)
-export function calculateProgressiveOverload(exerciseName = '', pastSets = [], baseWeight = 0, baseReps = 0, userBodyWeight = 70) {
+// 7. AI Smart Progressive Overload & Auto-Regulation Engine (Dataset-Backed Strength Standards)
+export function calculateProgressiveOverload(exerciseName = '', pastSets = [], baseWeight = 0, baseReps = 0, userBodyWeight = 65, lastRpe = null) {
   const name = String(exerciseName).toLowerCase();
+  const bw = Math.max(40, Math.min(150, parseFloat(userBodyWeight) || 65));
   
   // 1. Detect movement kinematics & equipment type
   const isBodyweight = name.includes('push up') || name.includes('push-up') || name.includes('pull up') || 
@@ -195,7 +196,7 @@ export function calculateProgressiveOverload(exerciseName = '', pastSets = [], b
                        name.includes('dip') || name.includes('crunch') || name.includes('plank') || 
                        name.includes('sit up') || name.includes('bodyweight');
 
-  const isBarbell = name.includes('barbell') || name.includes('deadlift') || name.includes('squat') && !name.includes('goblet') && !name.includes('dumbbell');
+  const isBarbell = name.includes('barbell') || name.includes('deadlift') || (name.includes('squat') && !name.includes('goblet') && !name.includes('dumbbell'));
   const isDumbbell = name.includes('dumbbell') || name.includes('db ') || name.includes('lateral raise') || name.includes('hammer curl');
   const isCableOrMachine = name.includes('cable') || name.includes('pulldown') || name.includes('machine') || name.includes('press machine') || name.includes('extension') || name.includes('curl machine');
 
@@ -203,9 +204,10 @@ export function calculateProgressiveOverload(exerciseName = '', pastSets = [], b
   const isUpperCompound = name.includes('bench') || name.includes('overhead') || name.includes('press') || name.includes('row') || name.includes('pull up') || name.includes('chin up') || name.includes('dip');
   const isCompound = isLowerCompound || isUpperCompound;
 
-  // 2. Extract baseline weight/reps from previous sets or active input
+  // 2. Extract baseline weight/reps/rpe from previous sets or active input
   let lastWeight = parseFloat(baseWeight) || 0;
   let lastReps = parseInt(baseReps, 10) || 0;
+  let rpeValue = parseFloat(lastRpe) || null;
 
   if (Array.isArray(pastSets) && pastSets.length > 0) {
     const validSets = pastSets.filter(s => (parseFloat(s.weight_kg) || parseFloat(s.kg) || parseFloat(s.weight) || 0) > 0);
@@ -213,103 +215,118 @@ export function calculateProgressiveOverload(exerciseName = '', pastSets = [], b
       const topSet = validSets[0];
       lastWeight = parseFloat(topSet.weight_kg) || parseFloat(topSet.kg) || parseFloat(topSet.weight) || lastWeight;
       lastReps = parseInt(topSet.reps, 10) || lastReps;
+      if (!rpeValue && topSet.rpe) rpeValue = parseFloat(topSet.rpe);
     }
   }
 
-  // 3. Intelligent Beginner / New Account Baseline Calibration
+  // 3. No History / Zero Baseline -> Return clean null (no starter numbers forced)
   if (lastWeight <= 0 && lastReps <= 0) {
-    if (isBodyweight) {
-      return {
-        recommendedWeightKg: 0,
-        recommendedReps: 10,
-        rationale: 'Gerakan beban tubuh (Bodyweight). Fokus kalibrasi postur & kendali otot penuh.',
-        deltaPercent: 0,
-        isDeloadRecommended: false,
-        movementType: 'bodyweight'
-      };
-    }
-
-    if (isBarbell) {
-      return {
-        recommendedWeightKg: 20, // Standard 20kg Olympic Barbell shaft
-        recommendedReps: 8,
-        rationale: 'Akun baru terdeteksi: AI memulai dari stang barbel standar 20kg untuk memastikan biomekanik & form aman.',
-        deltaPercent: 0,
-        isDeloadRecommended: false,
-        movementType: 'compound'
-      };
-    }
-
-    if (isDumbbell) {
-      const dbWeight = name.includes('lateral') ? 4 : (name.includes('curl') ? 6 : 8);
-      return {
-        recommendedWeightKg: dbWeight,
-        recommendedReps: 12,
-        rationale: `Kalibrasi dumbel adaptif (${dbWeight}kg) untuk pemula agar stabilitas sendi terjaga.`,
-        deltaPercent: 0,
-        isDeloadRecommended: false,
-        movementType: 'isolation'
-      };
-    }
-
-    if (isCableOrMachine) {
-      return {
-        recommendedWeightKg: 15,
-        recommendedReps: 12,
-        rationale: 'Pin beban mesin awal 15kg untuk melatih lintasan gerak dan tempo kontraksi.',
-        deltaPercent: 0,
-        isDeloadRecommended: false,
-        movementType: isCompound ? 'compound' : 'isolation'
-      };
-    }
-
-    // Default safe fallback
     return {
-      recommendedWeightKg: isCompound ? 20 : 6,
-      recommendedReps: isCompound ? 8 : 12,
-      rationale: 'Baseline awal untuk membangun form & adaptasi neuromuskular aman.',
+      hasData: false,
+      recommendedWeightKg: 0,
+      recommendedReps: 0,
+      rationale: '',
       deltaPercent: 0,
       isDeloadRecommended: false,
-      movementType: isCompound ? 'compound' : 'isolation'
+      movementType: isCompound ? 'compound' : (isBodyweight ? 'bodyweight' : 'isolation')
     };
   }
 
-  // 4. Progressive Overload Calculation for existing logs
+  // 4. Intra-Workout Acute Fatigue & Surprise Performance Engine (Set-by-Set Intelligence)
+  if (Array.isArray(pastSets) && pastSets.length > 1) {
+    const completedSets = pastSets.filter(s => s.completed && (parseFloat(s.kg) || parseFloat(s.weight_kg) || 0) > 0);
+    if (completedSets.length >= 1) {
+      const latestSet = completedSets[completedSets.length - 1];
+      const latestKg = parseFloat(latestSet.kg) || parseFloat(latestSet.weight_kg) || 0;
+      const latestR = parseInt(latestSet.reps, 10) || 0;
+      const latestRpe = parseFloat(latestSet.rpe) || null;
+
+      // Check for Warmup Over-performance (e.g., user did 15+ reps easily on starter weight)
+      if (latestR >= 16 && latestKg > 0) {
+        const boostedKg = Math.round((latestKg * 1.35) * 2) / 2; // Jump ~35%
+        return {
+          recommendedWeightKg: boostedKg,
+          recommendedReps: 8,
+          rationale: `Kapasitas atletik Anda melampaui beban awal (${latestR} reps). AI meningkatkan set berikutnya ke ${boostedKg}kg × 8 reps untuk memasuki zona hipertrofi nyata.`,
+          deltaPercent: Math.round(((boostedKg - latestKg) / latestKg) * 100),
+          isDeloadRecommended: false,
+          movementType: isCompound ? 'compound' : 'isolation'
+        };
+      }
+
+      // Check for Acute Intra-Workout Dropoff (e.g. Set 1: 12 reps -> Set 2: 6 reps)
+      if (completedSets.length >= 2) {
+        const previousSet = completedSets[completedSets.length - 2];
+        const prevKg = parseFloat(previousSet.kg) || parseFloat(previousSet.weight_kg) || 0;
+        const prevR = parseInt(previousSet.reps, 10) || 0;
+
+        if (prevKg === latestKg && prevR >= 8 && latestR <= Math.round(prevR * 0.65)) {
+          // Dropoff > 35% detected -> Suggest Back-off / Drop Set
+          const backoffKg = Math.max(isCompound ? 10 : 2, Math.round((latestKg * 0.8) * 2) / 2); // -20% weight
+          return {
+            recommendedWeightKg: backoffKg,
+            recommendedReps: 10,
+            rationale: `Kelelahan akut terdeteksi (drop repetisi ${prevR} ➔ ${latestR}). AI menyesuaikan menjadi Back-off Set (${backoffKg}kg × 10 reps) agar volume efektif tercapai tanpa merusak sendi.`,
+            deltaPercent: -20,
+            isDeloadRecommended: false,
+            movementType: isCompound ? 'compound' : 'isolation',
+            isBackoffSet: true
+          };
+        }
+      }
+    }
+  }
+
+  // 5. Scientific "Double Progression" & Auto-Regulation Overload Engine
   let recommendedWeightKg = lastWeight;
   let recommendedReps = lastReps;
   let rationale = '';
   let deltaPercent = 0;
 
+  // Auto-Regulation modifier based on RPE feedback
+  const isTooEasy = rpeValue !== null && rpeValue <= 6.5;
+  const isGrind = rpeValue !== null && rpeValue >= 9.5;
+
   if (isLowerCompound) {
-    if (lastReps >= 8) {
-      recommendedWeightKg = Math.round((lastWeight + 5.0) * 10) / 10;
-      recommendedReps = Math.max(6, lastReps - 2);
+    // Lower Compound Window: 6 - 10 Reps
+    if (lastReps >= 10 || (lastReps >= 8 && isTooEasy)) {
+      recommendedWeightKg = Math.round((lastWeight + 2.5) * 10) / 10;
+      recommendedReps = 6;
       deltaPercent = Math.round(((recommendedWeightKg - lastWeight) / lastWeight) * 100);
-      rationale = `Target repetisi tercapai. Naikkan beban +5kg untuk memicu adaptasi kekuatan kaki.`;
+      rationale = isTooEasy
+        ? `RPE rendah (enteng). Naikkan beban +2.5kg dengan target 6 reps untuk stimulus adaptif.`
+        : `Target 10 reps tercapai penuh! Waktunya naik beban +2.5kg dengan 6 reps (Double Progression).`;
     } else {
-      recommendedReps = lastReps + 1;
-      rationale = `Pertahankan beban ${lastWeight}kg dan tambah +1 rep untuk efisiensi biomekanik.`;
+      recommendedReps = Math.min(10, lastReps + 1);
+      rationale = isGrind
+        ? `RPE tinggi (mendekati batas). Pertahankan ${lastWeight}kg, fokus form bersih dan target ${recommendedReps} reps.`
+        : `Pertahankan beban ${lastWeight}kg. Target hari ini: tambah +1 rep (${recommendedReps} reps) sebelum menaikkan beban.`;
     }
   } else if (isUpperCompound) {
-    if (lastReps >= 8) {
+    // Upper Compound Window: 8 - 12 Reps
+    if (lastReps >= 12 || (lastReps >= 10 && isTooEasy)) {
       recommendedWeightKg = Math.round((lastWeight + 2.5) * 10) / 10;
-      recommendedReps = Math.max(6, lastReps - 2);
+      recommendedReps = 8;
       deltaPercent = Math.round(((recommendedWeightKg - lastWeight) / lastWeight) * 100);
-      rationale = `Target repetisi tercapai. Tambah micro-load +2.5kg untuk overreach terukur.`;
+      rationale = isTooEasy
+        ? `RPE rendah (kecepatan angkatan prima). Naikkan beban +2.5kg pada 8 reps.`
+        : `Target 12 reps tercapai! Naikkan micro-load +2.5kg dengan 8 reps terukur.`;
     } else {
-      recommendedReps = lastReps + 1;
-      rationale = `Pertahankan beban ${lastWeight}kg dan capai +1 rep sebelum menaikkan beban.`;
+      recommendedReps = Math.min(12, lastReps + 1);
+      rationale = isGrind
+        ? `RPE 9.5+ (usaha maksimal). Pertahankan beban ${lastWeight}kg dan jaga tempo terkontrol.`
+        : `Pertahankan beban ${lastWeight}kg. Target hari ini: kumpulkan ${recommendedReps} reps untuk adaptasi neuromuskular.`;
     }
   } else {
-    // Isolation exercise (Curls, Extensions, Raises)
-    if (lastReps >= 12) {
+    // Isolation Window: 10 - 15 Reps
+    if (lastReps >= 15 || (lastReps >= 12 && isTooEasy)) {
       recommendedWeightKg = Math.round((lastWeight + 1.25) * 10) / 10;
       recommendedReps = 10;
       deltaPercent = Math.round(((recommendedWeightKg - lastWeight) / lastWeight) * 100);
-      rationale = `Hipertrofi isolation optimal. Tambah micro-load +1.25kg pada repetisi 10.`;
+      rationale = `Puncak repetisi isolasi tercapai! Naikkan micro-load +1.25kg pada 10 reps.`;
     } else {
-      recommendedReps = lastReps + 1;
-      rationale = `Kumpulkan volume repetisi hingga 12 reps sebelum menaikkan beban isolasi.`;
+      recommendedReps = Math.min(15, lastReps + 1);
+      rationale = `Pertahankan beban ${lastWeight}kg. Tambah volume ke ${recommendedReps} repetisi sebelum menambah beban.`;
     }
   }
 
@@ -320,6 +337,83 @@ export function calculateProgressiveOverload(exerciseName = '', pastSets = [], b
     deltaPercent,
     isDeloadRecommended: false,
     movementType: isCompound ? 'compound' : 'isolation'
+  };
+}
+
+// 8. Dynamic Rest-Timer Engine (ATP-CP & Metabolic Recovery Optimizer)
+export function calculateRecommendedRestTime(exerciseName = '', weightKg = 0, reps = 0, rpe = null) {
+  const name = String(exerciseName).toLowerCase();
+  const isHeavyCompound = name.includes('squat') || name.includes('deadlift') || name.includes('bench') || name.includes('leg press');
+  const rpeNum = parseFloat(rpe) || 7.5;
+
+  if (isHeavyCompound) {
+    if (rpeNum >= 9 || reps <= 6) return 180; // 3 minutes for high CNS phosphagen restore
+    return 120; // 2 minutes for standard compound working sets
+  }
+
+  if (name.includes('curl') || name.includes('lateral raise') || name.includes('tricep') || name.includes('extension') || name.includes('calf')) {
+    return 60; // 60s for metabolic pump & hypertrophy stress
+  }
+
+  return 90; // Standard 90s fallback
+}
+
+// 9. Biomechanical Form & Eccentric Tempo Cue Engine
+export function getBiomechanicalCue(exerciseName = '') {
+  const name = String(exerciseName).toLowerCase();
+
+  if (name.includes('bench press')) {
+    return {
+      tempo: '3-0-1-0',
+      cue: 'Retraksi skapula (kunci bahu ke belakang-bawah). Turun 3 detik terkontrol, dorong eksplosif.',
+      focusMuscle: 'Pectoralis Major & Anterior Deltoid'
+    };
+  }
+
+  if (name.includes('squat')) {
+    return {
+      tempo: '3-1-1-0',
+      cue: 'Buka lutut sejajar jari kaki. Kunci core (bracing), turun hingga paha sejajar lantai.',
+      focusMuscle: 'Quadriceps & Gluteus Maximus'
+    };
+  }
+
+  if (name.includes('deadlift') || name.includes('rdl')) {
+    return {
+      tempo: '2-1-1-0',
+      cue: 'Dorong pinggul ke belakang (hip hinge). Pertahankan tulang belakang netral dan kunci lats.',
+      focusMuscle: 'Hamstrings, Glutes & Erector Spinae'
+    };
+  }
+
+  if (name.includes('lateral raise')) {
+    return {
+      tempo: '2-1-2-0',
+      cue: 'Angkat lengan 30° ke depan (scapular plane), pimpin dengan siku tanpa mengayun punggung.',
+      focusMuscle: 'Lateral Deltoid'
+    };
+  }
+
+  if (name.includes('pulldown') || name.includes('pull up') || name.includes('row')) {
+    return {
+      tempo: '2-1-2-0',
+      cue: 'Tarik siku ke arah saku pinggang belakang. Tahan perasan otot punggung 1 detik di puncak kontraksi.',
+      focusMuscle: 'Latissimus Dorsi & Rhomboids'
+    };
+  }
+
+  if (name.includes('curl')) {
+    return {
+      tempo: '2-0-1-0',
+      cue: 'Kunci posisi siku di samping rusuk. Putar pergelangan ke luar (supinasi) di puncak gerakan.',
+      focusMuscle: 'Biceps Brachii'
+    };
+  }
+
+  return {
+    tempo: '2-0-1-0',
+    cue: 'Kontrol fase eksentrik (turun lambat) dan hindari momentum tubuh untuk hipertrofi maksimal.',
+    focusMuscle: 'Target Muscle Group'
   };
 }
 
@@ -375,4 +469,218 @@ export function calculateVolumeLandmarks(muscleGroup = 'chest', weeklySets = 0) 
     badgeColor
   };
 }
+
+// 10. Cross-Muscle Kinetic Chain & Recovery Fatigue Warning Engine
+export function checkKineticChainFatigue(exerciseName = '', pastWorkouts = []) {
+  const currentEx = String(exerciseName).toLowerCase();
+  if (!Array.isArray(pastWorkouts) || pastWorkouts.length === 0) {
+    return {
+      isFatigued: false,
+      recoveryScore: 100,
+      overlappingExercise: '',
+      advice: 'Sistem neuromuskular dan rantai kinetik 100% pulih untuk eksekusi optimal.'
+    };
+  }
+
+  const now = Date.now();
+  let mostRecentConflict = null;
+  let minHoursAgo = 999;
+
+  for (const session of pastWorkouts) {
+    const sessionTime = new Date(session.created_at || session.start_time || now).getTime();
+    const hoursAgo = Math.max(0, (now - sessionTime) / (1000 * 60 * 60));
+    if (hoursAgo > 72) continue; // Only check last 72h window
+
+    const exList = Array.isArray(session.exercises) ? session.exercises : [];
+    for (const ex of exList) {
+      const exName = String(ex.name || '').toLowerCase();
+      let hasConflict = false;
+
+      // Rule 1: Squat vs Deadlift / Lower Back
+      if ((currentEx.includes('squat') && (exName.includes('deadlift') || exName.includes('rdl') || exName.includes('good morning'))) ||
+          (currentEx.includes('deadlift') && (exName.includes('squat') || exName.includes('leg press')))) {
+        hasConflict = true;
+      }
+      // Rule 2: Overhead Press vs Heavy Bench Press
+      else if ((currentEx.includes('overhead') || currentEx.includes('shoulder press')) && exName.includes('bench press')) {
+        hasConflict = true;
+      }
+      // Rule 3: Bench Press vs Heavy Dips / Close Grip Press
+      else if (currentEx.includes('bench press') && (exName.includes('dip') || exName.includes('overhead press') || exName.includes('shoulder press'))) {
+        hasConflict = true;
+      }
+      // Rule 4: Heavy Pull Ups / Rows vs Heavy Deadlift / Bicep Day
+      else if ((currentEx.includes('pull up') || currentEx.includes('pulldown') || currentEx.includes('row')) && (exName.includes('deadlift') || exName.includes('bicep'))) {
+        hasConflict = true;
+      }
+
+      if (hasConflict && hoursAgo < minHoursAgo) {
+        minHoursAgo = hoursAgo;
+        mostRecentConflict = {
+          exercise: ex.name,
+          hoursAgo: Math.round(hoursAgo)
+        };
+      }
+    }
+  }
+
+  if (mostRecentConflict && minHoursAgo < 48) {
+    const recoveryCalc = calculateMuscleRecovery(minHoursAgo);
+    return {
+      isFatigued: recoveryCalc.percentage < 70,
+      recoveryScore: recoveryCalc.percentage,
+      overlappingExercise: mostRecentConflict.exercise,
+      hoursAgo: mostRecentConflict.hoursAgo,
+      advice: `Kelelahan rantai kinetik (${mostRecentConflict.exercise} ${mostRecentConflict.hoursAgo} jam lalu - Pemulihan ${recoveryCalc.percentage}%). Jaga kestabilan form atau utamakan variasi dengan tumpuan terpandu.`
+    };
+  }
+
+  return {
+    isFatigued: false,
+    recoveryScore: 100,
+    overlappingExercise: '',
+    advice: 'Rantai kinetik dan persendian siap untuk performa kekuatan puncak.'
+  };
+}
+
+// 11. 4-Week Plateau Breaker & Exercise Variation Rotation Engine
+export const EXERCISE_ROTATION_MAP = {
+  'barbell bench press': 'Incline Dumbbell Press / Machine Chest Press',
+  'dumbbell bench press': 'Barbell Incline Press / Dips Berbobot',
+  'barbell back squat': 'Hack Squat Mesin / Bulgarian Split Squat',
+  'deadlift konvensional': 'Romanian Deadlift (RDL) / Trap Bar Deadlift',
+  'overhead press': 'Seated Dumbbell Shoulder Press / Machine Press',
+  'barbell bicep curl': 'Incline Dumbbell Curl / Bayesian Cable Curl',
+  'tricep pushdown': 'Overhead Cable Tricep Extension / Skull Crusher',
+  'dumbbell lateral raise': 'Behind-the-Back Cable Lateral Raise',
+  'lat pulldown lebar': 'Chest-Supported T-Bar Row / Neutral Grip Pulldown',
+};
+
+export function detectPlateauAndSuggestRotation(exerciseName = '', pastSessions = []) {
+  const name = String(exerciseName).toLowerCase();
+  let alternative = 'Variasi Dumbbell / Cable dengan sudut serat otot baru';
+
+  for (const [key, alt] of Object.entries(EXERCISE_ROTATION_MAP)) {
+    if (name.includes(key) || key.includes(name)) {
+      alternative = alt;
+      break;
+    }
+  }
+
+  if (!Array.isArray(pastSessions) || pastSessions.length < 3) {
+    return {
+      isPlateau: false,
+      plateauCount: 0,
+      alternativeExercise: alternative,
+      strategyRationale: 'Progres adaptif masih dalam kurva pertumbuhan normal.'
+    };
+  }
+
+  // Check if the last 3 sessions had 0 progress in top weight
+  const recent3 = pastSessions.slice(0, 3);
+  const weights = recent3.map(s => parseFloat(s.maxWeight || s.weight || s.top_weight) || 0);
+  const allSame = weights.length >= 3 && weights.every(w => w > 0 && w === weights[0]);
+
+  if (allSame) {
+    return {
+      isPlateau: true,
+      plateauCount: weights.length,
+      alternativeExercise: alternative,
+      strategyRationale: `Adaptasi neuromuscular tercapai pada gerakan ini (${weights.length} sesi berturut-turut di ${weights[0]}kg). Disarankan rotasi ke ${alternative} atau jadwalkan Deload Week (-50% volume) untuk memecah plateau!`
+    };
+  }
+
+  return {
+    isPlateau: false,
+    plateauCount: 0,
+    alternativeExercise: alternative,
+    strategyRationale: 'Progres beban dan repetisi berjalan lancar.'
+  };
+}
+
+// 12. Voice-Activated Hands-Free Workout Logger Speech Parser
+export function parseVoiceWorkoutCommand(speechTranscript = '') {
+  const text = String(speechTranscript).toLowerCase().trim();
+  if (!text) {
+    return { success: false, weightKg: 0, reps: 0, message: 'Suara tidak terdeteksi.' };
+  }
+
+  // Regex patterns for weight and reps in Indonesian / English
+  // Pattern 1: "80 kg 8 reps" or "80 kilo 8 repetisi" or "80kg 8rep"
+  const pattern1 = /(\d+(?:[.,]\d+)?)\s*(?:kg|kilo|kilogram|lbs)?\D+(\d+)\s*(?:rep|reps|repetisi|kali|x)/i;
+  // Pattern 2: "repetisi 8 beban 80" or "8 reps at 80 kg"
+  const pattern2 = /(\d+)\s*(?:rep|reps|repetisi|kali)\D+(\d+(?:[.,]\d+)?)\s*(?:kg|kilo|kilogram)?/i;
+  // Pattern 3: Simple two numbers "80 8" or "80x8"
+  const pattern3 = /(\d+(?:[.,]\d+)?)\s*(?:x|\*|\s)\s*(\d+)/i;
+
+  let weightKg = 0;
+  let reps = 0;
+
+  const match1 = text.match(pattern1);
+  const match2 = text.match(pattern2);
+  const match3 = text.match(pattern3);
+
+  if (match1) {
+    weightKg = parseFloat(match1[1].replace(',', '.'));
+    reps = parseInt(match1[2], 10);
+  } else if (match2) {
+    reps = parseInt(match2[1], 10);
+    weightKg = parseFloat(match2[2].replace(',', '.'));
+  } else if (match3) {
+    weightKg = parseFloat(match3[1].replace(',', '.'));
+    reps = parseInt(match3[2], 10);
+  } else {
+    // Single number fallbacks
+    const numMatches = text.match(/\d+(?:[.,]\d+)?/g);
+    if (numMatches && numMatches.length >= 2) {
+      weightKg = parseFloat(numMatches[0].replace(',', '.'));
+      reps = parseInt(numMatches[1], 10);
+    } else if (numMatches && numMatches.length === 1) {
+      if (text.includes('rep') || text.includes('kali')) {
+        reps = parseInt(numMatches[0], 10);
+      } else {
+        weightKg = parseFloat(numMatches[0].replace(',', '.'));
+      }
+    }
+  }
+
+  if (weightKg > 0 || reps > 0) {
+    return {
+      success: true,
+      weightKg: Math.round(weightKg * 10) / 10,
+      reps: Math.max(1, reps || 8),
+      rawTranscript: speechTranscript,
+      isComplete: true,
+      message: `Terdeteksi: ${weightKg} kg × ${reps || 8} reps`
+    };
+  }
+
+  return {
+    success: false,
+    weightKg: 0,
+    reps: 0,
+    rawTranscript: speechTranscript,
+    message: 'Perintah suara belum mengenali format angka (contoh: "80 kilo 8 repetisi").'
+  };
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    calculate1RM,
+    calculatePlateBreakdown,
+    calculateTDEE,
+    calculateHeartRateZones,
+    detectMuscleGroups,
+    calculateMuscleRecovery,
+    calculateProgressiveOverload,
+    calculateVolumeLandmarks,
+    calculateRecommendedRestTime,
+    getBiomechanicalCue,
+    checkKineticChainFatigue,
+    detectPlateauAndSuggestRotation,
+    parseVoiceWorkoutCommand,
+  };
+}
+
+
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, Pressable, Image, ImageBackground, ActivityIndicator, Alert, TextInput, Platform } from 'react-native';
-import { Plus, Minus, Check, ChevronLeft, ChevronRight, Clock, Trophy, Trash2, Dumbbell, AlertCircle, Save, X, Volume2, VolumeX } from 'lucide-react-native';
+import { Plus, Minus, Check, ChevronLeft, ChevronRight, Clock, Trophy, Trash2, Dumbbell, AlertCircle, Save, X, Volume2, VolumeX, Mic, MicOff } from 'lucide-react-native';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as Notifications from 'expo-notifications';
@@ -17,7 +17,7 @@ import DummyAdBanner from '../components/DummyAdBanner';
 import useInterstitialAd from '../components/DummyInterstitialAd';
 
 import * as Crypto from 'expo-crypto';
-import { calculateProgressiveOverload } from '../utils/fitnessMath';
+import { calculateProgressiveOverload, calculateRecommendedRestTime, getBiomechanicalCue, parseVoiceWorkoutCommand } from '../utils/fitnessMath';
 
 // Gunakan UUID v4 standar agar tidak terjadi bentrok ID
 function makeId() {
@@ -64,8 +64,164 @@ export default function LoggerScreen({
 
   // Voice Assistant State
   const [voiceGuideEnabled, setVoiceGuideEnabled] = useState(false);
+  const [voiceModalVisible, setVoiceModalVisible] = useState(false);
+  const [voiceInputText, setVoiceInputText] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [micStatusMsg, setMicStatusMsg] = useState('');
+  const recognitionRef = useRef(null);
 
   const [voiceMap, setVoiceMap] = useState({});
+
+  const startListening = async () => {
+    setMicStatusMsg('Memulai mikrofon...');
+    if (Platform.OS === 'web') {
+      const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+      if (!SpeechRecognition) {
+        setMicStatusMsg('Browser tidak mendukung Speech API.');
+        Alert.alert("Browser Belum Mendukung Mic Otomatis", "Silakan gunakan Google Chrome / Microsoft Edge atau ketik perintah di kolom bawah.");
+        return;
+      }
+
+      try {
+        // Request browser microphone permission explicitly if available
+        if (navigator?.mediaDevices?.getUserMedia) {
+          try {
+            await navigator.mediaDevices.getUserMedia({ audio: true });
+          } catch (permErr) {
+            console.warn('[GymVault Mic] Mic permission denied/prompted:', permErr);
+          }
+        }
+
+        if (recognitionRef.current) {
+          try { recognitionRef.current.abort(); } catch(e){}
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'id-ID';
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+          setIsListening(true);
+          setMicStatusMsg('🔴 Mendengarkan suara Anda...');
+        };
+
+        recognition.onresult = (event) => {
+          let currentTranscript = '';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            currentTranscript += event.results[i][0].transcript;
+          }
+          setVoiceInputText(currentTranscript);
+          setMicStatusMsg(`Mendengar: "${currentTranscript}"`);
+
+          if (event.results[0] && event.results[0].isFinal) {
+            setIsListening(false);
+            setMicStatusMsg('Memproses perintah...');
+            setTimeout(() => {
+              handleProcessVoiceCommand(currentTranscript);
+            }, 300);
+          }
+        };
+
+        recognition.onerror = (e) => {
+          console.warn('[GymVault Mic] Speech Recognition error:', e.error);
+          setIsListening(false);
+          if (e.error === 'not-allowed') {
+            setMicStatusMsg('Izin mikrofon ditolak. Izinkan mic di browser.');
+          } else if (e.error === 'no-speech') {
+            setMicStatusMsg('Tidak ada suara terdeteksi. Silakan coba lagi.');
+          } else {
+            setMicStatusMsg('Gagal mendengarkan: ' + (e.error || 'error'));
+          }
+        };
+
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        recognitionRef.current = recognition;
+        recognition.start();
+      } catch (err) {
+        console.warn('[GymVault Mic] Start error:', err);
+        setIsListening(false);
+        setMicStatusMsg('Gagal mengaktifkan mikrofon.');
+      }
+    } else {
+      setIsListening(true);
+      setMicStatusMsg('🔴 Mendengarkan...');
+      setTimeout(() => {
+        setIsListening(false);
+        setMicStatusMsg('');
+      }, 4000);
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      try { recognitionRef.current.abort(); } catch(e){}
+    }
+    setIsListening(false);
+    setMicStatusMsg('');
+  };
+
+  const handleProcessVoiceCommand = (rawText) => {
+    const textToParse = rawText || voiceInputText;
+    const parsed = parseVoiceWorkoutCommand(textToParse);
+    if (!parsed.success) {
+      Alert.alert("Perintah Suara Belum Jelas ⚠️", parsed.message || 'Contoh: "Coach, catat 80 kilo 8 repetisi"');
+      return;
+    }
+
+    const safeIdx = currentIndex < workoutData.length ? currentIndex : 0;
+    const curEx = workoutData[safeIdx];
+    if (!curEx) return;
+
+    const nextUncompletedIdx = curEx.sets.findIndex(s => !s.completed);
+    const targetSetIdx = nextUncompletedIdx >= 0 ? nextUncompletedIdx : curEx.sets.length - 1;
+
+    setWorkoutData(prev => prev.map((ex, i) => {
+      if (i !== safeIdx) return ex;
+      return {
+        ...ex,
+        sets: ex.sets.map((s, sIdx) => {
+          if (sIdx === targetSetIdx) {
+            return {
+              ...s,
+              kg: String(parsed.weightKg),
+              reps: String(parsed.reps),
+              completed: true
+            };
+          }
+          return s;
+        })
+      };
+    }));
+
+    try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (e) {}
+
+    // Auto-trigger dynamic rest time
+    const recRest = calculateRecommendedRestTime(curEx.name, parsed.weightKg, parsed.reps, 8);
+    setRestTime(recRest);
+    setTimerActive(true);
+
+    showNotification({
+      type: 'fire',
+      title: '🎙️ Set Dicatat via Suara!',
+      subtitle: `${curEx.name} Set ${targetSetIdx + 1}: ${parsed.weightKg}kg × ${parsed.reps} reps`,
+      duration: 3000
+    });
+
+    speakText(
+      `Set ${targetSetIdx + 1} dicatat, ${parsed.weightKg} kilogram ${parsed.reps} repetisi. Istirahat ${recRest} detik dimulai!`,
+      `Set ${targetSetIdx + 1} logged, ${parsed.weightKg} kg ${parsed.reps} reps. Rest timer started!`
+    );
+
+    setVoiceInputText('');
+    setVoiceModalVisible(false);
+  };
 
   useEffect(() => {
     const loadVoiceSetting = async () => {
@@ -366,18 +522,20 @@ export default function LoggerScreen({
       return { ...ex, sets: ex.sets.map(s => {
         if (s.id !== setId) return s;
         if (!s.completed) {
-          setRestTime(90); setTimerActive(true);
+          const exName = workoutData[currentIndex]?.name || '';
+          const optimalRest = calculateRecommendedRestTime(exName, s.kg, s.reps, s.rpe);
+          setRestTime(optimalRest); 
+          setTimerActive(true);
           Notifications.cancelAllScheduledNotificationsAsync().then(() => {
             Notifications.scheduleNotificationAsync({
               content: { title: "Rest is Over! 🏋️‍♂️", body: "Time for your next set. Let's get it!", sound: true },
-              trigger: { seconds: 90 },
+              trigger: { seconds: optimalRest },
             });
           });
           
           const estimated1RM = Math.round(Number(s.kg) * (1 + Number(s.reps) / 30));
-          const exName = workoutData[currentIndex].name;
           let title = 'Set Complete! ✅';
-          let subtitle = `${s.kg}kg × ${s.reps} reps`;
+          let subtitle = `${s.kg}kg × ${s.reps} reps · Istirahat ${optimalRest}s`;
           
           if (estimated1RM > (sessionMax1RM[exName] || 0) && estimated1RM > 0) {
             setSessionMax1RM(prev => ({ ...prev, [exName]: estimated1RM }));
@@ -631,6 +789,22 @@ export default function LoggerScreen({
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Pressable 
+              onPress={() => setVoiceModalVisible(true)}
+              style={{ 
+                backgroundColor: 'rgba(56, 189, 248, 0.1)', 
+                width: 36, 
+                height: 36, 
+                borderRadius: 10, 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                marginRight: 8,
+                borderWidth: 1,
+                borderColor: 'rgba(56, 189, 248, 0.4)'
+              }}
+            >
+              <Mic color="#38BDF8" size={18} />
+            </Pressable>
+            <Pressable 
               onPress={toggleVoiceGuide}
               style={{ 
                 backgroundColor: voiceGuideEnabled ? 'rgba(204, 255, 0, 0.1)' : 'rgba(255, 255, 255, 0.03)', 
@@ -715,7 +889,17 @@ export default function LoggerScreen({
                     </Pressable>
                   )}
                 </View>
-                <AppText style={{ fontSize: 11, color: '#AAA', marginTop: 2 }}>{curEx.sets.length} sets · {curEx.sets.filter(s => s.completed).length} done</AppText>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 3 }}>
+                  <AppText style={{ fontSize: 11, color: '#AAA' }}>{curEx.sets.length} sets · {curEx.sets.filter(s => s.completed).length} done</AppText>
+                  {(() => {
+                    const bio = getBiomechanicalCue(curEx.name);
+                    return (
+                      <View style={{ backgroundColor: 'rgba(255,255,255,0.12)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                        <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 9 }}>TEMPO {bio.tempo}</AppText>
+                      </View>
+                    );
+                  })()}
+                </View>
               </View>
               <Pressable onPress={removeExercise} hitSlop={15} style={{ padding: 6, zIndex: 10 }}>
                 <Trash2 color="#EF4444" size={16} />
@@ -727,12 +911,16 @@ export default function LoggerScreen({
         {/* ═══ AI Smart Progressive Overload Card ═══ */}
         {(() => {
           const activeSet = curEx.sets.find(s => !s.completed) || curEx.sets[0];
-          const overloadRec = calculateProgressiveOverload(curEx.name, curEx.sets, activeSet?.kg, activeSet?.reps);
+          const overloadRec = calculateProgressiveOverload(curEx.name, curEx.sets, activeSet?.kg, activeSet?.reps, 65, activeSet?.rpe);
+          if (!overloadRec || overloadRec.hasData === false) return null;
+
+          const isBackoff = !!overloadRec.isBackoffSet;
+
           return (
             <View style={{
-              backgroundColor: 'rgba(204, 255, 0, 0.04)',
+              backgroundColor: isBackoff ? 'rgba(245, 158, 11, 0.06)' : 'rgba(204, 255, 0, 0.04)',
               borderWidth: 1,
-              borderColor: 'rgba(204, 255, 0, 0.2)',
+              borderColor: isBackoff ? 'rgba(245, 158, 11, 0.3)' : 'rgba(204, 255, 0, 0.2)',
               borderRadius: 12,
               padding: 12,
               marginBottom: 14,
@@ -743,10 +931,17 @@ export default function LoggerScreen({
             }}>
               <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                  <View style={{ backgroundColor: '#CCFF00', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
-                    <AppText weight="bold" style={{ color: '#000', fontSize: 9 }}>AI TARGET</AppText>
+                  <View style={{ 
+                    backgroundColor: isBackoff ? '#F59E0B' : '#CCFF00', 
+                    paddingHorizontal: 6, 
+                    paddingVertical: 2, 
+                    borderRadius: 4 
+                  }}>
+                    <AppText weight="bold" style={{ color: '#000', fontSize: 9 }}>
+                      {isBackoff ? 'BACK-OFF SET' : 'AI TARGET'}
+                    </AppText>
                   </View>
-                  <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 13 }}>
+                  <AppText weight="bold" style={{ color: isBackoff ? '#F59E0B' : '#CCFF00', fontSize: 13 }}>
                     {overloadRec.recommendedWeightKg} kg × {overloadRec.recommendedReps} reps
                   </AppText>
                 </View>
@@ -785,7 +980,7 @@ export default function LoggerScreen({
                   });
                 }}
                 style={{
-                  backgroundColor: '#CCFF00',
+                  backgroundColor: isBackoff ? '#F59E0B' : '#CCFF00',
                   paddingHorizontal: 12,
                   paddingVertical: 8,
                   borderRadius: 8,
@@ -793,7 +988,9 @@ export default function LoggerScreen({
                   justifyContent: 'center',
                 }}
               >
-                <AppText weight="bold" style={{ color: '#000', fontSize: 11 }}>Pasang Target</AppText>
+                <AppText weight="bold" style={{ color: '#000', fontSize: 11 }}>
+                  Pasang Target
+                </AppText>
               </Pressable>
             </View>
           );
@@ -1232,6 +1429,141 @@ export default function LoggerScreen({
                 );
               })()}
             </View>
+          </View>
+        </View>
+      )}
+
+      {/* ═══ Hands-Free Voice Logger Modal ═══ */}
+      {voiceModalVisible && (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 20, zIndex: 100 }}>
+          <View style={{ width: '100%', maxWidth: 360, backgroundColor: '#0F172A', borderRadius: 20, borderWidth: 1, borderColor: '#38BDF8', padding: 20 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Mic color="#38BDF8" size={22} />
+                <AppText weight="bold" style={{ fontSize: 16, color: '#38BDF8' }}>Voice Hands-Free Logger</AppText>
+              </View>
+              <Pressable onPress={() => { setVoiceModalVisible(false); setVoiceInputText(''); }} style={{ padding: 4 }}>
+                <X color={theme.colors.textMuted} size={18} />
+              </Pressable>
+            </View>
+
+            <AppText style={{ fontSize: 12, color: '#94A3B8', marginBottom: 14, lineHeight: 17 }}>
+              Katakan atau ketik beban dan repetisi set Anda saat tangan sibuk:
+            </AppText>
+
+            {/* Live Microphone Recording Card (Whole Card is Clickable) */}
+            <Pressable
+              onPress={isListening ? stopListening : startListening}
+              style={({ pressed }) => ({
+                alignItems: 'center',
+                marginVertical: 14,
+                backgroundColor: isListening ? 'rgba(239, 68, 68, 0.12)' : 'rgba(56, 189, 248, 0.08)',
+                paddingVertical: 16,
+                paddingHorizontal: 12,
+                borderRadius: 16,
+                borderWidth: 1.5,
+                borderColor: isListening ? '#EF4444' : 'rgba(56, 189, 248, 0.4)',
+                opacity: pressed ? 0.8 : 1,
+                cursor: 'pointer'
+              })}
+            >
+              <View
+                style={{
+                  width: 76,
+                  height: 76,
+                  borderRadius: 38,
+                  backgroundColor: isListening ? '#EF4444' : '#38BDF8',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  shadowColor: isListening ? '#EF4444' : '#38BDF8',
+                  shadowOpacity: 0.6,
+                  shadowRadius: 16,
+                  elevation: 8,
+                  borderWidth: 4,
+                  borderColor: isListening ? 'rgba(239, 68, 68, 0.4)' : 'rgba(56, 189, 248, 0.4)',
+                  marginBottom: 10
+                }}
+              >
+                {isListening ? (
+                  <MicOff color="#FFF" size={34} />
+                ) : (
+                  <Mic color="#000" size={34} />
+                )}
+              </View>
+
+              <AppText weight="bold" style={{ color: isListening ? '#EF4444' : '#38BDF8', fontSize: 14, textAlign: 'center' }}>
+                {isListening ? '🔴 Sedang Mendengarkan Suara...' : '🎙️ Tekan Di Sini & Mulai Bicara'}
+              </AppText>
+              
+              <AppText style={{ color: '#94A3B8', fontSize: 11, marginTop: 4, textAlign: 'center' }}>
+                {isListening ? 'Katakan: "Coach, catat 80 kilo 8 repetisi"' : 'Katakan: "80 kilo 8 repetisi" atau "75kg 10 rep"'}
+              </AppText>
+
+              {micStatusMsg ? (
+                <View style={{ marginTop: 8, backgroundColor: 'rgba(0,0,0,0.4)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 }}>
+                  <AppText style={{ color: '#F59E0B', fontSize: 10, textAlign: 'center' }}>{micStatusMsg}</AppText>
+                </View>
+              ) : null}
+            </Pressable>
+
+            <TextInput
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                borderWidth: 1,
+                borderColor: isListening ? '#EF4444' : 'rgba(56,189,248,0.3)',
+                borderRadius: 12,
+                padding: 12,
+                color: '#FFF',
+                fontSize: 14,
+                marginBottom: 12
+              }}
+              value={voiceInputText}
+              onChangeText={setVoiceInputText}
+              placeholder='Transkrip suara otomatis muncul di sini...'
+              placeholderTextColor="#64748B"
+              onSubmitEditing={() => handleProcessVoiceCommand(voiceInputText)}
+            />
+
+            {/* Quick Voice Chips */}
+            <AppText style={{ fontSize: 10, color: '#64748B', marginBottom: 6 }}>ATAU PILIH CONTOH CEPAT:</AppText>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
+              {[
+                '80 kilo 8 repetisi',
+                '60 kg 10 reps',
+                '40 kilo 12 kali',
+                '25 kg 15 reps'
+              ].map((chip, idx) => (
+                <Pressable
+                  key={idx}
+                  onPress={() => handleProcessVoiceCommand(chip)}
+                  style={{
+                    backgroundColor: 'rgba(56,189,248,0.12)',
+                    paddingHorizontal: 10,
+                    paddingVertical: 5,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: 'rgba(56,189,248,0.25)'
+                  }}
+                >
+                  <AppText weight="bold" style={{ fontSize: 11, color: '#38BDF8' }}>{chip}</AppText>
+                </Pressable>
+              ))}
+            </View>
+
+            <Pressable
+              onPress={() => handleProcessVoiceCommand(voiceInputText)}
+              style={{
+                backgroundColor: '#38BDF8',
+                paddingVertical: 12,
+                borderRadius: 12,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <AppText weight="bold" style={{ color: '#000', fontSize: 13 }}>
+                ✔ Konfirmasi & Catat Set
+              </AppText>
+            </Pressable>
           </View>
         </View>
       )}

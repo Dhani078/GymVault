@@ -227,12 +227,35 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
     <>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 12, marginBottom: 16 }}>
         <AppText weight="bold" style={{ fontSize: 18 }}>Daily Nutrition</AppText>
-        <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => setMealPlannerVisible(true)} style={{ backgroundColor: 'rgba(204,255,0,0.08)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8, borderWidth: 0.5, borderColor: 'rgba(204,255,0,0.2)' }}>
-            <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 12 }}>🍖 AI Plan</AppText>
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+          <TouchableOpacity 
+            onPress={() => setMealPlannerVisible(true)} 
+            style={{ 
+              backgroundColor: 'rgba(245, 158, 11, 0.12)', 
+              paddingHorizontal: 10, 
+              paddingVertical: 6, 
+              borderRadius: 8, 
+              borderWidth: 1, 
+              borderColor: 'rgba(245, 158, 11, 0.35)',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4
+            }}
+          >
+            <AppText weight="bold" style={{ color: '#F59E0B', fontSize: 12 }}>🍳 AI Chef & Plan</AppText>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setManualNutModal(true)}>
-            <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 13 }}>+ Log Meal</AppText>
+          <TouchableOpacity 
+            onPress={() => setManualNutModal(true)}
+            style={{ 
+              backgroundColor: 'rgba(204, 255, 0, 0.1)', 
+              paddingHorizontal: 10, 
+              paddingVertical: 6, 
+              borderRadius: 8, 
+              borderWidth: 1, 
+              borderColor: 'rgba(204, 255, 0, 0.3)' 
+            }}
+          >
+            <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 12 }}>+ Log Meal</AppText>
           </TouchableOpacity>
         </View>
       </View>
