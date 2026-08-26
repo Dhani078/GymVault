@@ -122,6 +122,50 @@ export default function AdminDashboard() {
             {/* OVERVIEW MODULE */}
             {activeTab === 'overview' && (
               <>
+                {/* ─── LIVE APEX TELEMETRY BAR ─── */}
+                <View style={{
+                  backgroundColor: '#0D0D11',
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: '#222',
+                  padding: 16,
+                  marginBottom: 20,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: 12
+                }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(204,255,0,0.08)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(204,255,0,0.25)' }}>
+                      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#CCFF00' }} />
+                      <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold' }}>Gemini 3.7 Flash Cascade</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(56,189,248,0.08)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(56,189,248,0.25)' }}>
+                      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#38BDF8' }} />
+                      <Text style={{ color: '#38BDF8', fontSize: 12, fontWeight: 'bold' }}>Telegram Super-Admin Bot</Text>
+                    </View>
+                  </View>
+
+                  <View style={{ flexDirection: 'row', gap: 8 }}>
+                    <TouchableOpacity
+                      onPress={() => setShowNotifModal(true)}
+                      style={{ backgroundColor: 'rgba(204,255,0,0.12)', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(204,255,0,0.3)', flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                    >
+                      <Send color="#CCFF00" size={14} />
+                      <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold' }}>+ Broadcast</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() => setShowPromoModal(true)}
+                      style={{ backgroundColor: 'rgba(245,158,11,0.12)', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(245,158,11,0.3)', flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                    >
+                      <Ticket color="#F59E0B" size={14} />
+                      <Text style={{ color: '#F59E0B', fontSize: 12, fontWeight: 'bold' }}>+ Promo</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
                 <AdminStats stats={stats} />
                 <SystemHealthWidget onPing={onRefresh} />
                 <PaymentRequestsTable
