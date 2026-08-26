@@ -112,7 +112,8 @@ export interface ProgressiveOverloadRecommendation {
   rationale: string;
   deltaPercent: number;
   isDeloadRecommended: boolean;
-  movementType: 'compound' | 'isolation';
+  movementType: 'compound' | 'isolation' | 'bodyweight';
+  isExploratory?: boolean;
 }
 
 export interface VolumeLandmarkResult {
@@ -125,5 +126,20 @@ export interface VolumeLandmarkResult {
   status: 'under_mev' | 'optimal_mav' | 'approaching_mrv' | 'over_mrv';
   adviceText: string;
   badgeColor: string;
+}
+
+export interface KineticChainFatigueResult {
+  isFatigued: boolean;
+  recoveryScore: number;
+  overlappingExercise: string;
+  hoursAgo?: number;
+  advice: string;
+}
+
+export interface PlateauRotationResult {
+  isPlateau: boolean;
+  plateauCount: number;
+  alternativeExercise: string;
+  strategyRationale: string;
 }
 
