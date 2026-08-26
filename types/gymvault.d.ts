@@ -105,3 +105,25 @@ export interface MuscleRecoveryState {
   hoursAgo: number;
   isOverride?: boolean;
 }
+
+export interface ProgressiveOverloadRecommendation {
+  recommendedWeightKg: number;
+  recommendedReps: number;
+  rationale: string;
+  deltaPercent: number;
+  isDeloadRecommended: boolean;
+  movementType: 'compound' | 'isolation';
+}
+
+export interface VolumeLandmarkResult {
+  muscleGroup: string;
+  currentSets: number;
+  mev: number;
+  mavMin: number;
+  mavMax: number;
+  mrv: number;
+  status: 'under_mev' | 'optimal_mav' | 'approaching_mrv' | 'over_mrv';
+  adviceText: string;
+  badgeColor: string;
+}
+

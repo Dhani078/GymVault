@@ -17,6 +17,7 @@ import DummyAdBanner from '../components/DummyAdBanner';
 import useInterstitialAd from '../components/DummyInterstitialAd';
 
 import * as Crypto from 'expo-crypto';
+import { calculateProgressiveOverload } from '../utils/fitnessMath';
 
 // Gunakan UUID v4 standar agar tidak terjadi bentrok ID
 function makeId() {
@@ -722,6 +723,80 @@ export default function LoggerScreen({
             </View>
           </ImageBackground>
         </View>
+
+        {/* ═══ AI Smart Progressive Overload Card ═══ */}
+        {(() => {
+          const overloadRec = calculateProgressiveOverload(curEx.name, curEx.sets, curEx.sets[0]?.kg, curEx.sets[0]?.reps);
+          return (
+            <View style={{
+              backgroundColor: 'rgba(204, 255, 0, 0.04)',
+              borderWidth: 1,
+              borderColor: 'rgba(204, 255, 0, 0.2)',
+              borderRadius: 12,
+              padding: 12,
+              marginBottom: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+            }}>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                  <View style={{ backgroundColor: '#CCFF00', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                    <AppText weight="bold" style={{ color: '#000', fontSize: 9 }}>AI TARGET</AppText>
+                  </View>
+                  <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 13 }}>
+                    {overloadRec.recommendedWeightKg} kg × {overloadRec.recommendedReps} reps
+                  </AppText>
+                </View>
+                <AppText style={{ color: '#94A3B8', fontSize: 11, lineHeight: 15 }}>
+                  {overloadRec.rationale}
+                </AppText>
+              </View>
+              <Pressable
+                onPress={() => {
+                  try {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  } catch (e) {}
+                  setWorkoutData(prev => prev.map((ex, i) => {
+                    if (i !== safeIdx) return ex;
+                    const nextUncompletedIdx = ex.sets.findIndex(s => !s.completed);
+                    const targetIdx = nextUncompletedIdx >= 0 ? nextUncompletedIdx : 0;
+                    return {
+                      ...ex,
+                      sets: ex.sets.map((s, sIdx) => {
+                        if (sIdx === targetIdx) {
+                          return {
+                            ...s,
+                            kg: String(overloadRec.recommendedWeightKg),
+                            reps: String(overloadRec.recommendedReps)
+                          };
+                        }
+                        return s;
+                      })
+                    };
+                  }));
+                  showNotification({
+                    type: 'fire',
+                    title: 'Target AI Terpasang! 🎯',
+                    subtitle: `${overloadRec.recommendedWeightKg}kg × ${overloadRec.recommendedReps} reps siap dieksekusi`,
+                    duration: 3000
+                  });
+                }}
+                style={{
+                  backgroundColor: '#CCFF00',
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <AppText weight="bold" style={{ color: '#000', fontSize: 11 }}>Pasang Target</AppText>
+              </Pressable>
+            </View>
+          );
+        })()}
 
         {/* ═══ Sets ═══ */}
         <View style={{ gap: 8 }}>
