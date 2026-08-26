@@ -1,7 +1,8 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { View, useWindowDimensions, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, useWindowDimensions, StyleSheet, ActivityIndicator } from 'react-native';
 import { supabase } from '../supabaseClient';
 import { useTheme } from '../contexts/ThemeContext';
+import { Globe, Smartphone, ShieldCheck, ArrowLeft } from 'lucide-react-native';
 
 // High-Performance Dynamic Code Splitting for Desktop Views
 const LandingPage = lazy(() => import('../screens/LandingPage'));
@@ -22,7 +23,8 @@ export default function AdaptiveLayout({ children, session }) {
   const [role, setRole] = useState(null);
   const [loadingRole, setLoadingRole] = useState(false);
   
-  // State khusus agar tamu (guest) di PC bisa masuk ke halaman Login HP
+  // View mode switcher on Desktop: 'auto' | 'landing' | 'app' | 'admin'
+  const [desktopView, setDesktopView] = useState('auto');
   const [showLogin, setShowLogin] = useState(false);
 
   const isDesktop = width >= 768;
@@ -69,39 +71,116 @@ export default function AdaptiveLayout({ children, session }) {
     );
   }
 
+  // Top Floating Desktop View Mode Switcher
+  const renderDesktopSwitcher = () => (
+    <View style={styles.floatingSwitcher}>
+      <TouchableOpacity
+        style={[styles.switchChip, desktopView === 'landing' || (desktopView === 'auto' && !session && !showLogin) ? styles.switchChipActive : null]}
+        onPress={() => { setDesktopView('landing'); setShowLogin(false); }}
+      >
+        <Globe size={13} color={desktopView === 'landing' || (desktopView === 'auto' && !session && !showLogin) ? '#000' : '#888'} />
+        <Text style={[styles.switchChipText, desktopView === 'landing' || (desktopView === 'auto' && !session && !showLogin) ? styles.switchChipTextActive : null]}>
+          Landing Page
+        </Text>
+      </TouchableOpacity>
+
+      {session && role === 'admin' && (
+        <TouchableOpacity
+          style={[styles.switchChip, desktopView === 'admin' || (desktopView === 'auto' && session && role === 'admin') ? styles.switchChipActive : null]}
+          onPress={() => setDesktopView('admin')}
+        >
+          <ShieldCheck size={13} color={desktopView === 'admin' || (desktopView === 'auto' && session && role === 'admin') ? '#000' : '#888'} />
+          <Text style={[styles.switchChipText, desktopView === 'admin' || (desktopView === 'auto' && session && role === 'admin') ? styles.switchChipTextActive : null]}>
+            Admin Panel
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity
+        style={[styles.switchChip, (desktopView === 'app') || (desktopView === 'auto' && (session && role !== 'admin' || showLogin)) ? styles.switchChipActive : null]}
+        onPress={() => { setDesktopView('app'); setShowLogin(true); }}
+      >
+        <Smartphone size={13} color={(desktopView === 'app') || (desktopView === 'auto' && (session && role !== 'admin' || showLogin)) ? '#000' : '#888'} />
+        <Text style={[styles.switchChipText, (desktopView === 'app') || (desktopView === 'auto' && (session && role !== 'admin' || showLogin)) ? styles.switchChipTextActive : null]}>
+          {session ? 'App View' : 'Login / App'}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  // Forced View Mode Handlers
+  if (desktopView === 'landing') {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#000000' }}>
+        {renderDesktopSwitcher()}
+        <Suspense fallback={<DesktopFallbackLoader />}>
+          <LandingPage onLoginPress={() => { setDesktopView('app'); setShowLogin(true); }} />
+        </Suspense>
+      </View>
+    );
+  }
+
+  if (desktopView === 'admin' && session && role === 'admin') {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#000000' }}>
+        {renderDesktopSwitcher()}
+        <Suspense fallback={<DesktopFallbackLoader />}>
+          <AdminDashboard />
+        </Suspense>
+      </View>
+    );
+  }
+
+  if (desktopView === 'app') {
+    return (
+      <View style={[styles.desktopContainer, { backgroundColor: '#0A0A0A' }]}>
+        {renderDesktopSwitcher()}
+        <View style={styles.mobileMockupFrame}>
+          {children}
+        </View>
+      </View>
+    );
+  }
+
+  // Auto Default Mode:
   // 2. GUEST PC (Belum Login)
   if (!session) {
-    // Jika user klik "Masuk / Login" di Landing Page, tampilkan halaman Auth (bawaan HP)
     if (showLogin) {
       return (
         <View style={[styles.desktopContainer, { backgroundColor: '#0A0A0A' }]}>
+          {renderDesktopSwitcher()}
           <View style={styles.mobileMockupFrame}>
             {children}
           </View>
         </View>
       );
     }
-    // Jika tidak, tampilkan Cinematic Landing Page with Suspense
     return (
-      <Suspense fallback={<DesktopFallbackLoader />}>
-        <LandingPage onLoginPress={() => setShowLogin(true)} />
-      </Suspense>
+      <View style={{ flex: 1, backgroundColor: '#000000' }}>
+        {renderDesktopSwitcher()}
+        <Suspense fallback={<DesktopFallbackLoader />}>
+          <LandingPage onLoginPress={() => setShowLogin(true)} />
+        </Suspense>
+      </View>
     );
   }
 
   // 3. ADMIN PC (Sudah Login & Role = 'admin')
   if (session && role === 'admin') {
     return (
-      <Suspense fallback={<DesktopFallbackLoader />}>
-        <AdminDashboard />
-      </Suspense>
+      <View style={{ flex: 1, backgroundColor: '#000000' }}>
+        {renderDesktopSwitcher()}
+        <Suspense fallback={<DesktopFallbackLoader />}>
+          <AdminDashboard />
+        </Suspense>
+      </View>
     );
   }
 
   // 4. REGULAR USER PC (Sudah Login & Role != 'admin')
-  // Menampilkan aplikasi HP di tengah layar desktop dengan border/bayangan (Mockup Style)
   return (
     <View style={[styles.desktopContainer, { backgroundColor: '#0A0A0A' }]}>
+      {renderDesktopSwitcher()}
       <View style={styles.mobileMockupFrame}>
         {children}
       </View>
@@ -134,5 +213,45 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 50,
     elevation: 20,
+  },
+  floatingSwitcher: {
+    position: 'absolute',
+    top: 16,
+    right: 20,
+    zIndex: 99999,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(15, 15, 20, 0.85)',
+    padding: 5,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+    backdropFilter: 'blur(12px)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+  },
+  switchChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: 'transparent',
+  },
+  switchChipActive: {
+    backgroundColor: '#CCFF00',
+  },
+  switchChipText: {
+    color: '#888888',
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  switchChipTextActive: {
+    color: '#000000',
+    fontWeight: 'bold',
   }
 });
