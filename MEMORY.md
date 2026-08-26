@@ -20,15 +20,17 @@
 | **Mobile Runtime** | React Native (Expo SDK ~54.0.36) | Read versioned docs at `https://docs.expo.dev/versions/v54.0.0/`. Do NOT use deprecated APIs. |
 | **Styling & Theme** | StyleSheet + Custom Tokens | AMOLED theme in `theme.js` & `contexts/ThemeContext.js`. Primary `#CCFF00`, Background `#000000`. |
 | **Backend & Auth** | Supabase (PostgreSQL 15+) | Project ID `sjrzhiigrcrcpgvnfixo`. Strict RLS on all tables. Safe queries in `supabaseClient.js`. |
-| **AI Integration** | Google Gemini 3.7 Cascade | Multi-Model Waterfall (`gemini-3.7-flash` ➔ `3.6-flash` ➔ `3.5-flash` ➔ `3.1-flash-lite` ➔ `2.5-flash` ➔ `2.5-flash-lite` ➔ `1.5-flash`). NO hardcoding. |
-| **Mathematical Engine** | Pure Functional Module | `utils/fitnessMath.js` (1RM Brzycki, Olympic Plate Loading, TDEE Mifflin-St Jeor, HR Zones, Taxonomy, Decay) & `utils/dateHelpers.js` (WIB Standard). |
-| **Test Automation** | Zero-Dep Test Runner | `scripts/test-fitness-engine.js` executed via `npm test` validating 29 core scenarios (100% pass rate). |
+| **AI Integration** | Google Gemini 3.7 Cascade | 7-tier Waterfall (`gemini-3.7-flash` ➔ `3.6-flash` ➔ `3.5-flash` ➔ `3.1-flash-lite` ➔ `2.5-flash` ➔ `2.5-flash-lite` ➔ `1.5-flash`) in `services/geminiService.js`. |
+| **Mathematical Engine** | Pure Functional Module | `utils/fitnessMath.js` (1RM Brzycki, Olympic Plate Loading, TDEE, HR Zones, CNS Decay, Double Progression, Kinetic Chain Fatigue Warning, Plateau Breaker, Voice Command Parser). |
+| **Test Automation** | Zero-Dep Test Runner | `scripts/test-fitness-engine.js` executed via `npm test` validating **61 assertion scenarios across 14 test suites** (100% pass rate). |
+| **Hands-Free Voice** | Web Speech API / TTS | Real mic voice logging in `screens/LoggerScreen.js` + bilingual TTS voice coach (`expo-speech`). |
+| **Smart Fridge Chef** | Gemini Multimodal Meal AI | `screens/AIMealPlanModal.js` Fridge-to-Macro engine generating gram-precise recipes from available ingredients. |
+| **Telegram SaaS Bot** | 2-Way Webhook + Polling | `api/telegram-webhook.js` & `scripts/start-telegram-bot.js` supporting 8 admin commands (`/stats`, `/growth`, `/recent`, `/check`, `/grant`, `/revoke`, `/broadcast`, `/clearnotif`) + instant QRIS approval. |
 | **State & Modes** | React Context + AsyncStorage | `AppModeContext` (Gym vs Home), `ThemeContext`, `DynamicIslandContext`, `LanguageContext`. |
 | **List Performance**| `@shopify/flash-list` (v2.0.2) | Prefer `FlashList` for high-volume datasets (Exercise Library, History, Logs). |
 | **Graphics & Canvas**| `@shopify/react-native-skia` | Used for hardware-accelerated rings and progress charts. |
 | **Animations** | `react-native-reanimated` | 60/120 FPS UI-thread animations and smooth gestures. |
-| **Audio Guide** | `expo-speech` | Bilingual TTS (ID / EN) in `screens/LoggerScreen.js`. |
-| **Desktop Web** | Single Vercel URL Deployment | Responsive routing in `components/AdaptiveLayout.js` (`< 768px`: Mobile; `≥ 768px`: Landing / Admin) with `React.lazy()` chunking. |
+| **Desktop Web** | Single Vercel URL Deployment | Responsive routing in `components/AdaptiveLayout.js` with Desktop View Switcher (`[ 🌐 Landing Page ]` / `[ 👑 Admin Panel ]` / `[ 📱 App View ]`). |
 
 ---
 
@@ -56,11 +58,13 @@
 7. **`promo_codes`** (`id` UUID PRIMARY KEY)
    - Columns: `code` (UNIQUE), `discount_percent`, `duration_days`, `max_uses`, `used_count`, `is_active`, `expires_at`, `created_at`.
    - Security: RLS enabled. Atomic RPC `redeem_promo_code`.
+8. **`system_notifications`** (`id` UUID PRIMARY KEY)
+   - Columns: `title`, `message`, `type`, `target_user_id`, `created_at`. Broadcast repository for admin announcements.
 
 ### Custom Stored Functions & RPCs
 - `approve_payment_request(request_id UUID) -> JSONB`: Approves pending payment, sets `status = 'approved'`, and activates user's `is_premium = true` + `premium_until` (1 month or 1 year) under `SECURITY DEFINER`.
 - `reject_payment_request(request_id UUID) -> JSONB`: Rejects pending payment under `SECURITY DEFINER`.
-- `redeem_promo_code(input_code TEXT) -> JSONB`: Atomic promo validation, user assignment, and 10-year premium provisioning under `SECURITY DEFINER`.
+- `redeem_promo_code(input_code TEXT) -> JSONB`: Atomic promo validation, user assignment, and premium provisioning under `SECURITY DEFINER`.
 - `get_global_leaderboard() -> TABLE(...)`: Aggregates volume, workout count, and active streaks (`LIMIT 50`).
 - `search_users(search_query TEXT) -> TABLE(...)`: Searches lifters by username/name with volume and streaks (`LIMIT 20`).
 - `get_email_by_username(lookup_username TEXT) -> TEXT`: Secure email resolver for username login flow.
@@ -74,22 +78,22 @@ c:\xampp\htdocs\GYM\
 ├── types/
 │   └── gymvault.d.ts        # Master TypeScript Contract Interfaces
 ├── utils/
-│   ├── fitnessMath.js       # Pure fitness formulas (1RM, Plates, TDEE, HR, Recovery Decay)
+│   ├── fitnessMath.js       # Pure fitness formulas (1RM, Plates, TDEE, HR, Decay, Overload, Voice Parser)
 │   └── dateHelpers.js       # Pure WIB date & time standardization module
 ├── services/
-│   ├── geminiVision.js      # 7-layer Google Gemini AI Waterfall Cascade
+│   ├── geminiService.js     # 7-layer Google Gemini 3.7 Flash Cascade Waterfall Engine
 │   ├── NutritionDataset.js  # USDA + Indonesian Food dataset + Custom Food AsyncStorage vault
-│   └── offlineSync.js       # Auto-reconnect queue sync engine
+│   └── NotificationManager.js # Smart daily reminder scheduler
 ├── scripts/
-│   ├── test-fitness-engine.js # Automated unit test runner (npm test - 29/29 pass)
-│   ├── test-qiospay-webhook.js # Qiospay webhook simulation runner
+│   ├── test-fitness-engine.js # Automated unit test runner (npm test - 61/61 assertions pass)
+│   ├── start-telegram-bot.js # Local long-polling daemon for real-time Telegram Bot execution
 │   ├── set-webhook.js       # Telegram bot webhook registration script
-│   └── telegram-listener.js # Local telegram polling listener
+│   └── test-qiospay-webhook.js # Qiospay webhook simulation runner
 ├── components/
-│   ├── AdaptiveLayout.js    # Viewport breakpoint router (< 768px Mobile vs ≥ 768px PC Landing/Admin) with React.lazy
-│   ├── AIRoutineModal.js    # AI routine builder dialog
+│   ├── AdaptiveLayout.js    # Viewport breakpoint router (< 768px Mobile vs ≥ 768px PC Landing/Admin) with Desktop View Switcher
+│   ├── AIRoutineModal.js    # AI routine builder dialog powered by Gemini 3.7 Cascade
 │   ├── MuscleRecoveryMap.js # SVG body map rendering 12 muscle groups with recovery decay engine
-│   ├── NutritionWidget.js   # Daily macro tracker ring + meal logging preview
+│   ├── NutritionWidget.js   # Daily macro tracker ring + natural language meal parser
 │   └── SkiaProgressRing.js  # Hardware-accelerated circular progress ring
 ├── contexts/
 │   ├── AppModeContext.js    # Adaptive Engine: Gym Mode vs Home Mode + equipment inventory filter
@@ -99,18 +103,19 @@ c:\xampp\htdocs\GYM\
 ├── screens/
 │   ├── AuthScreen.js        # Login & Signup with username/email regex validation
 │   ├── DashboardScreen.js   # Main hub: volume stats, routine launcher, leaderboard, offline sync HUD
-│   ├── LibraryScreen.js     # Exercise catalogue (dynamic filter by home equipment + GitHub normalization)
-│   ├── LoggerScreen.js      # Active workout tracker with TTS audio coach and AsyncStorage restore
+│   ├── LibraryScreen.js     # Exercise catalogue with biomechanical cues & plateau breaker suggestions
+│   ├── LoggerScreen.js      # Active workout tracker with Real Mic Voice recognition & TTS coach
+│   ├── AIMealPlanModal.js   # Daily AI Meal Planner & 🍳 Fridge-to-Macro Smart Chef
 │   ├── HistoryScreen.js     # Calendar multi-tab history (Workouts, Nutrition, Hydration)
 │   ├── ProfileScreen.js     # Body metrics, recovery overview, trophies, settings, gold pro banner
 │   ├── AIChatBubble.js      # Floating AI Coach for advice & conversational logging
-│   ├── AdminDashboard.js    # Desktop Admin Control Panel (role === 'admin')
-│   ├── LandingPage.js       # Desktop Cinematic Guest Landing Page with 6 interactive simulators
+│   ├── AdminDashboard.js    # Desktop Super-Admin Control Panel & CRM Suite
+│   ├── LandingPage.js       # Desktop Cinematic Landing Page with 7 live interactive simulators
 │   └── PaywallScreen.js     # Subscription plans, QRIS DANA instant notifier, & promo code redemption
 └── api/
     ├── analyze-nutrition.js # Vercel serverless proxy for Gemini food image classification
-    ├── payment-notify.js    # Telegram admin notification with HTML caption & Gemini 3.7 receipt audit
-    ├── telegram-webhook.js  # Telegram inline button webhook handler (ACC/Reject)
+    ├── payment-notify.js    # Telegram admin notification with HTML caption & Gemini receipt audit
+    ├── telegram-webhook.js  # Telegram interactive command center (/stats, /grant, /broadcast, /check)
     └── qiospay-callback.js  # Qiospay realtime QRIS webhook handler
 ```
 
@@ -137,4 +142,5 @@ To prevent data collision between different logged-in users or guest sessions, a
 5. **Separation of Concerns**: Keep mathematical calculations in `utils/fitnessMath.js`, business logic inside hooks/services, and UI in components.
 6. **Cross-Platform Safety**: Always verify `Platform.OS === 'web'` when using browser APIs (`window`, `navigator`) or native modules (`AsyncStorage`, `ImagePicker`, `Notifications`).
 7. **Complete Output Enforcement**: Never truncate code with placeholders like `// ... rest of code unchanged`. Always provide exact, complete code blocks.
-8. **Automated Test Integrity**: Run `npm test` before major releases to guarantee zero mathematical regressions across 1RM, TDEE, Plate Loading, and CNS Recovery.
+8. **Automated Test Integrity**: Run `npm test` before major releases to guarantee zero mathematical regressions across 1RM, TDEE, Plate Loading, Progressive Overload, Kinetic Chain Fatigue, and Voice Parsing (61/61 Assertions).
+
