@@ -99,6 +99,7 @@ assert(getStartOfWeek(sampleDate) instanceof Date, `Start of week returns valid 
 
 // Test Suite 8: AI Progressive Overload Engine
 console.log('\n🧪 [Test Suite 8: AI Progressive Overload Engine]');
+// Progressive Overload for existing lifter
 const squatOverload = calculateProgressiveOverload('Barbell Back Squat', [{ weight_kg: 100, reps: 8 }]);
 assert(squatOverload.recommendedWeightKg === 105, `Squat 100kg x 8 -> recommended 105kg (+5kg) [Got: ${squatOverload.recommendedWeightKg}]`);
 assert(squatOverload.movementType === 'compound', `Squat classified as compound [Got: ${squatOverload.movementType}]`);
@@ -109,6 +110,19 @@ assert(benchOverload.recommendedWeightKg === 32.5, `Bench 30kg x 8 -> recommende
 const curlOverload = calculateProgressiveOverload('Bicep Cable Curl', [{ weight_kg: 15, reps: 12 }]);
 assert(curlOverload.recommendedWeightKg === 16.3 || curlOverload.recommendedWeightKg === 16.25, `Curl 15kg x 12 -> recommended 16.3kg (+1.25kg) [Got: ${curlOverload.recommendedWeightKg}]`);
 assert(curlOverload.movementType === 'isolation', `Curl classified as isolation [Got: ${curlOverload.movementType}]`);
+
+// New Account / Beginner Adaptive Baselines
+const newBarbell = calculateProgressiveOverload('Barbell Bench Press', []);
+assert(newBarbell.recommendedWeightKg === 20, `New Account Barbell -> 20kg empty Olympic bar [Got: ${newBarbell.recommendedWeightKg}]`);
+
+const newBodyweight = calculateProgressiveOverload('Push Up', []);
+assert(newBodyweight.recommendedWeightKg === 0, `New Account Push Up -> 0kg bodyweight [Got: ${newBodyweight.recommendedWeightKg}]`);
+
+const newDumbbell = calculateProgressiveOverload('Dumbbell Lateral Raise', []);
+assert(newDumbbell.recommendedWeightKg === 4, `New Account Lateral Raise -> 4kg safe baseline [Got: ${newDumbbell.recommendedWeightKg}]`);
+
+const newMachine = calculateProgressiveOverload('Lat Pulldown Machine', []);
+assert(newMachine.recommendedWeightKg === 15, `New Account Lat Pulldown -> 15kg pin baseline [Got: ${newMachine.recommendedWeightKg}]`);
 
 // Test Suite 9: Hypertrophy Volume Landmarks (MEV/MAV/MRV)
 console.log('\n🧪 [Test Suite 9: Hypertrophy Volume Landmarks]');

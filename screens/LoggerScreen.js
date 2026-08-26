@@ -726,7 +726,8 @@ export default function LoggerScreen({
 
         {/* ═══ AI Smart Progressive Overload Card ═══ */}
         {(() => {
-          const overloadRec = calculateProgressiveOverload(curEx.name, curEx.sets, curEx.sets[0]?.kg, curEx.sets[0]?.reps);
+          const activeSet = curEx.sets.find(s => !s.completed) || curEx.sets[0];
+          const overloadRec = calculateProgressiveOverload(curEx.name, curEx.sets, activeSet?.kg, activeSet?.reps);
           return (
             <View style={{
               backgroundColor: 'rgba(204, 255, 0, 0.04)',
