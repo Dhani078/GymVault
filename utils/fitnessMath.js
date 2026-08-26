@@ -185,39 +185,96 @@ export function calculateMuscleRecovery(hoursAgo) {
   return { percentage, status, hoursAgo: h };
 }
 
-// 7. AI Smart Progressive Overload Engine
-export function calculateProgressiveOverload(exerciseName = '', pastSets = [], baseWeight = 0, baseReps = 0) {
+// 7. AI Smart Progressive Overload Engine (Equipment & Experience-Adaptive)
+export function calculateProgressiveOverload(exerciseName = '', pastSets = [], baseWeight = 0, baseReps = 0, userBodyWeight = 70) {
   const name = String(exerciseName).toLowerCase();
   
-  // Classify movement category
-  const isLowerCompound = name.includes('squat') || name.includes('deadlift') || name.includes('leg press');
+  // 1. Detect movement kinematics & equipment type
+  const isBodyweight = name.includes('push up') || name.includes('push-up') || name.includes('pull up') || 
+                       name.includes('pull-up') || name.includes('chin up') || name.includes('chin-up') || 
+                       name.includes('dip') || name.includes('crunch') || name.includes('plank') || 
+                       name.includes('sit up') || name.includes('bodyweight');
+
+  const isBarbell = name.includes('barbell') || name.includes('deadlift') || name.includes('squat') && !name.includes('goblet') && !name.includes('dumbbell');
+  const isDumbbell = name.includes('dumbbell') || name.includes('db ') || name.includes('lateral raise') || name.includes('hammer curl');
+  const isCableOrMachine = name.includes('cable') || name.includes('pulldown') || name.includes('machine') || name.includes('press machine') || name.includes('extension') || name.includes('curl machine');
+
+  const isLowerCompound = name.includes('squat') || name.includes('deadlift') || name.includes('leg press') || name.includes('hack squat');
   const isUpperCompound = name.includes('bench') || name.includes('overhead') || name.includes('press') || name.includes('row') || name.includes('pull up') || name.includes('chin up') || name.includes('dip');
   const isCompound = isLowerCompound || isUpperCompound;
 
-  // Determine current baseline from pastSets if not explicitly passed
+  // 2. Extract baseline weight/reps from previous sets or active input
   let lastWeight = parseFloat(baseWeight) || 0;
   let lastReps = parseInt(baseReps, 10) || 0;
 
   if (Array.isArray(pastSets) && pastSets.length > 0) {
-    const validSets = pastSets.filter(s => (parseFloat(s.weight_kg) || parseFloat(s.weight) || 0) > 0);
+    const validSets = pastSets.filter(s => (parseFloat(s.weight_kg) || parseFloat(s.kg) || parseFloat(s.weight) || 0) > 0);
     if (validSets.length > 0) {
       const topSet = validSets[0];
-      lastWeight = parseFloat(topSet.weight_kg) || parseFloat(topSet.weight) || lastWeight;
+      lastWeight = parseFloat(topSet.weight_kg) || parseFloat(topSet.kg) || parseFloat(topSet.weight) || lastWeight;
       lastReps = parseInt(topSet.reps, 10) || lastReps;
     }
   }
 
+  // 3. Intelligent Beginner / New Account Baseline Calibration
   if (lastWeight <= 0 && lastReps <= 0) {
+    if (isBodyweight) {
+      return {
+        recommendedWeightKg: 0,
+        recommendedReps: 10,
+        rationale: 'Gerakan beban tubuh (Bodyweight). Fokus kalibrasi postur & kendali otot penuh.',
+        deltaPercent: 0,
+        isDeloadRecommended: false,
+        movementType: 'bodyweight'
+      };
+    }
+
+    if (isBarbell) {
+      return {
+        recommendedWeightKg: 20, // Standard 20kg Olympic Barbell shaft
+        recommendedReps: 8,
+        rationale: 'Akun baru terdeteksi: AI memulai dari stang barbel standar 20kg untuk memastikan biomekanik & form aman.',
+        deltaPercent: 0,
+        isDeloadRecommended: false,
+        movementType: 'compound'
+      };
+    }
+
+    if (isDumbbell) {
+      const dbWeight = name.includes('lateral') ? 4 : (name.includes('curl') ? 6 : 8);
+      return {
+        recommendedWeightKg: dbWeight,
+        recommendedReps: 12,
+        rationale: `Kalibrasi dumbel adaptif (${dbWeight}kg) untuk pemula agar stabilitas sendi terjaga.`,
+        deltaPercent: 0,
+        isDeloadRecommended: false,
+        movementType: 'isolation'
+      };
+    }
+
+    if (isCableOrMachine) {
+      return {
+        recommendedWeightKg: 15,
+        recommendedReps: 12,
+        rationale: 'Pin beban mesin awal 15kg untuk melatih lintasan gerak dan tempo kontraksi.',
+        deltaPercent: 0,
+        isDeloadRecommended: false,
+        movementType: isCompound ? 'compound' : 'isolation'
+      };
+    }
+
+    // Default safe fallback
     return {
-      recommendedWeightKg: isCompound ? 40 : 10,
+      recommendedWeightKg: isCompound ? 20 : 6,
       recommendedReps: isCompound ? 8 : 12,
-      rationale: 'Baseline awal untuk membangun form & adaptasi neuromuskular.',
+      rationale: 'Baseline awal untuk membangun form & adaptasi neuromuskular aman.',
       deltaPercent: 0,
       isDeloadRecommended: false,
       movementType: isCompound ? 'compound' : 'isolation'
     };
   }
 
+  // 4. Progressive Overload Calculation for existing logs
   let recommendedWeightKg = lastWeight;
   let recommendedReps = lastReps;
   let rationale = '';
@@ -228,7 +285,7 @@ export function calculateProgressiveOverload(exerciseName = '', pastSets = [], b
       recommendedWeightKg = Math.round((lastWeight + 5.0) * 10) / 10;
       recommendedReps = Math.max(6, lastReps - 2);
       deltaPercent = Math.round(((recommendedWeightKg - lastWeight) / lastWeight) * 100);
-      rationale = `Target repetisi tercapai. Naikkan beban +5kg untuk memicu adaptasi kekuatan ekstrem.`;
+      rationale = `Target repetisi tercapai. Naikkan beban +5kg untuk memicu adaptasi kekuatan kaki.`;
     } else {
       recommendedReps = lastReps + 1;
       rationale = `Pertahankan beban ${lastWeight}kg dan tambah +1 rep untuk efisiensi biomekanik.`;
