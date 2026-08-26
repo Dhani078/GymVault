@@ -3,6 +3,7 @@ import { View, TouchableOpacity, Modal, ActivityIndicator, ScrollView, TextInput
 import { X, Sparkles, Flame, Check, RefreshCw, Apple, MessageSquare, ChevronDown } from 'lucide-react-native';
 import { AppText, theme, styles } from '../theme';
 import { supabase } from '../supabaseClient';
+import { generateWithGeminiCascade } from '../services/geminiService';
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 export default function AIMealPlanModal({ visible, onClose, session, userProfile, onApplyTarget }) {
@@ -86,17 +87,11 @@ Kembalikan format JSON murni TANPA pembungkus markdown apapun dengan struktur be
 }
 Sangat penting: semua penjelasan nama makanan dan instruksi harus dalam Bahasa Indonesia yang ramah dan profesional.`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
+      const { text: rawText, modelUsed } = await generateWithGeminiCascade({
+        prompt,
+        responseMimeType: 'application/json'
       });
-
-      const resJson = await response.json();
-      const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawText) throw new Error("No response from Gemini");
+      console.log(`[Fridge Chef] Generated successfully using ${modelUsed}`);
 
       let cleanText = rawText.trim().replace(/```(?:json)?\s*([\s\S]*?)```/g, '$1').trim();
       const s = cleanText.indexOf('{');
@@ -154,24 +149,11 @@ Kembalikan format JSON murni TANPA pembungkus markdown (markdown code block sepe
 }
 Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indonesia yang ramah dan profesional.`;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }]
-        })
+      const { text: rawText, modelUsed } = await generateWithGeminiCascade({
+        prompt,
+        responseMimeType: 'application/json'
       });
-
-      const resJson = await response.json();
-      const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text;
-      
-      if (!rawText) {
-        throw new Error("No response content from Gemini.");
-      }
+      console.log(`[Meal Plan] Generated successfully using ${modelUsed}`);
 
       // Cleanup markdown and extract JSON block
       let cleanText = rawText.trim();

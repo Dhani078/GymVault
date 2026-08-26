@@ -4,6 +4,7 @@ import { FlashList } from '@shopify/flash-list';
 import { MessageCircle, X, Send, User } from 'lucide-react-native';
 import { AppText, styles, theme } from '../theme';
 import AICoachLogo from '../components/AICoachLogo';
+import { GEMINI_MODELS_CASCADE } from '../services/geminiService';
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 const getLocalDateString = () => {
@@ -493,25 +494,37 @@ export default function AIChatBubble() {
         }
       });
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: "Anda adalah AI Coach GymVault, asisten kebugaran dan nutrisi profesional yang asik, friendly, dan menggunakan gaya bahasa 'gym bros' ala Indonesia (seperti kata 'Bro', 'Sis', dll). Tugas Anda adalah menjawab pertanyaan pengguna HANYA seputar fitness/gym/nutrisi serta memproses log aktivitas harian pengguna. Anda WAJIB mengembalikan jawaban HANYA dalam format JSON valid (tanpa pembungkus markdown ```json). Format JSON:\n{\n  \"reply\": \"Jawaban asik dan friendly Anda di sini (tanpa simbol markdown seperti **)\",\n  \"log\": {\n    \"type\": \"water\" | \"nutrition\" | \"workout\" | null,\n    \"data\": {\n       \"ml\": 500,\n       \"food\": \"Nama makanan\", \"cal\": 500, \"p\": 30, \"c\": 50, \"f\": 10,\n       \"split\": \"Nama workout split\",\n       \"save_to_history\": true | false,\n       \"exercises\": [\n         {\"name\": \"Barbell Bench Press\", \"muscle_group\": \"Chest\" | \"Back\" | \"Shoulders\" | \"Arms\" | \"Quads\" | \"Hamstrings\" | \"Core\", \"sets\": [{\"reps\": 10, \"weight\": 60}]}\n       ]\n    }\n  }\n}\nDeteksi kata kunci pencatatan:\n- Air (water): jika user minum (ml/liter).\n- Makanan (nutrition): jika user makan (kalori, p, c, f). Jika protein/karbo/lemak tidak disebut, estimasikan nilainya secara logis.\n- Workout: jika user menyebutkan gerakan latihan (set, rep, beban). Cari tahu dan kelompokkan muscle_group untuk tiap gerakan latihan dengan tepat dari opsi: Chest, Back, Shoulders, Arms, Quads, Hamstrings, Core.\n  * Jika user menyatakan SUDAH selesai melakukan latihan (contoh: 'saya sudah main...', 'latihan hari ini selesai...', 'tadi abis latihan...'), set \"save_to_history\": true.\n  * Jika user menyatakan INGIN melakukan latihan sekarang/hari ini (contoh: 'saya mau main...', 'hari ini mau push day...', 'tambah ke logger...'), set \"save_to_history\": false." }]
-          },
-          contents: history
-        })
-      });
+      let aiText = '';
+      let modelSuccess = '';
 
-      const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
+      for (const modelName of GEMINI_MODELS_CASCADE) {
+        try {
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              systemInstruction: {
+                parts: [{ text: "Anda adalah AI Coach GymVault, asisten kebugaran dan nutrisi profesional yang asik, friendly, dan menggunakan gaya bahasa 'gym bros' ala Indonesia (seperti kata 'Bro', 'Sis', dll). Tugas Anda adalah menjawab pertanyaan pengguna HANYA seputar fitness/gym/nutrisi serta memproses log aktivitas harian pengguna. Anda WAJIB mengembalikan jawaban HANYA dalam format JSON valid (tanpa pembungkus markdown ```json). Format JSON:\n{\n  \"reply\": \"Jawaban asik dan friendly Anda di sini (tanpa simbol markdown seperti **)\",\n  \"log\": {\n    \"type\": \"water\" | \"nutrition\" | \"workout\" | null,\n    \"data\": {\n       \"ml\": 500,\n       \"food\": \"Nama makanan\", \"cal\": 500, \"p\": 30, \"c\": 50, \"f\": 10,\n       \"split\": \"Nama workout split\",\n       \"save_to_history\": true | false,\n       \"exercises\": [\n         {\"name\": \"Barbell Bench Press\", \"muscle_group\": \"Chest\" | \"Back\" | \"Shoulders\" | \"Arms\" | \"Quads\" | \"Hamstrings\" | \"Core\", \"sets\": [{\"reps\": 10, \"weight\": 60}]}\n       ]\n    }\n  }\n}\nDeteksi kata kunci pencatatan:\n- Air (water): jika user minum (ml/liter).\n- Makanan (nutrition): jika user makan (kalori, p, c, f). Jika protein/karbo/lemak tidak disebut, estimasikan nilainya secara logis.\n- Workout: jika user menyebutkan gerakan latihan (set, rep, beban). Cari tahu dan kelompokkan muscle_group untuk tiap gerakan latihan dengan tepat dari opsi: Chest, Back, Shoulders, Arms, Quads, Hamstrings, Core.\n  * Jika user menyatakan SUDAH selesai melakukan latihan (contoh: 'saya sudah main...', 'latihan hari ini selesai...', 'tadi abis latihan...'), set \"save_to_history\": true.\n  * Jika user menyatakan INGIN melakukan latihan sekarang/hari ini (contoh: 'saya mau main...', 'hari ini mau push day...', 'tambah ke logger...'), set \"save_to_history\": false." }]
+              },
+              contents: history
+            })
+          });
 
-      if (!data.candidates || data.candidates.length === 0 || !data.candidates[0].content || !data.candidates[0].content.parts || data.candidates[0].content.parts.length === 0) {
-        throw new Error("Gemini did not return any candidates.");
+          const data = await response.json();
+          if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            aiText = data.candidates[0].content.parts[0].text;
+            modelSuccess = modelName;
+            console.log(`[AI Coach Chat] Response from ${modelName}`);
+            break;
+          }
+        } catch (err) {
+          console.warn(`[AI Coach Chat] ${modelName} error, trying next...`);
+        }
       }
 
-      const aiText = data.candidates[0].content.parts[0].text;
+      if (!aiText) {
+        throw new Error("All Gemini cascade models failed to respond.");
+      }
       
       let replyText = aiText;
       let logData = null;
