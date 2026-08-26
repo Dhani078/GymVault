@@ -21,8 +21,8 @@
 | **Styling & Theme** | StyleSheet + Custom Tokens | AMOLED theme in `theme.js` & `contexts/ThemeContext.js`. Primary `#CCFF00`, Background `#000000`. |
 | **Backend & Auth** | Supabase (PostgreSQL 15+) | Project ID `sjrzhiigrcrcpgvnfixo`. Strict RLS on all tables. Safe queries in `supabaseClient.js`. |
 | **AI Integration** | Google Gemini 3.7 Cascade | Multi-Model Waterfall (`gemini-3.7-flash` ➔ `3.6-flash` ➔ `3.5-flash` ➔ `3.1-flash-lite` ➔ `2.5-flash` ➔ `2.5-flash-lite` ➔ `1.5-flash`). NO hardcoding. |
-| **Mathematical Engine** | Pure Functional Module | `utils/fitnessMath.js` (1RM Brzycki, Olympic Plate Loading, TDEE Mifflin-St Jeor, HR Zones, Taxonomy, Decay). |
-| **Test Automation** | Zero-Dep Test Runner | `scripts/test-fitness-engine.js` executed via `npm test` validating 23 core scenarios (100% pass rate). |
+| **Mathematical Engine** | Pure Functional Module | `utils/fitnessMath.js` (1RM Brzycki, Olympic Plate Loading, TDEE Mifflin-St Jeor, HR Zones, Taxonomy, Decay) & `utils/dateHelpers.js` (WIB Standard). |
+| **Test Automation** | Zero-Dep Test Runner | `scripts/test-fitness-engine.js` executed via `npm test` validating 29 core scenarios (100% pass rate). |
 | **State & Modes** | React Context + AsyncStorage | `AppModeContext` (Gym vs Home), `ThemeContext`, `DynamicIslandContext`, `LanguageContext`. |
 | **List Performance**| `@shopify/flash-list` (v2.0.2) | Prefer `FlashList` for high-volume datasets (Exercise Library, History, Logs). |
 | **Graphics & Canvas**| `@shopify/react-native-skia` | Used for hardware-accelerated rings and progress charts. |
@@ -48,14 +48,14 @@
    - Columns: `session_id` (UUID references `workout_sessions.id` ON DELETE CASCADE), `exercise_id`, `set_index`, `weight_kg`, `reps`, `is_checked`.
    - Security: RLS restricted to sessions owned by `auth.uid()`.
 5. **`nutrition_logs`** (`id` UUID PRIMARY KEY)
-   - Columns: `user_id`, `food_name`, `calories`, `protein`, `carbs`, `fats`, `created_at`.
+   - Columns: `user_id`, `meal_name`, `calories`, `protein_g`, `carbs_g`, `fat_g`, `logged_at`.
    - Security: RLS restricted to `auth.uid() = user_id`.
-6. **`body_weight_logs`** (`id` UUID PRIMARY KEY)
-   - Columns: `user_id`, `weight_kg`, `created_at`.
-   - Security: RLS restricted to `auth.uid() = user_id`.
-7. **`payment_requests`** (`id` UUID PRIMARY KEY)
-   - Columns: `user_id` (UUID references `users_profile.id`), `user_name`, `user_email`, `plan` ('monthly' | 'yearly'), `amount` (NUMERIC), `proof_url` (TEXT), `status` ('pending' | 'approved' | 'rejected'), `created_at`, `reviewed_at`.
-   - Security: RLS enabled. Users can SELECT & INSERT their own records. Admin approval is handled via Telegram webhook (`/api/telegram-webhook`) + atomic RPC `approve_payment_request`.
+6. **`payment_requests`** (`id` UUID PRIMARY KEY)
+   - Columns: `user_id`, `user_name`, `user_email`, `plan`, `amount`, `status` ('pending' | 'approved' | 'rejected'), `proof_url`, `reviewed_at`, `created_at`.
+   - Security: RLS enabled. Users insert/view own requests; Admin full CRUD. Atomic RPC `approve_payment_request` and `reject_payment_request`.
+7. **`promo_codes`** (`id` UUID PRIMARY KEY)
+   - Columns: `code` (UNIQUE), `discount_percent`, `duration_days`, `max_uses`, `used_count`, `is_active`, `expires_at`, `created_at`.
+   - Security: RLS enabled. Atomic RPC `redeem_promo_code`.
 
 ### Custom Stored Functions & RPCs
 - `approve_payment_request(request_id UUID) -> JSONB`: Approves pending payment, sets `status = 'approved'`, and activates user's `is_premium = true` + `premium_until` (1 month or 1 year) under `SECURITY DEFINER`.
@@ -67,18 +67,22 @@
 
 ---
 
-## 4. Key Architectural Patterns & Files
+## 4. Directory Structure & Key Artifacts
 
-```
-c:\xampp\htdocs\GYM/
-├── App.js                   # Root provider tree, tab navigator, session management, workout state sync
-├── supabaseClient.js        # Supabase client initialization, safe query wrappers (safeSelect, safeInsert)
-├── theme.js                 # Global palette (#CCFF00, #000000), typography, and standard styles
-├── .env                     # Environment keys (EXPO_PUBLIC_GEMINI_API_KEY, SUPABASE_URL, ANON_KEY, TELEGRAM_BOT_TOKEN)
+```text
+c:\xampp\htdocs\GYM\
+├── types/
+│   └── gymvault.d.ts        # Master TypeScript Contract Interfaces
 ├── utils/
-│   └── fitnessMath.js       # Pure mathematical engine (1RM, TDEE, Plate Loading, HR Zones, Muscle Taxonomy, Recovery)
+│   ├── fitnessMath.js       # Pure fitness formulas (1RM, Plates, TDEE, HR, Recovery Decay)
+│   └── dateHelpers.js       # Pure WIB date & time standardization module
+├── services/
+│   ├── geminiVision.js      # 7-layer Google Gemini AI Waterfall Cascade
+│   ├── NutritionDataset.js  # USDA + Indonesian Food dataset + Custom Food AsyncStorage vault
+│   └── offlineSync.js       # Auto-reconnect queue sync engine
 ├── scripts/
-│   ├── test-fitness-engine.js # Automated unit test runner (npm test)
+│   ├── test-fitness-engine.js # Automated unit test runner (npm test - 29/29 pass)
+│   ├── test-qiospay-webhook.js # Qiospay webhook simulation runner
 │   ├── set-webhook.js       # Telegram bot webhook registration script
 │   └── telegram-listener.js # Local telegram polling listener
 ├── components/
@@ -98,7 +102,7 @@ c:\xampp\htdocs\GYM/
 │   ├── LibraryScreen.js     # Exercise catalogue (dynamic filter by home equipment + GitHub normalization)
 │   ├── LoggerScreen.js      # Active workout tracker with TTS audio coach and AsyncStorage restore
 │   ├── HistoryScreen.js     # Calendar multi-tab history (Workouts, Nutrition, Hydration)
-│   ├── ProfileScreen.js     # Body metrics, recovery overview, trophies, settings
+│   ├── ProfileScreen.js     # Body metrics, recovery overview, trophies, settings, gold pro banner
 │   ├── AIChatBubble.js      # Floating AI Coach for advice & conversational logging
 │   ├── AdminDashboard.js    # Desktop Admin Control Panel (role === 'admin')
 │   ├── LandingPage.js       # Desktop Cinematic Guest Landing Page with 6 interactive simulators
@@ -106,7 +110,8 @@ c:\xampp\htdocs\GYM/
 └── api/
     ├── analyze-nutrition.js # Vercel serverless proxy for Gemini food image classification
     ├── payment-notify.js    # Telegram admin notification with HTML caption & Gemini 3.7 receipt audit
-    └── telegram-webhook.js  # Telegram inline button webhook handler (ACC/Reject)
+    ├── telegram-webhook.js  # Telegram inline button webhook handler (ACC/Reject)
+    └── qiospay-callback.js  # Qiospay realtime QRIS webhook handler
 ```
 
 ---
