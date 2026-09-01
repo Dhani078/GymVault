@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, Pressable, Image, ImageBackground, ActivityIndicator, Alert, TextInput, Platform } from 'react-native';
+import { View, ScrollView, Pressable, Image, ImageBackground, ActivityIndicator, Alert, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { Plus, Minus, Check, ChevronLeft, ChevronRight, Clock, Trophy, Trash2, Dumbbell, AlertCircle, Save, X, Volume2, VolumeX, Mic, MicOff } from 'lucide-react-native';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
@@ -758,7 +758,11 @@ export default function LoggerScreen({
   const progress = totalSets > 0 ? totalCompleted / totalSets : 0;
 
   return (
-    <View style={{ flex: 1 }}>
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
+    >
       <SmoothScrollView style={styles.screen} contentContainerStyle={{ padding: 20, paddingBottom: 120 }}>
 
         {/* ═══ Compact Header ═══ */}
@@ -1558,6 +1562,6 @@ export default function LoggerScreen({
       )}
 
       <DummyAdBanner />
-    </View>
+    </KeyboardAvoidingView>
   );
 }

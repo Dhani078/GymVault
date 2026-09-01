@@ -145,7 +145,7 @@ export default function DailyCheckInCard({
             </AppText>
             
             <AppText style={{ color: '#A1A1AA', fontSize: 13, textAlign: 'center', lineHeight: 20, marginBottom: 24, paddingHorizontal: 10 }}>
-              Klaim <AppText weight="bold" style={{ color: '#D4F53C' }}>Hari ke-{checkInStreak + 1}</AppText> untuk membuka <AppText weight="bold" style={{ color: '#FFF' }}>15x Scan AI</AppText> harian dan lanjutkan perjalanan menuju bonus Premium!
+              Klaim <AppText weight="bold" style={{ color: '#D4F53C' }}>Hari ke-{checkInStreak + 1}</AppText> untuk membuka <AppText weight="bold" style={{ color: '#FFF' }}>15x Scan AI</AppText>
             </AppText>
 
             {/* Visual 7-Day Journey Preview */}
