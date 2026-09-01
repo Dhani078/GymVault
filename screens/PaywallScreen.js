@@ -4,6 +4,7 @@ import { Check, Crown, Zap, Star, Shield, X, CreditCard, QrCode, Upload, CheckCi
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme, styles } from '../theme';
+import { useTheme } from '../contexts/ThemeContext';
 import GymVaultLogo from '../components/GymVaultLogo';
 import SmoothScrollView from '../components/SmoothScrollView';
 import { supabase } from '../supabaseClient';
@@ -27,6 +28,7 @@ const FEATURES = [
 ];
 
 export default function PaywallScreen({ onSkip, session }) {
+  const { colors } = useTheme();
   const [selectedPlan, setSelectedPlan] = useState('yearly');
   const [showPayment, setShowPayment] = useState(false);
   const [showProofModal, setShowProofModal] = useState(false);
@@ -280,17 +282,19 @@ export default function PaywallScreen({ onSkip, session }) {
                 </TouchableOpacity>
               </View>
 
-              {/* QR Code */}
-              <View style={{ backgroundColor: '#FFF', borderRadius: 16, padding: 16, alignItems: 'center', marginBottom: 20 }}>
-                <Image
-                  source={require('../assets/qris.jpg')}
-                  style={{ width: 240, height: 280, borderRadius: 12 }}
-                  resizeMode="contain"
-                />
-                <AppText weight="bold" style={{ color: '#1A8CFF', fontSize: 16, marginTop: 8 }}>
+              {/* QR Code — background putih tetap untuk QR agar bisa di-scan, teks pakai theme */}
+              <View style={{ backgroundColor: colors.card, borderRadius: 16, padding: 16, alignItems: 'center', marginBottom: 20, borderWidth: 1, borderColor: colors.border }}>
+                <View style={{ backgroundColor: '#FFFFFF', borderRadius: 12, padding: 8 }}>
+                  <Image
+                    source={require('../assets/qris.jpg')}
+                    style={{ width: 240, height: 280, borderRadius: 8 }}
+                    resizeMode="contain"
+                  />
+                </View>
+                <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 16, marginTop: 12 }}>
                   GymVault QRIS DANA
                 </AppText>
-                <AppText style={{ color: '#666', fontSize: 11, marginTop: 2, textAlign: 'center' }}>
+                <AppText style={{ color: colors.textMuted, fontSize: 11, marginTop: 2, textAlign: 'center' }}>
                   Support: DANA, BCA, GoPay, OVO, ShopeePay, Mandiri, dll
                 </AppText>
               </View>
