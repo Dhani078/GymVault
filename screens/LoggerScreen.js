@@ -676,6 +676,19 @@ export default function LoggerScreen({
       if (setRows.length > 0) {
         const { error: setsErr } = await safeBatchInsert('workout_sets', setRows);
         if (setsErr) console.warn('[Logger] Sets save partial failure:', setsErr.message);
+
+        // Auto-save last weight & reps per exercise for zero-friction autofill
+        try {
+          const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+          workoutData.forEach(ex => {
+            const completedSets = ex.sets.filter(s => s.completed);
+            const lastSet = completedSets[completedSets.length - 1] || ex.sets[ex.sets.length - 1];
+            if (lastSet && (Number(lastSet.kg) > 0 || Number(lastSet.reps) > 0)) {
+              const lastKey = `@gymvault_last_ex_${session?.user?.id || 'guest'}_${ex.name.toLowerCase().trim()}`;
+              AsyncStorage.setItem(lastKey, JSON.stringify({ kg: lastSet.kg, reps: lastSet.reps }));
+            }
+          });
+        } catch (e) {}
       }
 
       setSaving(false);
@@ -989,6 +1002,52 @@ export default function LoggerScreen({
           );
         })()}
 
+        {/* ═══ Quick Increment Chips (Fat Finger Friendly) ═══ */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+          <AppText style={{ fontSize: 11, color: theme.colors.textMuted, marginRight: 2 }}>Quick +KG:</AppText>
+          {[1.25, 2.5, 5, 10].map(amt => (
+            <Pressable
+              key={amt}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                const activeSet = curEx.sets[activeSetIndex] || curEx.sets[0];
+                if (activeSet) adjust(activeSet.id, 'kg', amt);
+              }}
+              style={({ pressed }) => ({
+                paddingHorizontal: 10,
+                paddingVertical: 6,
+                borderRadius: 8,
+                backgroundColor: pressed ? 'rgba(212,245,60,0.2)' : 'rgba(212,245,60,0.08)',
+                borderWidth: 1,
+                borderColor: 'rgba(212,245,60,0.25)',
+              })}
+            >
+              <AppText weight="bold" style={{ fontSize: 11, color: theme.colors.primary }}>+{amt}kg</AppText>
+            </Pressable>
+          ))}
+          <View style={{ flex: 1 }} />
+          {[1, 2].map(amt => (
+            <Pressable
+              key={amt}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                const activeSet = curEx.sets[activeSetIndex] || curEx.sets[0];
+                if (activeSet) adjust(activeSet.id, 'reps', amt);
+              }}
+              style={({ pressed }) => ({
+                paddingHorizontal: 8,
+                paddingVertical: 6,
+                borderRadius: 8,
+                backgroundColor: pressed ? 'rgba(255,255,255,0.1)' : theme.colors.card,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+              })}
+            >
+              <AppText weight="bold" style={{ fontSize: 11, color: theme.colors.text }}>+{amt} rep</AppText>
+            </Pressable>
+          ))}
+        </View>
+
         {/* ═══ Sets ═══ */}
         <View style={{ gap: 8 }}>
           {/* Table Header */}
@@ -1034,75 +1093,75 @@ export default function LoggerScreen({
                   )}
                 </View>
 
-                 {/* KG Stepper */}
-                <View style={{ flex: 1.1, minWidth: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 8, height: 38, borderWidth: 1, borderColor: theme.colors.border, overflow: 'hidden' }}>
+                 {/* KG Stepper — 44px Big Tap Target */}
+                <View style={{ flex: 1.1, minWidth: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 10, height: 44, borderWidth: 1, borderColor: isCurrentlyActive ? theme.colors.primary : theme.colors.border, overflow: 'hidden' }}>
                   <Pressable
-                    onPress={() => adjust(set.id, 'kg', -2.5)}
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); adjust(set.id, 'kg', -2.5); }}
                     style={({ pressed }) => ({
-                      width: 32, height: '100%', justifyContent: 'center', alignItems: 'center',
+                      width: 36, height: '100%', justifyContent: 'center', alignItems: 'center',
                       backgroundColor: pressed ? theme.colors.border : 'transparent'
                     })}
-                    hitSlop={4}
+                    hitSlop={6}
                   >
-                    <AppText weight="bold" style={{ fontSize: 16, color: theme.colors.textMuted }}>-</AppText>
+                    <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.textMuted }}>-</AppText>
                   </Pressable>
                   
                   <TextInput
                     keyboardType="decimal-pad"
                     selectTextOnFocus
-                    style={{ flex: 1, minWidth: 0, color: theme.colors.text, fontSize: 15, fontFamily: 'Inter_700Bold', textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false }}
+                    style={{ flex: 1, minWidth: 0, color: theme.colors.text, fontSize: 16, fontFamily: 'Inter_700Bold', textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false }}
                     value={String(set.kg)}
                     onChangeText={(txt) => updateSetValueText(set.id, 'kg', txt)}
                   />
 
                   <Pressable
-                    onPress={() => adjust(set.id, 'kg', 2.5)}
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); adjust(set.id, 'kg', 2.5); }}
                     style={({ pressed }) => ({
-                      width: 32, height: '100%', justifyContent: 'center', alignItems: 'center',
+                      width: 36, height: '100%', justifyContent: 'center', alignItems: 'center',
                       backgroundColor: pressed ? theme.colors.border : 'transparent'
                     })}
-                    hitSlop={4}
+                    hitSlop={6}
                   >
-                    <AppText weight="bold" style={{ fontSize: 16, color: theme.colors.textMuted }}>+</AppText>
+                    <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.primary }}>+</AppText>
                   </Pressable>
                 </View>
 
-                {/* Reps Stepper */}
-                <View style={{ flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 8, height: 38, borderWidth: 1, borderColor: theme.colors.border, overflow: 'hidden' }}>
+                {/* Reps Stepper — 44px Big Tap Target */}
+                <View style={{ flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 10, height: 44, borderWidth: 1, borderColor: isCurrentlyActive ? theme.colors.primary : theme.colors.border, overflow: 'hidden' }}>
                   <Pressable
-                    onPress={() => adjust(set.id, 'reps', -1)}
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); adjust(set.id, 'reps', -1); }}
                     style={({ pressed }) => ({
-                      width: 32, height: '100%', justifyContent: 'center', alignItems: 'center',
+                      width: 36, height: '100%', justifyContent: 'center', alignItems: 'center',
                       backgroundColor: pressed ? theme.colors.border : 'transparent'
                     })}
-                    hitSlop={4}
+                    hitSlop={6}
                   >
-                    <AppText weight="bold" style={{ fontSize: 16, color: theme.colors.textMuted }}>-</AppText>
+                    <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.textMuted }}>-</AppText>
                   </Pressable>
                   
                   <TextInput
                     keyboardType="number-pad"
                     selectTextOnFocus
-                    style={{ flex: 1, minWidth: 0, color: theme.colors.text, fontSize: 15, fontFamily: 'Inter_700Bold', textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false }}
+                    style={{ flex: 1, minWidth: 0, color: theme.colors.text, fontSize: 16, fontFamily: 'Inter_700Bold', textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false }}
                     value={String(set.reps)}
                     onChangeText={(txt) => updateSetValueText(set.id, 'reps', txt)}
                   />
 
                   <Pressable
-                    onPress={() => adjust(set.id, 'reps', 1)}
+                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); adjust(set.id, 'reps', 1); }}
                     style={({ pressed }) => ({
-                      width: 32, height: '100%', justifyContent: 'center', alignItems: 'center',
+                      width: 36, height: '100%', justifyContent: 'center', alignItems: 'center',
                       backgroundColor: pressed ? theme.colors.border : 'transparent'
                     })}
-                    hitSlop={4}
+                    hitSlop={6}
                   >
-                    <AppText weight="bold" style={{ fontSize: 16, color: theme.colors.textMuted }}>+</AppText>
+                    <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.primary }}>+</AppText>
                   </Pressable>
                 </View>
 
                 {/* RPE Column (Pro Mode) */}
                 {proMode && (
-                  <View style={{ width: 44, flexDirection: 'row', alignItems: 'stretch', justifyContent: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 8, height: 38, borderWidth: 1, borderColor: theme.colors.border, overflow: 'hidden' }}>
+                  <View style={{ width: 44, flexDirection: 'row', alignItems: 'stretch', justifyContent: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 10, height: 44, borderWidth: 1, borderColor: theme.colors.border, overflow: 'hidden' }}>
                     <TextInput
                       keyboardType="number-pad"
                       selectTextOnFocus
@@ -1119,15 +1178,15 @@ export default function LoggerScreen({
                   </View>
                 )}
 
-                {/* Check Button */}
+                {/* Check Button — Big Tap Target */}
                 <Pressable onPress={() => toggleSet(set.id)} style={{
-                  width: 36, height: 36, borderRadius: 10,
+                  width: 44, height: 44, borderRadius: 12,
                   backgroundColor: set.completed ? '#10B981' : 'transparent',
                   borderWidth: 1.5,
                   borderColor: set.completed ? '#10B981' : theme.colors.border,
                   justifyContent: 'center', alignItems: 'center',
                 }}>
-                  <Check size={16} color={set.completed ? '#FFF' : theme.colors.textMuted} strokeWidth={3} />
+                  <Check size={20} color={set.completed ? '#FFF' : theme.colors.textMuted} strokeWidth={3} />
                 </Pressable>
 
                 {/* Delete Set (swipe-like) */}

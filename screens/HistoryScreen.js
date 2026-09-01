@@ -26,7 +26,7 @@ const formatTimeStr = (d) => {
   return `${displayHours}:${minutes} ${ampm}`;
 };
 
-export default function HistoryScreen({ session, dbReady }) {
+export default function HistoryScreen({ session, dbReady, onStartWorkout }) {
   const { t } = useTranslation();
   const { graphicsQuality } = useTheme();
   const [historyData, setHistoryData] = useState([]);
@@ -610,11 +610,43 @@ export default function HistoryScreen({ session, dbReady }) {
         windowSize={5}
         removeClippedSubviews={graphicsQuality !== 'high'}
         ListEmptyComponent={() => (
-          <View style={{ alignItems: 'center', justifyContent: 'center', padding: 40 }}>
-            <Calendar color={theme.colors.textMuted} size={52} style={{ marginBottom: 16, opacity: 0.5 }} />
-            <AppText weight="bold" style={{ fontSize: 16, color: theme.colors.textMuted, marginBottom: 8 }}>
-              {activeTab === 'workouts' ? t('no_history') : activeTab === 'nutrition' ? 'Belum ada riwayat makanan.' : 'Belum ada riwayat air minum.'}
+          <View style={{ alignItems: 'center', justifyContent: 'center', padding: 32, backgroundColor: theme.colors.card, borderRadius: 20, borderWidth: 1, borderColor: theme.colors.border, marginHorizontal: 20, marginTop: 40 }}>
+            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(212,245,60,0.08)', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+              <Calendar color={theme.colors.primary} size={32} />
+            </View>
+            <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.text, marginBottom: 6, textAlign: 'center' }}>
+              {activeTab === 'workouts' ? 'Belum Ada Sesi Latihan' : activeTab === 'nutrition' ? 'Belum Ada Catatan Makanan' : 'Belum Ada Catatan Air'}
             </AppText>
+            <AppText style={{ fontSize: 13, color: theme.colors.textMuted, textAlign: 'center', lineHeight: 20, maxWidth: 280, marginBottom: 20 }}>
+              {activeTab === 'workouts' ? 'Selesaikan sesi latihan pertamamu untuk melihat grafik volume & riwayat angkatan di sini.' : 'Catat asupan harianmu untuk memonitor progres nutrisi.'}
+            </AppText>
+            {activeTab === 'workouts' && (
+              <TouchableOpacity
+                onPress={() => {
+                  try {
+                    const Haptics = require('expo-haptics');
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  } catch(e){}
+                  if (typeof onStartWorkout === 'function') onStartWorkout();
+                }}
+                style={{
+                  backgroundColor: theme.colors.primary,
+                  paddingHorizontal: 20,
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 8,
+                }}
+              >
+                <Dumbbell color="#000" size={16} />
+                <AppText weight="bold" style={{ color: '#000', fontSize: 14 }}>Mulai Latihan Sekarang</AppText>
+              </TouchableOpacity>
+            )}
           </View>
         )}
         renderSectionHeader={({ section: { title, data } }) => (
