@@ -4,9 +4,8 @@ import { supabase } from '../supabaseClient';
 import { useTheme } from '../contexts/ThemeContext';
 import { Globe, Smartphone, ShieldCheck, ArrowLeft } from 'lucide-react-native';
 
-// High-Performance Dynamic Code Splitting for Desktop Views
-const LandingPage = lazy(() => import('../screens/LandingPage'));
-const AdminDashboard = lazy(() => import('../screens/AdminDashboard'));
+import LandingPage from '../screens/LandingPage';
+import AdminDashboard from '../screens/AdminDashboard';
 
 function DesktopFallbackLoader() {
   return (
@@ -161,11 +160,9 @@ export default function AdaptiveLayout({ children, session }) {
       );
     }
     return (
-      <View style={{ flex: 1, backgroundColor: '#000000' }}>
+      <View style={{ flex: 1, backgroundColor: '#0E0E0F' }}>
         {renderDesktopSwitcher()}
-        <Suspense fallback={<DesktopFallbackLoader />}>
-          <LandingPage onLoginPress={() => setShowLogin(true)} />
-        </Suspense>
+        <LandingPage onLoginPress={() => setShowLogin(true)} />
       </View>
     );
   }
@@ -173,18 +170,16 @@ export default function AdaptiveLayout({ children, session }) {
   // 3. ADMIN PC (Sudah Login & Role = 'admin')
   if (session && role === 'admin') {
     return (
-      <View style={{ flex: 1, backgroundColor: '#000000' }}>
+      <View style={{ flex: 1, backgroundColor: '#0E0E0F' }}>
         {renderDesktopSwitcher()}
-        <Suspense fallback={<DesktopFallbackLoader />}>
-          <AdminDashboard />
-        </Suspense>
+        <AdminDashboard />
       </View>
     );
   }
 
   // 4. REGULAR USER PC (Sudah Login & Role != 'admin')
   return (
-    <View style={[styles.desktopContainer, { backgroundColor: '#0A0A0A' }]}>
+    <View style={[styles.desktopContainer, { backgroundColor: '#131315' }]}>
       {renderDesktopSwitcher()}
       <View style={styles.mobileMockupFrame}>
         {children}

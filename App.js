@@ -12,13 +12,15 @@ import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_7
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import AdaptiveLayout from './components/AdaptiveLayout';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
+if (Platform.OS !== 'web') {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+}
 
 import AuthScreen from './screens/AuthScreen';
 import PaywallScreen from './screens/PaywallScreen';
@@ -134,7 +136,7 @@ function AppContent() {
     };
   }, []);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded && Platform.OS !== 'web') {
     return <View style={{ flex: 1, backgroundColor: '#0E0E0F' }} />;
   }
 
