@@ -84,7 +84,7 @@ export async function generateWithGeminiCascade({
     }
   }
 
-  throw lastError || new Error('All Gemini cascade models failed to respond.');
+  throw lastError || new Error('[GymVault Gemini] All 7 cascade models failed. Check API key validity and model name availability at https://ai.google.dev/models/gemini');
 }
 
 if (typeof module !== 'undefined' && module.exports) {

@@ -22,17 +22,10 @@ import OfflineSyncBanner from '../components/OfflineSyncBanner';
 import CustomRoutinesWidget from '../components/CustomRoutinesWidget';
 import CommunitySocialFeedWidget from '../components/CommunitySocialFeedWidget';
 import LeaderboardPreviewWidget from '../components/LeaderboardPreviewWidget';
-import { formatShortDate } from '../utils/dateHelpers';
+import { formatShortDate, getLocalDateString } from '../utils/dateHelpers';
 import { MotiView } from 'moti';
 
-const getLocalDateString = () => {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
+
 
 export default function DashboardScreen({ onStartWorkout, onStartRoutine, session, dbReady, hasActiveWorkout }) {
   const { t } = useTranslation();

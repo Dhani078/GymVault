@@ -17,23 +17,12 @@ import DummyAdBanner from '../components/DummyAdBanner';
 import useInterstitialAd from '../components/DummyInterstitialAd';
 
 import * as Crypto from 'expo-crypto';
+import { makeId } from '../utils/makeId';
+import { getVolumeComparison } from '../utils/volumeComparison';
 import { calculateProgressiveOverload, calculateRecommendedRestTime, getBiomechanicalCue, parseVoiceWorkoutCommand } from '../utils/fitnessMath';
 
-// Gunakan UUID v4 standar agar tidak terjadi bentrok ID
-function makeId() {
-  return Crypto.randomUUID();
-}
 
-const getVolumeComparison = (vol) => {
-  if (vol === 0) return '';
-  if (vol < 500) return 'Setara mengangkat 2 ekor Panda dewasa 🐼';
-  if (vol < 1000) return 'Setara mengangkat motor gede Harley Davidson 🏍️';
-  if (vol < 2000) return 'Setara mengangkat 1 ekor sapi limosin premium 🐂';
-  if (vol < 3500) return 'Setara mengangkat mobil keluarga Avanza 🚗';
-  if (vol < 5000) return 'Setara mengangkat mobil SUV Fortuner Gagah 🚙';
-  if (vol < 8000) return 'Setara mengangkat mobil listrik Tesla Model X ⚡';
-  return 'Setara mengangkat helikopter tempur Apache 🚁';
-};
+
 
 export default function LoggerScreen({
   session, dbReady, workoutData, setWorkoutData, currentIndex, setCurrentIndex,

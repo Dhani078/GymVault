@@ -92,12 +92,28 @@ export function isSameDay(dateInput1, dateInput2) {
 }
 
 /**
- * Get start of the current week (Sunday 00:00:00)
+ * Get start of the current week (Monday 00:00:00)
+ * Gym context: week starts on Monday, not Sunday.
  */
 export function getStartOfWeek(dateInput = new Date()) {
   const d = parseSafeDate(dateInput);
   const start = new Date(d);
-  start.setDate(d.getDate() - d.getDay());
+  // getDay(): 0=Sun,1=Mon,...,6=Sat → shift so Monday=0
+  const dayOfWeek = d.getDay();
+  const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  start.setDate(d.getDate() - diffToMonday);
   start.setHours(0, 0, 0, 0);
   return start;
+}
+
+/**
+ * Format YYYY-MM-DD in local time (no UTC shift).
+ * Shared util — import dari sini, jangan definisikan ulang di tiap screen.
+ */
+export function getLocalDateString(date = new Date()) {
+  const d = parseSafeDate(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }

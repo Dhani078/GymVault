@@ -54,10 +54,10 @@ export default function useAdminData() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      // 1. Ambil data semua user
+      // 1. Ambil data semua user — pilih field spesifik, jangan select('*')
       const { data: users, error: userError } = await supabase
         .from('users_profile')
-        .select('*')
+        .select('id, name, username, email, role, is_premium, premium_plan, premium_until, body_weight, height, cns_fatigue, created_at')
         .order('created_at', { ascending: false });
 
       if (userError) throw userError;
