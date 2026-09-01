@@ -156,14 +156,14 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           }));
           setLeaderboardData(mapped);
         } else if (rpcErr) {
-          console.warn('[Dashboard] Leaderboard RPC error:', rpcErr.message);
+
         }
       } catch (leaderboardErr) {
-        console.warn('[Dashboard] Failed to fetch leaderboard:', leaderboardErr);
+
       }
 
     } catch (e) {
-      console.warn('[Dashboard] fetch error:', e.message);
+
       setDbError(true);
     }
 
@@ -190,7 +190,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           cns_fatigue: 3, // Default Neutral
         });
       } catch (e) {
-        console.warn('[Dashboard] Quick Start CNS save failed:', e.message);
+
       }
     }
     setLoading(false);

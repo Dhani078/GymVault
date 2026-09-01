@@ -43,7 +43,7 @@ export default function useInterstitialAd() {
     });
 
     const unsubscribeError = interstitial.addAdEventListener(AdEventType.ERROR, (error) => {
-      console.warn('Interstitial Ad Error:', error);
+
       setLoaded(false);
     });
 

@@ -206,7 +206,7 @@ export default function HistoryScreen({ session, dbReady }) {
       }
 
     } catch (e) {
-      console.warn('[History] fetch exception:', e.message);
+
       setError(`Error: ${e.message}`);
     }
 

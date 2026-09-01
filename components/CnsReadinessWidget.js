@@ -29,7 +29,7 @@ export default function CnsReadinessWidget({ session, userProfile, dbError, onSt
           cns_fatigue: averageCns,
         });
       } catch (e) {
-        console.warn('[CnsReadinessWidget] CNS save failed:', e.message);
+
       }
     }
 

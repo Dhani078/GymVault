@@ -77,7 +77,7 @@ export default function LoggerScreen({
           try {
             await navigator.mediaDevices.getUserMedia({ audio: true });
           } catch (permErr) {
-            console.warn('[GymVault Mic] Mic permission denied/prompted:', permErr);
+
           }
         }
 
@@ -114,7 +114,7 @@ export default function LoggerScreen({
         };
 
         recognition.onerror = (e) => {
-          console.warn('[GymVault Mic] Speech Recognition error:', e.error);
+
           setIsListening(false);
           if (e.error === 'not-allowed') {
             setMicStatusMsg('Izin mikrofon ditolak. Izinkan mic di browser.');
@@ -132,7 +132,7 @@ export default function LoggerScreen({
         recognitionRef.current = recognition;
         recognition.start();
       } catch (err) {
-        console.warn('[GymVault Mic] Start error:', err);
+
         setIsListening(false);
         setMicStatusMsg('Gagal mengaktifkan mikrofon.');
       }
@@ -268,7 +268,7 @@ export default function LoggerScreen({
       }
       return true;
     } catch (e) {
-      console.warn('[GymVault TTS] Audio playback failed:', e.message);
+
       return false;
     }
   };
@@ -310,7 +310,7 @@ export default function LoggerScreen({
 
             if (!response.ok) {
               const errText = await response.text();
-              console.warn(`[GymVault TTS] Model ${modelName} failed (${response.status}):`, errText.substring(0, 300));
+
               continue;
             }
 
@@ -322,21 +322,21 @@ export default function LoggerScreen({
             if (audioPart) {
               const played = await playAudioFromBase64(audioPart.inlineData.data, audioPart.inlineData.mimeType);
               if (played) {
-                console.log(`[GymVault TTS] ✅ Gemini voice (${modelName}) played successfully`);
+
                 return;
               }
             } else {
-              console.warn(`[GymVault TTS] Model ${modelName}: no audio part in response`);
+
             }
           } catch (modelErr) {
-            console.warn(`[GymVault TTS] Model ${modelName} error:`, modelErr.message);
+
             continue;
           }
         }
         
-        console.warn('[GymVault TTS] All Gemini models failed, using phone TTS');
+
       } catch (e) {
-        console.warn("[GymVault TTS] Gemini TTS error:", e.message);
+
       }
     }
 
@@ -478,7 +478,7 @@ export default function LoggerScreen({
         });
       }
     } catch (err) {
-      console.warn('[LoggerScreen] LiveActivity error:', err);
+
     }
   }, [timerActive, workoutStartTime, currentIndex]);
 
@@ -497,7 +497,7 @@ export default function LoggerScreen({
       });
       return () => unsubscribe();
     } catch (e) {
-      console.warn('[LoggerScreen] Notification action subscription failed:', e);
+
     }
   }, []);
 
@@ -692,7 +692,7 @@ export default function LoggerScreen({
       
       setShowShareModal(true);
     } catch (e) {
-      console.warn('[Logger] handleFinish exception:', e.message);
+
       setSaveError(`Error: ${e.message}`);
       setSaving(false);
     }
@@ -724,7 +724,7 @@ export default function LoggerScreen({
       setRoutineName('');
       showNotification({ type: 'success', title: 'Routine Saved!', subtitle: `"${newRoutine.name}" ready on Dashboard`, duration: 3000 });
     } catch (e) {
-      console.warn("Failed to save routine:", e);
+
       Alert.alert("Error", "Failed to save routine.");
     }
   };

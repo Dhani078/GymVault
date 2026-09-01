@@ -71,7 +71,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         }
       }
     } catch (nutErr) {
-      console.warn("[Offline Sync] Nutrition sync error:", nutErr);
+
     } finally {
       setIsSyncing(false);
     }
@@ -109,7 +109,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         setMacroTarget({ target_calories: 0, target_protein: 0 });
       }
     } catch (e) {
-      console.warn("Fetch nutrition error:", e);
+
     }
   };
 
@@ -123,7 +123,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         prompt,
         responseMimeType: 'application/json'
       });
-      console.log(`[Nutrition Log] Parsed using ${modelUsed}`);
+
 
       const cleanJson = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleanJson);
@@ -144,7 +144,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         duration: 2500,
       });
     } catch (e) {
-      console.warn("AI parse food failed:", e);
+
       Alert.alert("Gagal memproses", "AI gagal mendeteksi makanan. Coba ketik dengan format lebih jelas (cth: dada ayam bakar 200 kalori).");
     } finally {
       setAiLoading(false);
@@ -197,7 +197,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         .eq('id', session.user.id);
       if (error) console.warn("[NutritionWidget] Failed to sync nutrition target to Supabase:", error.message);
     } catch (err) {
-      console.warn("Error applying macro targets", err);
+
     }
   };
 

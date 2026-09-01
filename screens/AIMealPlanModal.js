@@ -91,7 +91,7 @@ Sangat penting: semua penjelasan nama makanan dan instruksi harus dalam Bahasa I
         prompt,
         responseMimeType: 'application/json'
       });
-      console.log(`[Fridge Chef] Generated successfully using ${modelUsed}`);
+
 
       let cleanText = rawText.trim().replace(/```(?:json)?\s*([\s\S]*?)```/g, '$1').trim();
       const s = cleanText.indexOf('{');
@@ -101,7 +101,7 @@ Sangat penting: semua penjelasan nama makanan dan instruksi harus dalam Bahasa I
       const parsed = JSON.parse(cleanText);
       setFridgeRecipe(parsed);
     } catch (e) {
-      console.warn("Fridge recipe error:", e);
+
       Alert.alert("Gagal Meracik Resep ⚠️", "Sistem sedang sibuk. Silakan coba beberapa saat lagi.");
     } finally {
       setLoading(false);
@@ -153,7 +153,7 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
         prompt,
         responseMimeType: 'application/json'
       });
-      console.log(`[Meal Plan] Generated successfully using ${modelUsed}`);
+
 
       // Cleanup markdown and extract JSON block
       let cleanText = rawText.trim();
@@ -167,7 +167,7 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
       const parsed = JSON.parse(cleanText);
       setMealPlan(parsed);
     } catch (e) {
-      console.warn("AI Generation failed:", e);
+
       Alert.alert("Gagal Membuat Menu ⚠️", "Sistem sedang sibuk. Silakan coba beberapa saat lagi.");
     } finally {
       setLoading(false);

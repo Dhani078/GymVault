@@ -378,7 +378,7 @@ export default function LibraryScreen({ onStartExercise }) {
       globalCachedExercises = merged;
 
     } catch (err) {
-      console.log('Error fetching exercises:', err);
+
     } finally {
       setIsFetchingMore(false);
     }

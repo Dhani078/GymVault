@@ -50,7 +50,7 @@ export default function useRewardedAd() {
     });
 
     const unsubscribeError = rewarded.addAdEventListener(AdEventType.ERROR, (error) => {
-      console.warn('Rewarded Ad Error:', error);
+
       setLoaded(false);
     });
 

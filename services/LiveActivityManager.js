@@ -30,7 +30,7 @@ class LiveActivityManager {
       try {
         l(actionId);
       } catch (err) {
-        console.warn('[LiveActivityManager] Listener error:', err);
+
       }
     });
   }
@@ -52,7 +52,7 @@ class LiveActivityManager {
         sound: 'default',
       });
     } catch (e) {
-      console.warn('[LiveActivityManager] Channel creation failed:', e);
+
     }
   }
 
@@ -95,7 +95,7 @@ class LiveActivityManager {
         },
       });
     } catch (e) {
-      console.warn('[LiveActivityManager] Display workout notification failed:', e);
+
     }
   }
 
@@ -142,7 +142,7 @@ class LiveActivityManager {
         },
       });
     } catch (e) {
-      console.warn('[LiveActivityManager] Display rest notification failed:', e);
+
     }
   }
 
@@ -159,7 +159,7 @@ class LiveActivityManager {
       await notifee.stopForegroundService();
       await notifee.cancelNotification('active_workout');
     } catch (e) {
-      console.warn('[LiveActivityManager] Stop activity failed:', e);
+
     }
   }
 }

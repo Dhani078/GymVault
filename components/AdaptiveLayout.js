@@ -50,7 +50,7 @@ export default function AdaptiveLayout({ children, session }) {
             setRole(data.role); // e.g. 'admin' or 'user'
           }
         } catch (e) {
-          console.warn('[AdaptiveLayout] Error fetching role:', e);
+
         } finally {
           setLoadingRole(false);
         }

@@ -41,7 +41,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
         setSearchResults(mapped);
       }
     } catch (e) {
-      console.warn("Failed search:", e);
+
     } finally {
       setSearching(false);
     }
@@ -131,7 +131,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
       }
       
       if (rpcErr) {
-        console.warn("RPC fetch error, falling back to safeSelect:", rpcErr.message);
+
       }
 
       // 2. Fallback client-side aggregation (only shows current user unless RLS is relaxed)
@@ -142,7 +142,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
       });
 
       if (usersErr || sessErr) {
-        console.warn("Failed to fetch real leaderboard data");
+
         setLoading(false);
         return;
       }
@@ -220,7 +220,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
       const rankedData = realData.map((u, i) => ({ ...u, rank: i + 1 }));
       setLeaderboard(rankedData);
     } catch (e) {
-      console.warn(e);
+
     } finally {
       setLoading(false);
     }

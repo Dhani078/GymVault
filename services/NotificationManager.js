@@ -21,7 +21,7 @@ export const NotificationManager = {
       }
       
       if (finalStatus !== 'granted') {
-        console.log('Failed to get push token for push notification!');
+
         return;
       }
 
@@ -71,9 +71,9 @@ export const NotificationManager = {
       });
 
       await AsyncStorage.setItem(NOTIFICATION_SETUP_KEY, 'true');
-      console.log('Daily Reminders Scheduled!');
+
     } catch (error) {
-      console.log('Error scheduling notifications:', error);
+
     }
   },
 
@@ -82,7 +82,7 @@ export const NotificationManager = {
       await Notifications.cancelAllScheduledNotificationsAsync();
       await AsyncStorage.removeItem(NOTIFICATION_SETUP_KEY);
     } catch (e) {
-      console.error(e);
+
     }
   }
 };

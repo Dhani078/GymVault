@@ -31,7 +31,7 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
           .eq('is_checked', true);
 
         if (error) {
-          console.warn('[Analytics] query error:', error);
+
         }
 
         if (!error && data) {
@@ -48,7 +48,7 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
           }
         }
       } catch (e) {
-        console.warn('[Analytics] Failed to fetch exercises:', e.message);
+
       } finally {
         setLoading(false);
       }
@@ -76,7 +76,7 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
           .eq('is_checked', true);
 
         if (error) {
-          console.warn('[Analytics] fetch error:', error);
+
         }
 
         if (!error && data) {
@@ -112,7 +112,7 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
           setHistoryData(Object.values(sessionsGrouped));
         }
       } catch (e) {
-        console.warn('[Analytics] History fetch failed:', e.message);
+
       } finally {
         setLoading(false);
       }

@@ -135,7 +135,7 @@ export default function AIChatBubble() {
             f = matched.f;
           }
         } catch (e) {
-          console.warn("Dataset match error in Chat:", e);
+
         }
 
         const { data: inserted } = await supabase.from('nutrition_logs').insert({
@@ -220,7 +220,7 @@ export default function AIChatBubble() {
         return { type: 'workout', id: sessionId, split: splitName, exercises: exercises };
       }
     } catch (e) {
-      console.warn("Failed to process AI Coach log:", e);
+
     }
     return null;
   };
@@ -308,7 +308,7 @@ export default function AIChatBubble() {
       }));
 
     } catch (e) {
-      console.warn("Undo failed:", e);
+
     }
   };
 
@@ -514,11 +514,11 @@ export default function AIChatBubble() {
           if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
             aiText = data.candidates[0].content.parts[0].text;
             modelSuccess = modelName;
-            console.log(`[AI Coach Chat] Response from ${modelName}`);
+
             break;
           }
         } catch (err) {
-          console.warn(`[AI Coach Chat] ${modelName} error, trying next...`);
+
         }
       }
 
@@ -540,7 +540,7 @@ export default function AIChatBubble() {
         replyText = parsed.reply || aiText;
         logData = parsed.log;
       } catch (err) {
-        console.warn("Failed to parse AI JSON response:", err);
+
       }
 
       let loggedInfo = null;
@@ -555,14 +555,14 @@ export default function AIChatBubble() {
         log: loggedInfo
       }]);
     } catch (error) {
-      console.warn("AI Chat Error:", error);
+
       
       // Attempt offline pattern matching
       let offlineResult = null;
       try {
         offlineResult = await processOfflineMessage(textToSend);
       } catch (offErr) {
-        console.warn("Offline processor error:", offErr);
+
       }
 
       if (offlineResult) {

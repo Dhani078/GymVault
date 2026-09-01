@@ -185,7 +185,7 @@ export default function useAdminData() {
       }));
       
     } catch (e) {
-      console.warn('[AdminDashboard] Fetch Error:', e);
+
     } finally {
       setLoading(false);
     }
@@ -201,7 +201,7 @@ export default function useAdminData() {
         fetchAdminData();
       }
     } catch (e) {
-      console.warn('[AdminDashboard] Approve Payment Error:', e);
+
     } finally {
       setActionLoadingId(null);
     }
@@ -215,7 +215,7 @@ export default function useAdminData() {
         setPaymentRequests(prev => prev.map(p => p.id === requestId ? { ...p, status: 'rejected' } : p));
       }
     } catch (e) {
-      console.warn('[AdminDashboard] Reject Payment Error:', e);
+
     } finally {
       setActionLoadingId(null);
     }
@@ -254,7 +254,7 @@ export default function useAdminData() {
       setUsersList(usersList.filter(u => u.id !== userToDelete.id));
       setStats(prev => ({ ...prev, totalUsers: prev.totalUsers - 1 }));
     } catch (e) {
-      console.warn('[AdminDashboard] Delete Error:', e);
+
     } finally {
       setUserToDelete(null);
     }
@@ -291,7 +291,7 @@ export default function useAdminData() {
         u.id === userToToggleStatus.id ? { ...u, status: newStatus } : u
       ));
     } catch (e) {
-      console.warn('[AdminDashboard] Toggle Status Error:', e);
+
       Alert.alert("Error", "Gagal mengubah status. Pastikan kolom 'status' ada di database.");
     } finally {
       setUserToToggleStatus(null);
@@ -315,7 +315,7 @@ export default function useAdminData() {
         setUserWorkouts([]);
       }
     } catch (e) {
-      console.warn('[AdminDashboard] Fetch Detail Error:', e);
+
     } finally {
       setLoadingDetail(false);
     }
@@ -369,7 +369,7 @@ export default function useAdminData() {
         setPromoCodes([data[0], ...promoCodes]);
       }
     } catch (e) {
-      console.warn('[AdminDashboard] Create Promo Error:', e);
+
       Alert.alert("Error", e.message || "Gagal membuat kode promo.");
     } finally {
       setIsGeneratingPromo(false);
@@ -396,7 +396,7 @@ export default function useAdminData() {
       } catch(e) {}
       
     } catch (e) {
-      console.warn('[AdminDashboard] Delete Promo Error:', e);
+
     } finally {
       setPromoToDelete(null);
     }
@@ -447,7 +447,7 @@ export default function useAdminData() {
         Alert.alert("Sukses", "Notifikasi berhasil disebarkan!");
       }
     } catch (e) {
-      console.warn('[AdminDashboard] Create Notif Error:', e);
+
       Alert.alert("Error", e.message || "Gagal membuat notifikasi.");
     } finally {
       setIsSendingNotif(false);
@@ -474,7 +474,7 @@ export default function useAdminData() {
       } catch(e) {}
       
     } catch (e) {
-      console.warn('[AdminDashboard] Delete Notif Error:', e);
+
     } finally {
       setNotifToDelete(null);
     }
@@ -508,7 +508,7 @@ export default function useAdminData() {
       
       setSelectedTicket(null);
     } catch (e) {
-      console.warn('[AdminDashboard] Resolve Ticket Error:', e);
+
     } finally {
       setIsResolvingTicket(false);
     }
@@ -578,7 +578,7 @@ export default function useAdminData() {
         }));
       }
     } catch (e) {
-      console.warn('[AdminDashboard] Toggle Pro Error:', e);
+
     }
   };
 
