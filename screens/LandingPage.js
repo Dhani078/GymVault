@@ -250,18 +250,16 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.heroSection, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.badge}>
           <Sparkles color="#D4F53C" size={14} />
-          <Text style={styles.badgeText}>ELITE FITNESS & ADAPTIVE RECOVERY ENGINE 2.0</Text>
+          <Text style={styles.badgeText}>GYMVAULT FITNESS PLATFORM 2.0</Text>
         </View>
 
         <Text style={[styles.heroTitle, { fontSize: isLarge ? 64 : isMedium ? 44 : 32, lineHeight: isLarge ? 74 : isMedium ? 52 : 40 }]}>
           ENGINEERED FOR{'\n'}
-          <Text style={{ color: '#D4F53C' }}>ABSOLUTE PHYSICAL DOMINANCE.</Text>
+          <Text style={{ color: '#D4F53C', fontWeight: '600', letterSpacing: 1 }}>PRECISION TRAINING.</Text>
         </Text>
 
         <Text style={[styles.heroSubtitle, { maxWidth: isLarge ? 760 : 600 }]}>
-          GymVault memadukan pelacakan latihan berkecepatan 120 FPS Skia GPU, 
-          mesin pemulihan kelelahan otot Central Nervous System (CNS), 
-          dan kecerdasan buatan Google Gemini Multimodal untuk memecahkan batas rekor fisik Anda.
+          Platform pencatat latihan dengan pelacakan performa, recovery analysis, dan insight berbasis data. Dirancang untuk hasil nyata.
         </Text>
 
         {/* Hero CTAs */}
@@ -311,7 +309,7 @@ export default function LandingPage({ onLoginPress }) {
           {/* Tab Switcher */}
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
             {[
-              { id: 'logger', label: 'Zero-Friction Live Logger', icon: PlayCircle },
+              { id: 'logger', label: 'Live Logger', icon: PlayCircle },
               { id: 'voice', label: '🎙️ Voice Hands-Free Logger', icon: Mic },
               { id: 'fridge', label: '🍳 Fridge-to-Macro Chef', icon: Utensils },
               { id: 'heatmap', label: '12-Group CNS Heatmap', icon: Activity },
