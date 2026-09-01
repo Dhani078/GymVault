@@ -94,7 +94,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
         prompt,
         responseMimeType: 'application/json'
       });
-      console.log(`[AI Routine] Generated using ${modelUsed}`);
+
 
       let text = rawText.trim();
       text = text.replace(/```(?:json)?\s*([\s\S]*?)```/g, '$1').trim();
@@ -122,7 +122,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
       onStartRoutine(routine);
 
     } catch (e) {
-      console.warn("AI Gen error", e);
+
       Alert.alert("Error", `Gagal memproses AI: ${e.message}`);
     } finally {
       setLoading(false);

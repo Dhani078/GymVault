@@ -30,7 +30,7 @@ export default function WaterTrackerWidget({ userProfile, refreshTrigger }) {
         }
       }
     } catch (e) {
-      console.warn('Error fetching water data', e);
+
     }
   };
 

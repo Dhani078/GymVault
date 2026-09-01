@@ -734,7 +734,7 @@ export async function getCustomFoods(userId = 'guest') {
     const json = await AsyncStorage.getItem(`@gymvault_custom_foods_${userId}`);
     return json ? JSON.parse(json) : [];
   } catch (e) {
-    console.warn('[NutritionDataset] Error loading custom foods:', e);
+
     return [];
   }
 }
@@ -759,7 +759,7 @@ export async function saveCustomFood(userId = 'guest', food) {
     await AsyncStorage.setItem(`@gymvault_custom_foods_${userId}`, JSON.stringify(updated));
     return newEntry;
   } catch (e) {
-    console.warn('[NutritionDataset] Error saving custom food:', e);
+
     return null;
   }
 }
@@ -772,7 +772,7 @@ export async function deleteCustomFood(userId = 'guest', foodId) {
     await AsyncStorage.setItem(`@gymvault_custom_foods_${userId}`, JSON.stringify(filtered));
     return true;
   } catch (e) {
-    console.warn('[NutritionDataset] Error deleting custom food:', e);
+
     return false;
   }
 }

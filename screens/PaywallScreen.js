@@ -130,7 +130,7 @@ export default function PaywallScreen({ onSkip, session }) {
         throw new Error(json.error || 'Gagal mengirim notifikasi.');
       }
     } catch (e) {
-      console.error('Submit Payment Error:', e);
+
       Alert.alert('Gagal Mengirim', 'Terjadi kesalahan saat mengirim bukti. Pastikan koneksi internet Anda stabil.');
     } finally {
       setIsSubmitting(false);

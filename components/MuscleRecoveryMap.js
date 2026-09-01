@@ -240,7 +240,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
         setOverrides({});
       }
     } catch (e) {
-      console.warn("[Muscle Recovery] Override load failed:", e);
+
     }
   };
 
@@ -280,7 +280,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
         });
       }
     } catch (e) {
-      console.warn("[Muscle Recovery] Override save failed:", e);
+
     }
   };
 

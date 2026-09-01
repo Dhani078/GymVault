@@ -56,7 +56,7 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
         return queue;
       }
     } catch (e) {
-      console.warn("Error loading offline queue:", e);
+
     }
     setOfflineQueueCount(0);
     return [];
@@ -91,7 +91,7 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
           
           const { data: sessionData, error: sessionErr } = await safeInsert('workout_sessions', payload);
           if (sessionErr || !sessionData) {
-            console.warn("[Offline Sync] Failed to insert session:", sessionErr?.message);
+
             continue;
           }
 
@@ -118,13 +118,13 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
           if (setRows.length > 0) {
             const { error: setsErr } = await safeBatchInsert('workout_sets', setRows);
             if (setsErr) {
-              console.warn('[Offline Sync] Sets save partial failure:', setsErr.message);
+
             }
           }
 
           successfulIds.push(i);
         } catch (err) {
-          console.warn("[Offline Sync] Network/request failed during sync:", err);
+
         }
       }
 
@@ -153,7 +153,7 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
         }
       }
     } catch (e) {
-      console.warn("syncOfflineQueue error:", e);
+
     } finally {
       setIsSyncing(false);
     }

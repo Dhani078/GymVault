@@ -33,7 +33,7 @@ export default function DummyAdBanner() {
             requestNonPersonalizedAdsOnly: true,
           }}
           onAdFailedToLoad={(error) => {
-            console.warn('AdMob Banner Error:', error);
+
             setIsVisible(false);
           }}
         />

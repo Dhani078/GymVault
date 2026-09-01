@@ -75,11 +75,11 @@ export async function generateWithGeminiCascade({
       }
 
       if (data?.error) {
-        console.warn(`[Gemini Cascade] ${modelName} error (${data.error.code || data.error.status}): ${data.error.message}, switching to next model...`);
+
         lastError = new Error(data.error.message || 'Model API error');
       }
     } catch (err) {
-      console.warn(`[Gemini Cascade] ${modelName} fetch failed, trying next...`, err.message);
+
       lastError = err;
     }
   }

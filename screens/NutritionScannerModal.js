@@ -179,11 +179,11 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
           parsedResult.f = matched.f;
         }
       } catch (e) {
-        console.warn("Dataset matching error:", e);
+
       }
       return parsedResult;
     } catch (error) {
-      console.warn("Serverless API Error / Network Error:", error.message);
+
       return { food: "Error Jaringan / Server", cal: 0, p: 0, c: 0, f: 0 };
     }
   };
@@ -252,7 +252,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
         setIsAnalyzing(false);
       }
     } catch (e) {
-      console.warn("Scan failed", e);
+
       setIsAnalyzing(false);
     }
   };

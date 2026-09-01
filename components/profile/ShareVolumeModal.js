@@ -138,7 +138,7 @@ export default function ShareVolumeModal({
                       Alert.alert("Error", "Sharing is not available on this device.");
                     }
                   } catch (e) {
-                    console.warn("Share error", e);
+
                   }
                 }}
                 style={{ flex: 1, backgroundColor: '#D4F53C', borderRadius: 14, padding: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 10 }}
@@ -159,7 +159,7 @@ export default function ShareVolumeModal({
                       Alert.alert("Error", "Izin akses galeri dibutuhkan untuk menyimpan gambar.");
                     }
                   } catch (e) {
-                    console.warn("Save error", e);
+
                     Alert.alert("Gagal menyimpan", "Terjadi kesalahan saat memproses gambar.");
                   }
                 }}

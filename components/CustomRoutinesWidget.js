@@ -44,11 +44,11 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
               .eq('id', session.user.id);
           }
         } else if (error) {
-          console.log('[CustomRoutines] Supabase custom_routines fetch failed or column not ready:', error.message);
+
         }
       }
     } catch (e) {
-      console.warn("Failed to load or sync routines:", e);
+
     }
   };
 
@@ -74,7 +74,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
         duration: 2500,
       });
     } catch (e) {
-      console.warn("Failed to delete routine", e);
+
     }
   };
 
