@@ -73,13 +73,13 @@ export default function AdminDashboard() {
       <View style={styles.navTabsBar}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.navTabsScroll}>
           {[
-            { key: 'overview', label: '🚀 Overview', count: null },
-            { key: 'payments', label: '💳 Verifikasi QRIS', count: pendingPaymentsCount > 0 ? pendingPaymentsCount : null },
-            { key: 'users', label: '👥 Database Lifter', count: usersList.length },
-            { key: 'promos', label: '🎟️ Promo Engine', count: promoCodes.length },
-            { key: 'notifications', label: '📢 Broadcast Push', count: notifications.length },
-            { key: 'support', label: '💬 Support Desk', count: supportTickets.filter(t => t.status === 'open').length || null },
-            { key: 'audit', label: '📜 Audit Logs', count: null },
+            { key: 'overview', label: 'Overview', count: null },
+            { key: 'payments', label: 'Verifikasi Pembayaran', count: pendingPaymentsCount > 0 ? pendingPaymentsCount : null },
+            { key: 'users', label: 'User Database', count: usersList.length },
+            { key: 'promos', label: 'Promo Engine', count: promoCodes.length },
+            { key: 'notifications', label: 'Push Broadcast', count: notifications.length },
+            { key: 'support', label: 'Support Desk', count: supportTickets.filter(t => t.status === 'open').length || null },
+            { key: 'audit', label: 'Audit Logs', count: null },
           ].map(tab => (
             <TouchableOpacity
               key={tab.key}
@@ -305,7 +305,7 @@ export default function AdminDashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: '#0E0E0F',
     width: '100%',
   },
   header: {
@@ -314,14 +314,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 40,
     height: 80,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: '#161618',
     borderBottomWidth: 1,
-    borderBottomColor: '#1A1A1A',
+    borderBottomColor: '#252528',
   },
   navTabsBar: {
-    backgroundColor: '#0E0E14',
+    backgroundColor: '#0E0E0F',
     borderBottomWidth: 1,
-    borderBottomColor: '#1E1E28',
+    borderBottomColor: '#252528',
     paddingVertical: 10,
     paddingHorizontal: 30,
   },
@@ -337,16 +337,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#14141E',
+    backgroundColor: '#131315',
     borderWidth: 1,
-    borderColor: '#222230',
+    borderColor: '#252528',
   },
   navTabBtnActive: {
-    backgroundColor: 'rgba(204, 255, 0, 0.15)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderColor: '#D4F53C',
   },
   navTabText: {
-    color: '#8E8E9F',
+    color: '#909096',
     fontSize: 13,
     fontWeight: 'bold',
   },
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     color: '#D4F53C',
   },
   navTabBadge: {
-    backgroundColor: 'rgba(204, 255, 0, 0.2)',
+    backgroundColor: 'rgba(212, 245, 60, 0.15)',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 10,
@@ -379,12 +379,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   adminBadge: {
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.3)',
+    borderColor: 'rgba(212, 245, 60, 0.2)',
   },
   adminBadgeText: {
     color: '#D4F53C',

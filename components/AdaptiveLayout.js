@@ -200,19 +200,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mobileMockupFrame: {
-    width: 450,
-    height: '90%',
-    maxHeight: 900,
-    backgroundColor: '#000000',
-    borderRadius: 40,
+    width: 414,
+    height: '92%',
+    maxHeight: 896,
+    backgroundColor: '#0E0E0F',
+    borderRadius: 48,
     overflow: 'hidden',
-    borderWidth: 8,
-    borderColor: '#1A1A1A',
+    borderWidth: 10,
+    borderColor: '#111112',
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.1,
-    shadowRadius: 50,
+    shadowOffset: { width: 0, height: 40 },
+    shadowOpacity: 0.8,
+    shadowRadius: 80,
     elevation: 20,
+    // Outer ring effect for web
+    ...(Platform.OS === 'web' ? {
+      boxShadow: '0px 40px 100px -10px rgba(0,0,0,0.9), inset 0px 0px 0px 1px rgba(255,255,255,0.05)',
+      outlineStyle: 'solid',
+      outlineWidth: 1,
+      outlineColor: 'rgba(255,255,255,0.1)'
+    } : {})
   },
   floatingSwitcher: {
     position: 'absolute',
