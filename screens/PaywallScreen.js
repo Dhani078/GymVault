@@ -141,7 +141,7 @@ export default function PaywallScreen({ onSkip, session }) {
 
   if (isPremium) {
     return (
-      <View style={[styles.screen, { justifyContent: 'center', alignItems: 'center', padding: 32 }]}>
+      <View style={[styles.screen, { justifyContent: 'center', alignItems: 'center', padding: 32, backgroundColor: colors.background }]}>
         <GymVaultLogo size={90} />
         <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(212,245,60,0.15)', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
           <Crown color="#D4F53C" size={36} />
@@ -163,7 +163,7 @@ export default function PaywallScreen({ onSkip, session }) {
   }
 
   return (
-    <SmoothScrollView contentContainerStyle={{ padding: 24, paddingBottom: 60, minHeight: '100%' }}>
+    <SmoothScrollView contentContainerStyle={{ padding: 24, paddingBottom: 60, minHeight: '100%' }} style={{ backgroundColor: colors.background }}>
       {/* Header */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, marginTop: 10 }}>
         <GymVaultLogo size={44} />

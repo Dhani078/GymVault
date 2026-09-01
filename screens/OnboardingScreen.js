@@ -21,7 +21,7 @@ export default function OnboardingScreen({ onComplete }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000', padding: 24, justifyContent: 'center' }}>
+    <View style={{ flex: 1, backgroundColor: '#0E0E0F', padding: 24, justifyContent: 'center' }}>
       <AppText weight="bold" style={{ fontSize: 32, color: '#FFF', marginBottom: 16 }}>
         {step === 1 ? "What's your main goal?" : "What's your experience level?"}
       </AppText>
