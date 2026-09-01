@@ -1,7 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
+import { generateWithGeminiCascade } from '../services/geminiService';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://sjrzhiigrcrcpgvnfixo.supabase.co';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_QkDfIJZOVzZsO39jEdpI5w_fb4Bkavp';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('[payment-notify] Missing EXPO_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_ANON_KEY env vars');
+}
+
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Target Account Details for Validation
@@ -16,27 +22,14 @@ const VALID_DESTINATIONS = {
   }
 };
 
-// Prioritized Model Waterfall Switch (Auto-Fallback)
-const GEMINI_MODEL_CASCADE = [
-  'gemini-3.7-flash',
-  'gemini-3.6-flash',
-  'gemini-3.5-flash',
-  'gemini-3.1-flash-lite',
-  'gemini-2.5-flash',
-  'gemini-2.5-flash-lite',
-  'gemini-1.5-flash'
-];
-
 async function analyzeReceiptWithGemini(base64Image, expectedAmount) {
-  const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-  if (!GEMINI_API_KEY || !base64Image) return null;
+  if (!base64Image) return null;
 
-  const cleanBase64 = base64Image.replace(/^data:image\/[a-z]+;base64,/, '');
   const now = new Date();
   const currentDateWIB = now.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'long', year: 'numeric' });
   const currentShortDate = now.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  const prompt = 
+  const prompt =
     `Anda adalah AI Audit & Fraud Detection Pembayaran GymVault yang sangat teliti dan berstandar tinggi.\n\n` +
     `Tugas Anda adalah memeriksa foto struk transfer / bukti bayar ini dengan aturan ketat berikut:\n` +
     `1. REKENING / QRIS TUJUAN HARUS SALAH SATU DARI:\n` +
@@ -59,50 +52,22 @@ async function analyzeReceiptWithGemini(base64Image, expectedAmount) {
     `  "fraudAnalysis": string\n` +
     `}`;
 
-  // Loop through models in cascade order
-  for (const modelName of GEMINI_MODEL_CASCADE) {
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: prompt },
-                {
-                  inline_data: {
-                    mime_type: 'image/jpeg',
-                    data: cleanBase64
-                  }
-                }
-              ]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.1,
-            responseMimeType: "application/json"
-          }
-        })
-      });
-
-      const result = await response.json();
-      if (result?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        const parsed = JSON.parse(result.candidates[0].content.parts[0].text);
-        parsed.modelUsed = modelName;
-        return parsed;
-      }
-
-      if (result?.error) {
-        console.warn(`[Gemini Cascade] ${modelName} error (${result.error.code}), switching to next model...`);
-      }
-    } catch (modelErr) {
-      console.warn(`[Gemini Cascade] ${modelName} exception, falling back...`, modelErr.message);
-    }
+  try {
+    const cleanBase64 = base64Image.replace(/^data:image\/[a-z]+;base64,/, '');
+    const result = await generateWithGeminiCascade({
+      prompt,
+      imageBase64: cleanBase64,
+      mimeType: 'image/jpeg',
+      responseMimeType: 'application/json',
+      temperature: 0.1,
+    });
+    const parsed = JSON.parse(result.text);
+    parsed.modelUsed = result.modelUsed;
+    return parsed;
+  } catch (err) {
+    console.warn('[payment-notify] Gemini receipt analysis failed:', err.message);
+    return null;
   }
-
-  return null;
 }
 
 export default async function handler(req, res) {
@@ -116,6 +81,12 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  // Basic secret check — set PAYMENT_WEBHOOK_SECRET di env, kirim via header X-Webhook-Secret
+  const webhookSecret = process.env.PAYMENT_WEBHOOK_SECRET;
+  if (webhookSecret && req.headers['x-webhook-secret'] !== webhookSecret) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {

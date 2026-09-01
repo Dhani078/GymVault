@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView, StatusBar, View, TouchableOpacity, ActivityIndicator, Alert, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LayoutDashboard, Dumbbell, PenLine, BarChart3, Clock, Camera } from 'lucide-react-native';
 import { AppText, theme, styles } from './theme';
 import { supabase, ensureDatabase } from './supabaseClient';
@@ -7,7 +8,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { DynamicIslandProvider } from './contexts/DynamicIslandContext';
 import { AppModeProvider } from './contexts/AppModeContext';
 import * as Notifications from 'expo-notifications';
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_700Bold } from '@expo-google-fonts/inter';
+import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import AdaptiveLayout from './components/AdaptiveLayout';
 
@@ -39,11 +40,8 @@ const TABS = [
 ];
 
 import * as Crypto from 'expo-crypto';
+import { makeId } from './utils/makeId';
 
-// Gunakan UUID v4 standar agar tidak terjadi bentrok ID
-function makeId() {
-  return Crypto.randomUUID();
-}
 
 function AppContent() {
   const { colors, darkMode } = useTheme();
@@ -51,6 +49,7 @@ function AppContent() {
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
+    Inter_600SemiBold,
     Inter_700Bold,
   });
 
@@ -77,8 +76,6 @@ function AppContent() {
 
   useEffect(() => {
     const initApp = async () => {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      
       // Load onboarding status
       const seen = await AsyncStorage.getItem('has_seen_onboarding');
       if (!seen) setShowOnboarding(true);
@@ -124,6 +121,8 @@ function AppContent() {
         setWorkoutData([]);
         setWorkoutIndex(0);
         setWorkoutStartTime(null);
+        // Reset notif timer saat logout agar bisa menjadwalkan ulang
+        Notifications.cancelAllScheduledNotificationsAsync().catch(() => {});
       }
     });
 
@@ -178,21 +177,25 @@ function AppContent() {
     }
   }, [workoutStartTime, workoutIndex, workoutData]);
 
-  // Setup Inactivity Reminder (3 Days)
+  // Setup Inactivity Reminder (3 Days) — hanya jadwalkan jika belum ada
   useEffect(() => {
     const setupNotifications = async () => {
       const { status } = await Notifications.requestPermissionsAsync();
-      if (status === 'granted') {
-        await Notifications.cancelAllScheduledNotificationsAsync();
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "🔥 Don't lose your streak!",
-            body: "It's been a few days since your last session. Time to crush a workout today!",
-            sound: true,
-          },
-          trigger: { seconds: 3 * 24 * 60 * 60 }, // 3 days
-        });
-      }
+      if (status !== 'granted') return;
+
+      // Cek apakah sudah ada notifikasi terjadwal — jangan reset kalau sudah ada
+      const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+      const alreadySet = scheduled.some(n => n.content?.title?.includes("Don't lose your streak"));
+      if (alreadySet) return;
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "🔥 Don't lose your streak!",
+          body: "It's been a few days since your last session. Time to crush a workout today!",
+          sound: true,
+        },
+        trigger: { seconds: 3 * 24 * 60 * 60 }, // 3 days
+      });
     };
     setupNotifications();
   }, []);

@@ -29,6 +29,11 @@ export default function AdaptiveLayout({ children, session }) {
 
   const isDesktop = width >= 768;
 
+  // Ekstrak kondisi aktif per chip supaya tidak ada duplikasi logika
+  const isLandingActive = desktopView === 'landing' || (desktopView === 'auto' && !session && !showLogin);
+  const isAdminActive = desktopView === 'admin' || (desktopView === 'auto' && session && role === 'admin');
+  const isAppActive = desktopView === 'app' || (desktopView === 'auto' && (session && role !== 'admin' || showLogin));
+
   useEffect(() => {
     // 🛡️ ANTI-HACK: Fetch role directly from Supabase DB on server-side
     const fetchUserRole = async () => {
@@ -75,33 +80,33 @@ export default function AdaptiveLayout({ children, session }) {
   const renderDesktopSwitcher = () => (
     <View style={styles.floatingSwitcher}>
       <TouchableOpacity
-        style={[styles.switchChip, desktopView === 'landing' || (desktopView === 'auto' && !session && !showLogin) ? styles.switchChipActive : null]}
+        style={[styles.switchChip, isLandingActive ? styles.switchChipActive : null]}
         onPress={() => { setDesktopView('landing'); setShowLogin(false); }}
       >
-        <Globe size={13} color={desktopView === 'landing' || (desktopView === 'auto' && !session && !showLogin) ? '#000' : '#888'} />
-        <Text style={[styles.switchChipText, desktopView === 'landing' || (desktopView === 'auto' && !session && !showLogin) ? styles.switchChipTextActive : null]}>
+        <Globe size={13} color={isLandingActive ? '#000' : '#888'} />
+        <Text style={[styles.switchChipText, isLandingActive ? styles.switchChipTextActive : null]}>
           Landing Page
         </Text>
       </TouchableOpacity>
 
       {session && role === 'admin' && (
         <TouchableOpacity
-          style={[styles.switchChip, desktopView === 'admin' || (desktopView === 'auto' && session && role === 'admin') ? styles.switchChipActive : null]}
+          style={[styles.switchChip, isAdminActive ? styles.switchChipActive : null]}
           onPress={() => setDesktopView('admin')}
         >
-          <ShieldCheck size={13} color={desktopView === 'admin' || (desktopView === 'auto' && session && role === 'admin') ? '#000' : '#888'} />
-          <Text style={[styles.switchChipText, desktopView === 'admin' || (desktopView === 'auto' && session && role === 'admin') ? styles.switchChipTextActive : null]}>
+          <ShieldCheck size={13} color={isAdminActive ? '#000' : '#888'} />
+          <Text style={[styles.switchChipText, isAdminActive ? styles.switchChipTextActive : null]}>
             Admin Panel
           </Text>
         </TouchableOpacity>
       )}
 
       <TouchableOpacity
-        style={[styles.switchChip, (desktopView === 'app') || (desktopView === 'auto' && (session && role !== 'admin' || showLogin)) ? styles.switchChipActive : null]}
+        style={[styles.switchChip, isAppActive ? styles.switchChipActive : null]}
         onPress={() => { setDesktopView('app'); setShowLogin(true); }}
       >
-        <Smartphone size={13} color={(desktopView === 'app') || (desktopView === 'auto' && (session && role !== 'admin' || showLogin)) ? '#000' : '#888'} />
-        <Text style={[styles.switchChipText, (desktopView === 'app') || (desktopView === 'auto' && (session && role !== 'admin' || showLogin)) ? styles.switchChipTextActive : null]}>
+        <Smartphone size={13} color={isAppActive ? '#000' : '#888'} />
+        <Text style={[styles.switchChipText, isAppActive ? styles.switchChipTextActive : null]}>
           {session ? 'App View' : 'Login / App'}
         </Text>
       </TouchableOpacity>
@@ -222,12 +227,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(15, 15, 20, 0.85)',
+    backgroundColor: 'rgba(15, 15, 20, 0.92)', // sedikit lebih opaque: ganti backdropFilter yg tidak jalan di native
     padding: 5,
     borderRadius: 24,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.12)',
-    backdropFilter: 'blur(12px)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,

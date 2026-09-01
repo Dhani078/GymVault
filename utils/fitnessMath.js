@@ -113,8 +113,11 @@ export function detectMuscleGroups(rawText) {
   ) groups.add('lower_back');
 
   if (
-    text.includes('middle back') || text.includes('upper back') || text.includes('back') || text.includes('lats') || text.includes('latissimus') || text.includes('sayap') || text.includes('punggung') || text.includes('pull') ||
-    text.includes('row') || text.includes('pull up') || text.includes('pull-up') || text.includes('pulldown') || text.includes('t-bar') || text.includes('lat pull') || text.includes('chin-up') || text.includes('chin up')
+    // Pisahkan 'pull' supaya tidak double-count dengan biceps
+    text.includes('middle back') || text.includes('upper back') || text.includes('back') || text.includes('lats') || text.includes('latissimus') || text.includes('sayap') || text.includes('punggung') ||
+    text.includes('pulldown') || text.includes('t-bar') || text.includes('lat pull') ||
+    text.includes('pull up') || text.includes('pull-up') || text.includes('chin-up') || text.includes('chin up') ||
+    (text.includes('row') && !text.includes('upright row'))
   ) groups.add('lats');
 
   if (
@@ -128,8 +131,10 @@ export function detectMuscleGroups(rawText) {
   ) groups.add('forearms');
 
   if (
-    text.includes('biceps') || text.includes('bicep') || text.includes('bisep') || text.includes('brachialis') || text.includes('pull') ||
-    text.includes('curl') || text.includes('chin-up') || text.includes('chin up') || text.includes('preacher') || text.includes('hammer') || text.includes('pulldown') || text.includes('row')
+    text.includes('biceps') || text.includes('bicep') || text.includes('bisep') || text.includes('brachialis') ||
+    // 'pull' sengaja dihapus dari sini — sudah masuk lats di atas, mencegah double-count
+    text.includes('curl') || text.includes('chin-up') || text.includes('chin up') || text.includes('preacher') || text.includes('hammer') ||
+    text.includes('pulldown') || (text.includes('row') && !text.includes('upright row'))
   ) groups.add('biceps');
 
   if (
@@ -302,6 +307,23 @@ export function calculateProgressiveOverload(exerciseName = '', pastSets = [], b
         ? `RPE tinggi (mendekati batas). Pertahankan ${lastWeight}kg, fokus form bersih dan target ${recommendedReps} reps.`
         : `Pertahankan beban ${lastWeight}kg. Target hari ini: tambah +1 rep (${recommendedReps} reps) sebelum menaikkan beban.`;
     }
+  } else if (isBodyweight) {
+    // Bodyweight Window: 6 - 15 Reps → progressi lewat rep, bukan beban
+    // Pull-up/dip/push-up: target 15 reps baru tambah beban (weighted vest)
+    if (lastReps >= 15 || (lastReps >= 12 && isTooEasy)) {
+      // Sudah bisa 15 rep — rekomendasi tambah beban eksternal (weighted)
+      recommendedWeightKg = lastWeight > 0 ? Math.round((lastWeight + 2.5) * 10) / 10 : 0;
+      recommendedReps = 6;
+      deltaPercent = lastWeight > 0 ? Math.round(((recommendedWeightKg - lastWeight) / lastWeight) * 100) : 0;
+      rationale = lastWeight > 0
+        ? `Target bodyweight tercapai! Tambah beban +2.5kg (weighted vest/dip belt) untuk 6 reps.`
+        : `Kamu sudah bisa ${lastReps} reps! Pertimbangkan weighted vest atau progressi ke variasi lebih sulit.`;
+    } else {
+      recommendedReps = Math.min(15, lastReps + 1);
+      rationale = isGrind
+        ? `RPE 9.5+ (hampir failure). Pertahankan ${lastReps} reps, jaga form ketat.`
+        : `Tambah +1 rep per sesi. Target: ${recommendedReps} reps bersih sebelum naikkan intensitas.`;
+    }
   } else if (isUpperCompound) {
     // Upper Compound Window: 8 - 12 Reps
     if (lastReps >= 12 || (lastReps >= 10 && isTooEasy)) {
@@ -340,7 +362,7 @@ export function calculateProgressiveOverload(exerciseName = '', pastSets = [], b
   };
 }
 
-// 8. Dynamic Rest-Timer Engine (ATP-CP & Metabolic Recovery Optimizer)
+// 9. Dynamic Rest-Timer Engine (ATP-CP & Metabolic Recovery Optimizer)
 export function calculateRecommendedRestTime(exerciseName = '', weightKg = 0, reps = 0, rpe = null) {
   const name = String(exerciseName).toLowerCase();
   const isHeavyCompound = name.includes('squat') || name.includes('deadlift') || name.includes('bench') || name.includes('leg press');
