@@ -321,7 +321,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           </View>
         )}
 
-        {/* ═══ START WORKOUT CTA ═══ */}
+        {/* ═══ 1-TAP QUICK START ROUTINE HERO CARD ═══ */}
         <TouchableOpacity
           activeOpacity={0.9}
           style={{ 
@@ -330,32 +330,36 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
             overflow: 'hidden', 
             marginBottom: 16, 
             backgroundColor: hasActiveWorkout ? '#F59E0B' : theme.colors.primary, 
-            shadowColor: hasActiveWorkout ? '#F59E0B' : theme.colors.primary, 
-            shadowOffset: { width: 0, height: 10 }, 
-            shadowOpacity: 0.45, 
-            shadowRadius: 20, 
+            shadowColor: '#000000', 
+            shadowOffset: { width: 0, height: 8 }, 
+            shadowOpacity: 0.35, 
+            shadowRadius: 16, 
             elevation: 8,
             borderWidth: 1,
-            borderColor: 'rgba(255,255,255,0.2)'
+            borderColor: hasActiveWorkout ? '#F59E0B' : 'rgba(212,245,60,0.3)'
           }}
           onPress={handleQuickStart}
           disabled={loading}
         >
-          <View style={{ paddingVertical: 24, paddingHorizontal: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+          <View style={{ paddingVertical: 20, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
             {loading ? <ActivityIndicator color="#000" /> : (
               <>
-                <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(0,0,0,0.06)', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(0,0,0,0.12)', justifyContent: 'center', alignItems: 'center' }}>
                   <Dumbbell color="#000" size={24} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <AppText weight="bold" style={{ color: '#000', fontSize: 20, letterSpacing: 0.2 }}>
-                    {hasActiveWorkout ? (t('language') === 'Bahasa Indonesia' ? 'Lanjutkan Latihan' : 'Resume Workout') : t('quick_start')}
-                  </AppText>
-                  <AppText style={{ color: 'rgba(0,0,0,0.55)', fontSize: 13, marginTop: 2, fontWeight: '500' }}>
-                    {hasActiveWorkout ? 'You have an active session' : 'Begin your custom training session'}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                    <AppText weight="bold" style={{ color: '#000', fontSize: 18, letterSpacing: 0.2 }}>
+                      {hasActiveWorkout ? 'Lanjutkan Sesi Latihan' : (userProfile?.split_name ? `${userProfile.split_name} Workout` : 'Mulai Latihan Hari Ini')}
+                    </AppText>
+                  </View>
+                  <AppText style={{ color: 'rgba(0,0,0,0.65)', fontSize: 12, fontWeight: '500' }}>
+                    {hasActiveWorkout ? 'Ada latihan yang belum selesai disimpan' : '1-Tap langsung catat beban & repetisi'}
                   </AppText>
                 </View>
-                <Zap color="#000" size={20} />
+                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#000', justifyContent: 'center', alignItems: 'center' }}>
+                  <Zap color={hasActiveWorkout ? '#F59E0B' : theme.colors.primary} size={18} />
+                </View>
               </>
             )}
           </View>

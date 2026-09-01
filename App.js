@@ -246,10 +246,25 @@ function AppContent() {
   }, []);
 
   // Library "Start Exercise" → APPEND to workout
-  const handleAddExercise = useCallback((ex) => {
+  const handleAddExercise = useCallback(async (ex) => {
     if (!workoutStartTime) {
       setWorkoutStartTime(new Date().toISOString());
     }
+
+    let defaultKg = 0;
+    let defaultReps = 10;
+
+    try {
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      const lastKey = `@gymvault_last_ex_${session?.user?.id || 'guest'}_${ex.name.toLowerCase().trim()}`;
+      const saved = await AsyncStorage.getItem(lastKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.kg) defaultKg = Number(parsed.kg) || 0;
+        if (parsed?.reps) defaultReps = Number(parsed.reps) || 10;
+      }
+    } catch (e) {}
+
     setWorkoutData(prev => {
       const existing = prev.findIndex(e => e.name === ex.name);
       if (existing >= 0) {
@@ -263,14 +278,18 @@ function AppContent() {
         secondary_muscles: ex.secondary_muscles || ex.secondaryMuscles || [],
         equipment_type: ex.equipment_type || ex.equipment || '',
         image: ex.thumbnail_url || ex.image || '',
-        sets: [{ id: makeId(), kg: 0, reps: 0, completed: false }],
+        sets: [
+          { id: makeId(), kg: defaultKg, reps: defaultReps, completed: false },
+          { id: makeId(), kg: defaultKg, reps: defaultReps, completed: false },
+          { id: makeId(), kg: defaultKg, reps: defaultReps, completed: false },
+        ],
       };
       const newData = [...prev, newItem];
       setWorkoutIndex(newData.length - 1);
       return newData;
     });
     setTab('Logger');
-  }, [workoutStartTime]);
+  }, [workoutStartTime, session]);
 
   // Logger finished → clear workout, go to History
   const handleFinishWorkout = useCallback(() => {
@@ -372,7 +391,7 @@ function AppContent() {
               )}
             </View>
             <View style={{ flex: 1, display: tab === 'History' ? 'flex' : 'none' }}>
-              {visitedTabs.includes('History') && <HistoryScreen session={session} dbReady={dbReady} />}
+              {visitedTabs.includes('History') && <HistoryScreen session={session} dbReady={dbReady} onStartWorkout={handleStartWorkout} />}
             </View>
             <View style={{ flex: 1, display: tab === 'Profile' ? 'flex' : 'none' }}>
               {visitedTabs.includes('Profile') && <ProfileScreen session={session} dbReady={dbReady} onSignOut={() => supabase.auth.signOut()} onGoToHistory={() => setTab('History')} />}
