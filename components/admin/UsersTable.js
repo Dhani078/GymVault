@@ -41,7 +41,7 @@ export default function UsersTable({
       <View style={styles.chartHeader}>
         <View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Users size={20} color="#CCFF00" />
+            <Users size={20} color="#D4F53C" />
             <Text style={styles.sectionTitle}>Database Lifter & Member Directory</Text>
           </View>
           <Text style={styles.chartSubtitle}>Kelola akun, status pro, dan hak akses database</Text>
@@ -119,8 +119,8 @@ export default function UsersTable({
                 {/* Tier */}
                 <View style={[styles.tableCell, styles.cellFlex1]}>
                   <View style={[styles.tierBadge, isPro ? styles.tierPro : styles.tierFree]}>
-                    {isPro && <Star size={10} color="#CCFF00" />}
-                    <Text style={[styles.tierText, isPro ? { color: '#CCFF00' } : { color: '#888' }]}>
+                    {isPro && <Star size={10} color="#D4F53C" />}
+                    <Text style={[styles.tierText, isPro ? { color: '#D4F53C' } : { color: '#888' }]}>
                       {isPro ? 'PRO LIFTER' : 'FREE'}
                     </Text>
                   </View>
@@ -148,7 +148,7 @@ export default function UsersTable({
                     onPress={() => onTogglePro && onTogglePro(user)}
                     title={isPro ? 'Revoke Pro' : 'Grant Pro'}
                   >
-                    <Star color={isPro ? '#CCFF00' : '#888'} size={14} fill={isPro ? '#CCFF00' : 'transparent'} />
+                    <Star color={isPro ? '#D4F53C' : '#888'} size={14} fill={isPro ? '#D4F53C' : 'transparent'} />
                   </TouchableOpacity>
 
                   <TouchableOpacity 
@@ -156,7 +156,7 @@ export default function UsersTable({
                     onPress={() => openUserDetails(user)}
                     title="Detail"
                   >
-                    <Eye color="#CCFF00" size={14} />
+                    <Eye color="#D4F53C" size={14} />
                   </TouchableOpacity>
                   
                   <TouchableOpacity 
@@ -165,7 +165,7 @@ export default function UsersTable({
                     title={isSuspended ? 'Unsuspend' : 'Suspend'}
                   >
                     {isSuspended ? (
-                      <UserCheck color="#CCFF00" size={14} />
+                      <UserCheck color="#D4F53C" size={14} />
                     ) : (
                       <Ban color="#FFA500" size={14} />
                     )}
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   },
   filterPillActive: {
     backgroundColor: 'rgba(204, 255, 0, 0.12)',
-    borderColor: '#CCFF00',
+    borderColor: '#D4F53C',
   },
   filterPillText: {
     color: '#8E8E9F',
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   filterPillTextActive: {
-    color: '#CCFF00',
+    color: '#D4F53C',
   },
   tableContainer: {
     borderWidth: 1,
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
   },
   actionBtnStarActive: {
     backgroundColor: 'rgba(204, 255, 0, 0.15)',
-    borderColor: '#CCFF00',
+    borderColor: '#D4F53C',
   },
   actionBtnInfo: {
     width: 30,

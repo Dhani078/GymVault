@@ -269,14 +269,14 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
               <AppText style={{ fontSize: 14, color: theme.colors.textMuted }}> kcal</AppText>
             </AppText>
             {macroTarget?.target_calories > 0 && (
-              <AppText style={{ color: nutritionStats.calories > macroTarget.target_calories ? '#EF4444' : '#CCFF00', fontSize: 11, marginTop: 4 }}>
+              <AppText style={{ color: nutritionStats.calories > macroTarget.target_calories ? '#EF4444' : '#D4F53C', fontSize: 11, marginTop: 4 }}>
                 {nutritionStats.calories > macroTarget.target_calories 
                   ? `Over ${nutritionStats.calories - macroTarget.target_calories} kcal` 
                   : `${macroTarget.target_calories - nutritionStats.calories} kcal remaining`}
               </AppText>
             )}
           </View>
-          <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(204,255,0,0.06)', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(212,245,60,0.06)', justifyContent: 'center', alignItems: 'center' }}>
             <Flame color={theme.colors.primary} size={20} />
           </View>
         </View>
@@ -285,7 +285,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <SkiaProgressRing 
               progress={nutritionStats.protein / (macroTarget?.target_protein || 150)} 
-              size={68} strokeWidth={6} primaryColor="#CCFF00" secondaryColor="rgba(204,255,0,0.15)"
+              size={68} strokeWidth={6} primaryColor="#D4F53C" secondaryColor="rgba(212,245,60,0.15)"
             />
             <View style={{ position: 'absolute', alignItems: 'center' }}>
               <AppText weight="bold" style={{ fontSize: 14, color: theme.colors.text }}>{nutritionStats.protein}g</AppText>
@@ -343,7 +343,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
               </TouchableOpacity>
             </View>
 
-            <View style={{ marginBottom: 20, padding: 12, backgroundColor: theme.colors.surface, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(204,255,0,0.2)' }}>
+            <View style={{ marginBottom: 20, padding: 12, backgroundColor: theme.colors.surface, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(212,245,60,0.2)' }}>
               <AppText weight="bold" style={{ fontSize: 13, color: theme.colors.primary, marginBottom: 6 }}>✨ AI Fast Log (Tulis Bebas)</AppText>
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 <TextInput

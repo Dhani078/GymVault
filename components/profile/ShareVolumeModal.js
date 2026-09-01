@@ -46,15 +46,15 @@ export default function ShareVolumeModal({
               </TouchableOpacity>
             </View>
             <ScrollView showsVerticalScrollIndicator={true}>
-              <TouchableOpacity onPress={() => { setShareMode('lifetime'); setShowSessionSelector(false); }} style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#333', backgroundColor: shareMode === 'lifetime' ? 'rgba(204,255,0,0.1)' : 'transparent' }}>
-                <AppText weight="bold" style={{ color: shareMode === 'lifetime' ? '#CCFF00' : '#FFF' }}>Rekor Keseluruhan (Semua Waktu)</AppText>
+              <TouchableOpacity onPress={() => { setShareMode('lifetime'); setShowSessionSelector(false); }} style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#333', backgroundColor: shareMode === 'lifetime' ? 'rgba(212,245,60,0.1)' : 'transparent' }}>
+                <AppText weight="bold" style={{ color: shareMode === 'lifetime' ? '#D4F53C' : '#FFF' }}>Rekor Keseluruhan (Semua Waktu)</AppText>
               </TouchableOpacity>
               {(sessions || []).slice(0, 30).map((s, idx) => {
                 const dObj = new Date((s.started_at || '').replace(' ', 'T'));
                 const label = !isNaN(dObj.getTime()) ? dObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : `Sesi ${idx+1}`;
                 return (
-                  <TouchableOpacity key={s.id} onPress={() => { setShareMode(s.id); setShowSessionSelector(false); }} style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#333', backgroundColor: shareMode === s.id ? 'rgba(204,255,0,0.1)' : 'transparent' }}>
-                    <AppText weight="bold" style={{ color: shareMode === s.id ? '#CCFF00' : '#FFF' }}>{label}</AppText>
+                  <TouchableOpacity key={s.id} onPress={() => { setShareMode(s.id); setShowSessionSelector(false); }} style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#333', backgroundColor: shareMode === s.id ? 'rgba(212,245,60,0.1)' : 'transparent' }}>
+                    <AppText weight="bold" style={{ color: shareMode === s.id ? '#D4F53C' : '#FFF' }}>{label}</AppText>
                   </TouchableOpacity>
                 );
               })}
@@ -92,14 +92,14 @@ export default function ShareVolumeModal({
                     
                     {/* Top Strava-like Profile Header */}
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                      <Image source={{ uri: profile.avatar_url || 'https://ui-avatars.com/api/?name=Gym+Athlete&background=CCFF00&color=000' }} style={{ width: 46, height: 46, borderRadius: 23, borderWidth: 1, borderColor: '#333' }} />
+                      <Image source={{ uri: profile.avatar_url || 'https://ui-avatars.com/api/?name=Gym+Athlete&background=D4F53C&color=000' }} style={{ width: 46, height: 46, borderRadius: 23, borderWidth: 1, borderColor: '#333' }} />
                       <View style={{ flex: 1 }}>
                         <AppText weight="bold" style={{ color: '#FFFFFF', fontSize: 16 }}>{profile.name || 'GymVault Athlete'}</AppText>
                         <AppText style={{ color: '#888888', fontSize: 12, marginTop: 2 }}>{dateText}</AppText>
                       </View>
                       <View style={{ alignItems: 'flex-end' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                          <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#CCFF00' }} />
+                          <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#D4F53C' }} />
                           <AppText weight="bold" style={{ color: '#FFFFFF', letterSpacing: 1, fontSize: 12 }}>GYMVAULT</AppText>
                         </View>
                       </View>
@@ -108,7 +108,7 @@ export default function ShareVolumeModal({
                     {/* Center Floating Object */}
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
                       <Image source={{ uri: comp.imageUrl }} style={{ width: '100%', height: 220, resizeMode: 'contain', 
-                        shadowColor: '#CCFF00', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.15, shadowRadius: 30 
+                        shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.15, shadowRadius: 30 
                       }} />
                       <AppText weight="bold" style={{ color: '#FFFFFF', fontSize: 28, textAlign: 'center', marginTop: 16, letterSpacing: 1 }}>{comp.qty}x {comp.item.toUpperCase()}</AppText>
                       <AppText style={{ color: '#888', fontSize: 12, textAlign: 'center', marginTop: 6, letterSpacing: 2 }}>{subtitle}</AppText>
@@ -118,7 +118,7 @@ export default function ShareVolumeModal({
                     <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#333', paddingTop: 20, justifyContent: 'center' }}>
                       <View style={{ alignItems: 'center' }}>
                         <AppText style={{ color: '#888', fontSize: 11, marginBottom: 4, letterSpacing: 1 }}>VOLUME TOTAL</AppText>
-                        <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 32 }}>{displayVolume >= 1000 ? (displayVolume / 1000).toFixed(1) + 'k' : displayVolume} <AppText style={{ fontSize: 18, color: '#FFF' }}>kg</AppText></AppText>
+                        <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 32 }}>{displayVolume >= 1000 ? (displayVolume / 1000).toFixed(1) + 'k' : displayVolume} <AppText style={{ fontSize: 18, color: '#FFF' }}>kg</AppText></AppText>
                       </View>
                     </View>
 
@@ -141,7 +141,7 @@ export default function ShareVolumeModal({
                     console.warn("Share error", e);
                   }
                 }}
-                style={{ flex: 1, backgroundColor: '#CCFF00', borderRadius: 14, padding: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 10 }}
+                style={{ flex: 1, backgroundColor: '#D4F53C', borderRadius: 14, padding: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 10 }}
               >
                 <Share2 color="#000" size={20} />
                 <AppText weight="bold" style={{ color: '#000000', fontSize: 16 }}>Share IG Story</AppText>

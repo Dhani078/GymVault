@@ -463,7 +463,7 @@ export function calculateVolumeLandmarks(muscleGroup = 'chest', weeklySets = 0) 
 
   let status = 'optimal_mav';
   let adviceText = 'Volume latihan berada di zona hipertrofi optimal (MAV). Pertahankan!';
-  let badgeColor = '#CCFF00'; // Electric Green
+  let badgeColor = '#D4F53C'; // Electric Green
 
   if (sets < benchmark.mev) {
     status = 'under_mev';

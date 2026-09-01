@@ -11,7 +11,7 @@ export default function PromoManager({ promoCodes, setShowPromoModal, setPromoTo
           <Text style={styles.chartSubtitle}>Kelola kode promo akses Premium</Text>
         </View>
         <TouchableOpacity 
-          style={[styles.exportBtn, { backgroundColor: '#CCFF00' }]} 
+          style={[styles.exportBtn, { backgroundColor: '#D4F53C' }]} 
           onPress={() => setShowPromoModal(true)}
         >
           <Plus color="#000" size={16} />
@@ -33,7 +33,7 @@ export default function PromoManager({ promoCodes, setShowPromoModal, setPromoTo
           const isExhausted = promo.uses >= promo.max_uses;
           return (
             <View key={promo.id || index} style={[styles.tableRow, isEven && styles.tableRowEven]}>
-              <Text style={[styles.tableCell, styles.cellFlex2, styles.cellTextBold, { color: '#CCFF00', letterSpacing: 1 }]}>
+              <Text style={[styles.tableCell, styles.cellFlex2, styles.cellTextBold, { color: '#D4F53C', letterSpacing: 1 }]}>
                 {promo.code}
               </Text>
               <Text style={[styles.tableCell, styles.cellFlex1, styles.cellText]}>

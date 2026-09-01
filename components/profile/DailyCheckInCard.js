@@ -20,8 +20,8 @@ export default function DailyCheckInCard({
       <View style={{ backgroundColor: cardColor, borderRadius: 20, padding: 18, borderWidth: 1, borderColor: borderColor, marginBottom: 16 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(204,255,0,0.1)', justifyContent: 'center', alignItems: 'center' }}>
-              <Flame color="#CCFF00" size={20} fill="#CCFF00" />
+            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(212,245,60,0.1)', justifyContent: 'center', alignItems: 'center' }}>
+              <Flame color="#D4F53C" size={20} fill="#D4F53C" />
             </View>
             <View>
               <AppText weight="bold" style={{ color: textColor, fontSize: 15 }}>Daily Check-In</AppText>
@@ -30,8 +30,8 @@ export default function DailyCheckInCard({
               </AppText>
             </View>
           </View>
-          <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(204,255,0,0.2)' }}>
-            <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 12 }}>{checkInStreak} Hari Streak</AppText>
+          <View style={{ backgroundColor: 'rgba(212,245,60,0.1)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(212,245,60,0.2)' }}>
+            <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 12 }}>{checkInStreak} Hari Streak</AppText>
           </View>
         </View>
 
@@ -50,9 +50,9 @@ export default function DailyCheckInCard({
                   width: 32,
                   height: 32,
                   borderRadius: 16,
-                  backgroundColor: isCompleted ? '#CCFF00' : (isTodayUnclaimed ? 'rgba(204,255,0,0.1)' : 'rgba(255,255,255,0.05)'),
+                  backgroundColor: isCompleted ? '#D4F53C' : (isTodayUnclaimed ? 'rgba(212,245,60,0.1)' : 'rgba(255,255,255,0.05)'),
                   borderWidth: isTodayUnclaimed ? 2 : 1,
-                  borderColor: isCompleted || isTodayUnclaimed ? '#CCFF00' : '#444',
+                  borderColor: isCompleted || isTodayUnclaimed ? '#D4F53C' : '#444',
                   justifyContent: 'center',
                   alignItems: 'center',
                   marginBottom: 6,
@@ -61,7 +61,7 @@ export default function DailyCheckInCard({
                   {isCompleted ? (
                     <CheckCircle color="#000" size={16} />
                   ) : (
-                    <AppText weight="bold" style={{ color: isTodayUnclaimed ? '#CCFF00' : '#888', fontSize: 11 }}>{day}</AppText>
+                    <AppText weight="bold" style={{ color: isTodayUnclaimed ? '#D4F53C' : '#888', fontSize: 11 }}>{day}</AppText>
                   )}
 
                   {isGiftDay && (
@@ -79,7 +79,7 @@ export default function DailyCheckInCard({
                     </View>
                   )}
                 </View>
-                <AppText style={{ color: isCompleted ? '#CCFF00' : '#888', fontSize: 9 }}>D{day}</AppText>
+                <AppText style={{ color: isCompleted ? '#D4F53C' : '#888', fontSize: 9 }}>D{day}</AppText>
               </View>
             );
           })}
@@ -101,8 +101,8 @@ export default function DailyCheckInCard({
               gap: 8
             }}
           >
-            <CheckCircle color="#CCFF00" size={16} />
-            <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 13 }}>Sudah Check-In Hari Ini</AppText>
+            <CheckCircle color="#D4F53C" size={16} />
+            <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 13 }}>Sudah Check-In Hari Ini</AppText>
           </View>
         ) : (
           <TouchableOpacity
@@ -110,12 +110,12 @@ export default function DailyCheckInCard({
             activeOpacity={0.8}
             style={{
               width: '100%',
-              backgroundColor: '#CCFF00',
+              backgroundColor: '#D4F53C',
               paddingVertical: 12,
               borderRadius: 12,
               justifyContent: 'center',
               alignItems: 'center',
-              shadowColor: '#CCFF00',
+              shadowColor: '#D4F53C',
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.3,
               shadowRadius: 8,
@@ -130,14 +130,14 @@ export default function DailyCheckInCard({
       {/* ─── Auto Daily Check-In Prompt Modal ─── */}
       <Modal visible={showCheckInPrompt} transparent animationType="fade" onRequestClose={() => setShowCheckInPrompt(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-          <View style={{ backgroundColor: '#0A0A0C', borderRadius: 24, borderWidth: 1.5, borderColor: '#CCFF00', width: '100%', maxWidth: 360, padding: 24, alignItems: 'center', shadowColor: '#CCFF00', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.25, shadowRadius: 20 }}>
+          <View style={{ backgroundColor: '#0A0A0C', borderRadius: 24, borderWidth: 1.5, borderColor: '#D4F53C', width: '100%', maxWidth: 360, padding: 24, alignItems: 'center', shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.25, shadowRadius: 20 }}>
             
             <TouchableOpacity onPress={() => setShowCheckInPrompt(false)} style={{ position: 'absolute', top: 16, right: 16, padding: 4 }}>
               <X color="#888" size={20} />
             </TouchableOpacity>
 
-            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(204,255,0,0.15)', justifyContent: 'center', alignItems: 'center', marginBottom: 16, marginTop: 12, borderWidth: 1, borderColor: 'rgba(204,255,0,0.3)' }}>
-              <Flame color="#CCFF00" size={32} fill="#CCFF00" />
+            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(212,245,60,0.15)', justifyContent: 'center', alignItems: 'center', marginBottom: 16, marginTop: 12, borderWidth: 1, borderColor: 'rgba(212,245,60,0.3)' }}>
+              <Flame color="#D4F53C" size={32} fill="#D4F53C" />
             </View>
 
             <AppText weight="bold" style={{ fontSize: 22, color: '#FFF', textAlign: 'center', marginBottom: 8, letterSpacing: 0.5 }}>
@@ -145,7 +145,7 @@ export default function DailyCheckInCard({
             </AppText>
             
             <AppText style={{ color: '#A1A1AA', fontSize: 13, textAlign: 'center', lineHeight: 20, marginBottom: 24, paddingHorizontal: 10 }}>
-              Klaim <AppText weight="bold" style={{ color: '#CCFF00' }}>Hari ke-{checkInStreak + 1}</AppText> untuk membuka <AppText weight="bold" style={{ color: '#FFF' }}>15x Scan AI</AppText> harian dan lanjutkan perjalanan menuju bonus Premium!
+              Klaim <AppText weight="bold" style={{ color: '#D4F53C' }}>Hari ke-{checkInStreak + 1}</AppText> untuk membuka <AppText weight="bold" style={{ color: '#FFF' }}>15x Scan AI</AppText> harian dan lanjutkan perjalanan menuju bonus Premium!
             </AppText>
 
             {/* Visual 7-Day Journey Preview */}
@@ -161,11 +161,11 @@ export default function DailyCheckInCard({
                     <View key={day} style={{ alignItems: 'center' }}>
                       <View style={{
                         width: 34, height: 34, borderRadius: 17,
-                        backgroundColor: isPast ? '#CCFF00' : (isCurrent ? 'rgba(204,255,0,0.15)' : 'rgba(255,255,255,0.05)'),
+                        backgroundColor: isPast ? '#D4F53C' : (isCurrent ? 'rgba(212,245,60,0.15)' : 'rgba(255,255,255,0.05)'),
                         borderWidth: isCurrent ? 2 : 1,
-                        borderColor: isPast ? '#CCFF00' : (isCurrent ? '#CCFF00' : '#333'),
+                        borderColor: isPast ? '#D4F53C' : (isCurrent ? '#D4F53C' : '#333'),
                         justifyContent: 'center', alignItems: 'center',
-                        shadowColor: isCurrent ? '#CCFF00' : 'transparent',
+                        shadowColor: isCurrent ? '#D4F53C' : 'transparent',
                         shadowOffset: { width: 0, height: 0 },
                         shadowOpacity: isCurrent ? 0.5 : 0,
                         shadowRadius: 8,
@@ -174,9 +174,9 @@ export default function DailyCheckInCard({
                         {isPast ? (
                           <Check color="#000" size={16} />
                         ) : isGift ? (
-                          <Award color={isCurrent ? '#CCFF00' : '#888'} size={16} />
+                          <Award color={isCurrent ? '#D4F53C' : '#888'} size={16} />
                         ) : (
-                          <AppText weight="bold" style={{ fontSize: 13, color: isCurrent ? '#CCFF00' : '#888' }}>{day}</AppText>
+                          <AppText weight="bold" style={{ fontSize: 13, color: isCurrent ? '#D4F53C' : '#888' }}>{day}</AppText>
                         )}
                       </View>
                     </View>
@@ -190,8 +190,8 @@ export default function DailyCheckInCard({
                   <AppText style={{ color: '#A1A1AA', fontSize: 12 }}>Hari 3: <AppText weight="bold" style={{ color: '#FF007F' }}>Pro Trial 15 Hari</AppText></AppText>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <Crown color="#CCFF00" size={14} />
-                  <AppText style={{ color: '#A1A1AA', fontSize: 12 }}>Hari 7: <AppText weight="bold" style={{ color: '#CCFF00' }}>Pro Trial 30 Hari</AppText></AppText>
+                  <Crown color="#D4F53C" size={14} />
+                  <AppText style={{ color: '#A1A1AA', fontSize: 12 }}>Hari 7: <AppText weight="bold" style={{ color: '#D4F53C' }}>Pro Trial 30 Hari</AppText></AppText>
                 </View>
               </View>
             </View>
@@ -202,13 +202,13 @@ export default function DailyCheckInCard({
                 onCheckIn();
               }}
               style={{
-                backgroundColor: '#CCFF00',
+                backgroundColor: '#D4F53C',
                 width: '100%',
                 paddingVertical: 14,
                 borderRadius: 14,
                 justifyContent: 'center',
                 alignItems: 'center',
-                shadowColor: '#CCFF00',
+                shadowColor: '#D4F53C',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,

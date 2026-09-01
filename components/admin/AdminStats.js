@@ -14,10 +14,10 @@ export default function AdminStats({ stats = {} }) {
         <View style={[styles.statCard, styles.revenueCard]}>
           <View style={styles.statTopRow}>
             <View style={[styles.statIconBox, { backgroundColor: 'rgba(204, 255, 0, 0.15)' }]}>
-              <Wallet color="#CCFF00" size={22} />
+              <Wallet color="#D4F53C" size={22} />
             </View>
             <View style={styles.trendBadgeGreen}>
-              <TrendingUp size={12} color="#CCFF00" />
+              <TrendingUp size={12} color="#D4F53C" />
               <Text style={styles.trendTextGreen}>+34% MoM</Text>
             </View>
           </View>
@@ -76,7 +76,7 @@ export default function AdminStats({ stats = {} }) {
             <Text style={styles.chartSubtitle}>Statistik 6 Bulan Terakhir Berdasarkan Data Real PostgreSQL</Text>
           </View>
           <View style={styles.chartTrend}>
-            <TrendingUp color="#CCFF00" size={18} />
+            <TrendingUp color="#D4F53C" size={18} />
             <Text style={styles.chartTrendText}>Organik +28.5%</Text>
           </View>
         </View>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   trendTextGreen: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 10,
     fontWeight: 'bold',
   },
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   chartTrendText: {
     fontFamily: 'Inter_600SemiBold',
     fontSize: 12,
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontWeight: 'bold',
   },
   chartContainer: {
@@ -250,13 +250,13 @@ const styles = StyleSheet.create({
   },
   barFill: {
     width: '100%',
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     borderRadius: 6,
   },
   barValue: {
     fontFamily: 'Inter_600SemiBold',
     fontSize: 11,
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontWeight: 'bold',
   },
   barLabel: {

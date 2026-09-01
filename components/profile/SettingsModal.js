@@ -270,16 +270,16 @@ export default function SettingsModal({
                   alignItems: 'center', 
                   padding: 16, 
                   borderRadius: 12, 
-                  backgroundColor: language === l.code ? 'rgba(204,255,0,0.15)' : 'transparent', 
+                  backgroundColor: language === l.code ? 'rgba(212,245,60,0.15)' : 'transparent', 
                   borderWidth: 1, 
-                  borderColor: language === l.code ? '#CCFF00' : borderColor, 
+                  borderColor: language === l.code ? '#D4F53C' : borderColor, 
                   marginBottom: 12 
                 }}
               >
                 <AppText style={{ fontSize: 20, marginRight: 14 }}>{l.flag}</AppText>
                 <AppText weight="bold" style={{ color: textColor, fontSize: 16, flex: 1 }}>{l.label}</AppText>
-                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: language === l.code ? '#CCFF00' : '#555', justifyContent: 'center', alignItems: 'center' }}>
-                  {language === l.code && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#CCFF00' }} />}
+                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: language === l.code ? '#D4F53C' : '#555', justifyContent: 'center', alignItems: 'center' }}>
+                  {language === l.code && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#D4F53C' }} />}
                 </View>
               </TouchableOpacity>
             ))}
@@ -296,9 +296,9 @@ export default function SettingsModal({
           <View style={{ backgroundColor: cardColor, borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, borderWidth: 1, borderColor: borderColor }}>
             <AppText weight="bold" style={{ fontSize: 20, color: textColor, marginBottom: 24 }}>{t('units_title')}</AppText>
             {['metric', 'imperial'].map(u => (
-              <TouchableOpacity key={u} onPress={() => { setWeightUnit(u); setUnitsModalVisible(false); showToast('success', u === 'metric' ? t('unit_metric') : t('unit_imperial')); }} style={{ flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 12, backgroundColor: weightUnit === u ? 'rgba(204,255,0,0.15)' : 'transparent', borderWidth: 1, borderColor: weightUnit === u ? '#CCFF00' : borderColor, marginBottom: 12 }}>
-                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: weightUnit === u ? '#CCFF00' : '#555', justifyContent: 'center', alignItems: 'center', marginRight: 14 }}>
-                  {weightUnit === u && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#CCFF00' }} />}
+              <TouchableOpacity key={u} onPress={() => { setWeightUnit(u); setUnitsModalVisible(false); showToast('success', u === 'metric' ? t('unit_metric') : t('unit_imperial')); }} style={{ flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 12, backgroundColor: weightUnit === u ? 'rgba(212,245,60,0.15)' : 'transparent', borderWidth: 1, borderColor: weightUnit === u ? '#D4F53C' : borderColor, marginBottom: 12 }}>
+                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: weightUnit === u ? '#D4F53C' : '#555', justifyContent: 'center', alignItems: 'center', marginRight: 14 }}>
+                  {weightUnit === u && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#D4F53C' }} />}
                 </View>
                 <AppText weight="bold" style={{ color: textColor, fontSize: 16 }}>{u === 'metric' ? t('unit_metric') : t('unit_imperial')}</AppText>
               </TouchableOpacity>
@@ -335,9 +335,9 @@ export default function SettingsModal({
                   alignItems: 'center', 
                   padding: 16, 
                   borderRadius: 12, 
-                  backgroundColor: graphicsQuality === g.code ? 'rgba(204,255,0,0.15)' : 'transparent', 
+                  backgroundColor: graphicsQuality === g.code ? 'rgba(212,245,60,0.15)' : 'transparent', 
                   borderWidth: 1, 
-                  borderColor: graphicsQuality === g.code ? '#CCFF00' : borderColor, 
+                  borderColor: graphicsQuality === g.code ? '#D4F53C' : borderColor, 
                   marginBottom: 12 
                 }}
               >
@@ -345,8 +345,8 @@ export default function SettingsModal({
                   <AppText weight="bold" style={{ color: textColor, fontSize: 16, marginBottom: 4 }}>{g.label}</AppText>
                   <AppText style={{ color: textMuted, fontSize: 12 }}>{g.desc}</AppText>
                 </View>
-                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: graphicsQuality === g.code ? '#CCFF00' : '#555', justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
-                  {graphicsQuality === g.code && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#CCFF00' }} />}
+                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: graphicsQuality === g.code ? '#D4F53C' : '#555', justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                  {graphicsQuality === g.code && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#D4F53C' }} />}
                 </View>
               </TouchableOpacity>
             ))}
@@ -381,9 +381,9 @@ export default function SettingsModal({
                   alignItems: 'center', 
                   padding: 16, 
                   borderRadius: 12, 
-                  backgroundColor: fpsLimit === f.code ? 'rgba(204,255,0,0.15)' : 'transparent', 
+                  backgroundColor: fpsLimit === f.code ? 'rgba(212,245,60,0.15)' : 'transparent', 
                   borderWidth: 1, 
-                  borderColor: fpsLimit === f.code ? '#CCFF00' : borderColor, 
+                  borderColor: fpsLimit === f.code ? '#D4F53C' : borderColor, 
                   marginBottom: 12 
                 }}
               >
@@ -391,8 +391,8 @@ export default function SettingsModal({
                   <AppText weight="bold" style={{ color: textColor, fontSize: 16, marginBottom: 4 }}>{f.label}</AppText>
                   <AppText style={{ color: textMuted, fontSize: 12 }}>{f.desc}</AppText>
                 </View>
-                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: fpsLimit === f.code ? '#CCFF00' : '#555', justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
-                  {fpsLimit === f.code && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#CCFF00' }} />}
+                <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: fpsLimit === f.code ? '#D4F53C' : '#555', justifyContent: 'center', alignItems: 'center', marginLeft: 12 }}>
+                  {fpsLimit === f.code && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#D4F53C' }} />}
                 </View>
               </TouchableOpacity>
             ))}
@@ -407,7 +407,7 @@ export default function SettingsModal({
       <Modal visible={exportModalVisible} transparent animationType="fade">
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
           <View style={{ backgroundColor: cardColor, borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, borderWidth: 1, borderColor: borderColor }}>
-            <Download color="#CCFF00" size={40} style={{ alignSelf: 'center', marginBottom: 16 }} />
+            <Download color="#D4F53C" size={40} style={{ alignSelf: 'center', marginBottom: 16 }} />
             <AppText weight="bold" style={{ fontSize: 20, color: textColor, textAlign: 'center', marginBottom: 8 }}>{t('export_title')}</AppText>
             <AppText style={{ color: textMuted, textAlign: 'center', marginBottom: 24, lineHeight: 22 }}>{t('export_confirm')}</AppText>
             <View style={{ flexDirection: 'row', gap: 12 }}>
@@ -419,7 +419,7 @@ export default function SettingsModal({
                   setExportModalVisible(false);
                   if (handleExportData) handleExportData();
                 }}
-                style={{ flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#CCFF00', alignItems: 'center' }}
+                style={{ flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#D4F53C', alignItems: 'center' }}
               >
                 <AppText weight="bold" style={{ color: '#000' }}>{t('confirm')}</AppText>
               </TouchableOpacity>

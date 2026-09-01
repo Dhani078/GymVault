@@ -62,15 +62,15 @@ export default function TdeeCalculatorModal({
             <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
               <TouchableOpacity
                 onPress={() => setTdeeForm({ ...tdeeForm, gender: 'male' })}
-                style={{ flex: 1, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: tdeeForm.gender === 'male' ? '#CCFF00' : borderColor, backgroundColor: tdeeForm.gender === 'male' ? 'rgba(204,255,0,0.1)' : 'transparent', alignItems: 'center' }}
+                style={{ flex: 1, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: tdeeForm.gender === 'male' ? '#D4F53C' : borderColor, backgroundColor: tdeeForm.gender === 'male' ? 'rgba(212,245,60,0.1)' : 'transparent', alignItems: 'center' }}
               >
-                <AppText weight="bold" style={{ color: tdeeForm.gender === 'male' ? '#CCFF00' : textColor }}>Pria</AppText>
+                <AppText weight="bold" style={{ color: tdeeForm.gender === 'male' ? '#D4F53C' : textColor }}>Pria</AppText>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setTdeeForm({ ...tdeeForm, gender: 'female' })}
-                style={{ flex: 1, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: tdeeForm.gender === 'female' ? '#CCFF00' : borderColor, backgroundColor: tdeeForm.gender === 'female' ? 'rgba(204,255,0,0.1)' : 'transparent', alignItems: 'center' }}
+                style={{ flex: 1, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: tdeeForm.gender === 'female' ? '#D4F53C' : borderColor, backgroundColor: tdeeForm.gender === 'female' ? 'rgba(212,245,60,0.1)' : 'transparent', alignItems: 'center' }}
               >
-                <AppText weight="bold" style={{ color: tdeeForm.gender === 'female' ? '#CCFF00' : textColor }}>Wanita</AppText>
+                <AppText weight="bold" style={{ color: tdeeForm.gender === 'female' ? '#D4F53C' : textColor }}>Wanita</AppText>
               </TouchableOpacity>
             </View>
 
@@ -95,9 +95,9 @@ export default function TdeeCalculatorModal({
                 <TouchableOpacity
                   key={act.value}
                   onPress={() => setTdeeForm({ ...tdeeForm, activity: act.value })}
-                  style={{ padding: 12, borderRadius: 12, borderWidth: 1, borderColor: tdeeForm.activity === act.value ? '#CCFF00' : borderColor, backgroundColor: tdeeForm.activity === act.value ? 'rgba(204,255,0,0.1)' : 'transparent', marginBottom: 8 }}
+                  style={{ padding: 12, borderRadius: 12, borderWidth: 1, borderColor: tdeeForm.activity === act.value ? '#D4F53C' : borderColor, backgroundColor: tdeeForm.activity === act.value ? 'rgba(212,245,60,0.1)' : 'transparent', marginBottom: 8 }}
                 >
-                  <AppText style={{ color: tdeeForm.activity === act.value ? '#CCFF00' : textColor }}>{act.label}</AppText>
+                  <AppText style={{ color: tdeeForm.activity === act.value ? '#D4F53C' : textColor }}>{act.label}</AppText>
                 </TouchableOpacity>
               ))}
             </View>
@@ -113,23 +113,23 @@ export default function TdeeCalculatorModal({
                 <TouchableOpacity
                   key={g.value}
                   onPress={() => setTdeeForm({ ...tdeeForm, goal: g.value })}
-                  style={{ padding: 12, borderRadius: 12, borderWidth: 1, borderColor: tdeeForm.goal === g.value ? '#CCFF00' : borderColor, backgroundColor: tdeeForm.goal === g.value ? 'rgba(204,255,0,0.1)' : 'transparent', marginBottom: 8 }}
+                  style={{ padding: 12, borderRadius: 12, borderWidth: 1, borderColor: tdeeForm.goal === g.value ? '#D4F53C' : borderColor, backgroundColor: tdeeForm.goal === g.value ? 'rgba(212,245,60,0.1)' : 'transparent', marginBottom: 8 }}
                 >
-                  <AppText style={{ color: tdeeForm.goal === g.value ? '#CCFF00' : textColor }}>{g.label}</AppText>
+                  <AppText style={{ color: tdeeForm.goal === g.value ? '#D4F53C' : textColor }}>{g.label}</AppText>
                 </TouchableOpacity>
               ))}
             </View>
 
             <TouchableOpacity
-              style={{ backgroundColor: '#CCFF00', padding: 16, borderRadius: 16, marginTop: 16, marginBottom: 32, alignItems: 'center', shadowColor: '#CCFF00', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 5 }}
+              style={{ backgroundColor: '#D4F53C', padding: 16, borderRadius: 16, marginTop: 16, marginBottom: 32, alignItems: 'center', shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 5 }}
               onPress={handleCalculateAndSave}
             >
               <AppText weight="bold" style={{ color: '#000', fontSize: 16, textAlign: 'center' }}>Hitung & Simpan Target</AppText>
             </TouchableOpacity>
             
             {nutritionGoals?.target_calories > 0 && (
-               <View style={{ marginTop: 24, padding: 16, backgroundColor: 'rgba(204,255,0,0.05)', borderRadius: 12, borderWidth: 1, borderColor: '#CCFF00' }}>
-                 <AppText style={{ color: '#CCFF00', textAlign: 'center', marginBottom: 8 }}>Target Saat Ini</AppText>
+               <View style={{ marginTop: 24, padding: 16, backgroundColor: 'rgba(212,245,60,0.05)', borderRadius: 12, borderWidth: 1, borderColor: '#D4F53C' }}>
+                 <AppText style={{ color: '#D4F53C', textAlign: 'center', marginBottom: 8 }}>Target Saat Ini</AppText>
                  <AppText weight="bold" style={{ color: textColor, fontSize: 24, textAlign: 'center' }}>{nutritionGoals.target_calories} kcal</AppText>
                  <AppText style={{ color: textMuted, textAlign: 'center' }}>Protein: {nutritionGoals.target_protein}g</AppText>
                </View>

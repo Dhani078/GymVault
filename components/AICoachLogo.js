@@ -1,7 +1,7 @@
 import React from 'react';
 import Svg, { Path, Circle, Rect, Defs, LinearGradient, Stop } from 'react-native-svg';
 
-export default function AICoachLogo({ size = 36, color = '#CCFF00', secondaryColor = '#FFFFFF' }) {
+export default function AICoachLogo({ size = 36, color = '#D4F53C', secondaryColor = '#FFFFFF' }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100" fill="none">
       <Defs>

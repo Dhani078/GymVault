@@ -16,7 +16,7 @@ export default function SupportModals({
         <View style={[styles.modalContent, { alignItems: 'stretch' }]}>
           <View style={[styles.detailHeader, { borderBottomWidth: 0, marginBottom: 10 }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <MessageSquare color="#CCFF00" size={28} />
+              <MessageSquare color="#D4F53C" size={28} />
               <Text style={styles.modalTitle}>Detail Keluhan</Text>
             </View>
             <TouchableOpacity onPress={() => setSelectedTicket(null)} style={styles.closeBtn}>
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   submitBtn: {
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
@@ -151,6 +151,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   statusTextActive: {
-    color: '#CCFF00',
+    color: '#D4F53C',
   },
 });

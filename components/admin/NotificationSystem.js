@@ -43,7 +43,7 @@ export default function NotificationSystem({ notifications, setShowNotifModal, s
                   borderColor: notif.type === 'warning' ? 'rgba(255, 165, 0, 0.3)' : notif.type === 'info' ? 'rgba(68, 136, 255, 0.3)' : 'rgba(204, 255, 0, 0.3)'
                 }]}>
                   <Text style={[styles.statusText, {
-                    color: notif.type === 'warning' ? '#FFA500' : notif.type === 'info' ? '#4488FF' : '#CCFF00'
+                    color: notif.type === 'warning' ? '#FFA500' : notif.type === 'info' ? '#4488FF' : '#D4F53C'
                   }]}>
                     {notif.type.toUpperCase()}
                   </Text>

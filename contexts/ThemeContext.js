@@ -41,14 +41,14 @@ export function ThemeProvider({ children }) {
   }, []);
 
   const colors = {
-    background: darkMode ? '#000000' : '#F8F9FA',
-    surface: darkMode ? '#111112' : '#FFFFFF',
-    border: darkMode ? '#222225' : '#E5E7EB',
-    primary: '#CCFF00',
+    background: darkMode ? '#0E0E0F' : '#F5F5F2',
+    surface: darkMode ? '#161618' : '#FFFFFF',
+    border: darkMode ? '#252528' : '#E5E7EB',
+    primary: '#D4F53C',
     text: darkMode ? '#FFFFFF' : '#121214',
-    textMuted: darkMode ? '#8E8E93' : '#6C757D',
-    card: darkMode ? '#0A0A0C' : '#FFFFFF',
-    inputBg: darkMode ? '#1C1C22' : '#F1F3F5',
+    textMuted: darkMode ? '#909096' : '#6C757D',
+    card: darkMode ? '#131315' : '#FFFFFF',
+    inputBg: darkMode ? '#1E1E21' : '#F1F3F5',
   };
 
   const setDarkMode = async (value) => {
@@ -114,14 +114,14 @@ export function useTheme() {
       setGraphicsQuality: () => {},
       setFpsLimit: () => {},
       colors: {
-        background: '#000000',
-        surface: '#111112',
-        border: '#222225',
-        primary: '#CCFF00',
+        background: '#0E0E0F',
+        surface: '#161618',
+        border: '#252528',
+        primary: '#D4F53C',
         text: '#FFFFFF',
-        textMuted: '#8E8E93',
-        card: '#0A0A0C',
-        inputBg: '#1C1C22',
+        textMuted: '#909096',
+        card: '#131315',
+        inputBg: '#1E1E21',
       }
     };
   }

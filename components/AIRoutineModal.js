@@ -148,15 +148,15 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
             const maxUsage = checkedInToday ? 15 : 3;
             return (
               <View style={{ backgroundColor: 'rgba(204, 255, 0, 0.1)', padding: 12, borderRadius: 12, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(204, 255, 0, 0.3)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <AppText style={{ color: '#CCFF00', fontSize: 14 }}>Sisa AI Routine Hari Ini:</AppText>
-                <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 16 }}>{Math.max(0, maxUsage - usageCount)} / {maxUsage}</AppText>
+                <AppText style={{ color: '#D4F53C', fontSize: 14 }}>Sisa AI Routine Hari Ini:</AppText>
+                <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 16 }}>{Math.max(0, maxUsage - usageCount)} / {maxUsage}</AppText>
               </View>
             );
           })()}
 
           {showPaywall ? (
             <View style={{ alignItems: 'center' }}>
-              <Award color="#CCFF00" size={48} style={{ marginBottom: 16 }} />
+              <Award color="#D4F53C" size={48} style={{ marginBottom: 16 }} />
               <AppText weight="bold" style={{ fontSize: 24, marginBottom: 8, textAlign: 'center' }}>Limit AI Habis</AppText>
               <AppText style={{ color: '#888', textAlign: 'center', marginBottom: 24, lineHeight: 20 }}>
                 Biaya server AI cukup mahal. Dukung developer Rp 10.000 via DANA (QRIS) untuk membuka fitur ini tanpa batas selama 1 Bulan!
@@ -194,7 +194,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
                 Biarkan AI meracik latihan yang pas untuk tubuhmu hari ini berdasarkan skor kelelahan (CNS) dan alat yang kamu punya.
                 {!isPremium && (() => {
                   const maxUsage = checkedInToday ? 15 : 3;
-                  return <AppText style={{ color: '#CCFF00', fontSize: 12 }}> (Sisa: {maxUsage - usageCount}/{maxUsage})</AppText>;
+                  return <AppText style={{ color: '#D4F53C', fontSize: 12 }}> (Sisa: {maxUsage - usageCount}/{maxUsage})</AppText>;
                 })()}
               </AppText>
 
@@ -207,7 +207,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
                     disabled={loading}
                     style={{
                       flex: 1, paddingVertical: 12, borderRadius: 12,
-                      backgroundColor: level === lvl ? 'rgba(204,255,0,0.1)' : theme.colors.inputBg,
+                      backgroundColor: level === lvl ? 'rgba(212,245,60,0.1)' : theme.colors.inputBg,
                       borderWidth: 1, borderColor: level === lvl ? theme.colors.primary : theme.colors.border,
                       alignItems: 'center'
                     }}
@@ -226,7 +226,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
                     disabled={loading}
                     style={{
                       width: '48%', paddingVertical: 12, borderRadius: 12,
-                      backgroundColor: focus === foc ? 'rgba(204,255,0,0.1)' : theme.colors.inputBg,
+                      backgroundColor: focus === foc ? 'rgba(212,245,60,0.1)' : theme.colors.inputBg,
                       borderWidth: 1, borderColor: focus === foc ? theme.colors.primary : theme.colors.border,
                       alignItems: 'center'
                     }}

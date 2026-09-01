@@ -30,11 +30,11 @@ export default function TrophyCabinet({ stats = {}, checkInStreak = 0, cardColor
                 borderRadius: 20,
                 padding: 16,
                 borderWidth: 1,
-                borderColor: achieved ? '#CCFF00' : borderColor,
+                borderColor: achieved ? '#D4F53C' : borderColor,
                 alignItems: 'center',
                 marginRight: idx === arr.length - 1 ? 48 : 16,
                 opacity: achieved ? 1 : 0.4,
-                shadowColor: achieved ? '#CCFF00' : '#000',
+                shadowColor: achieved ? '#D4F53C' : '#000',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: achieved ? 0.25 : 0.1,
                 shadowRadius: 8,
@@ -51,7 +51,7 @@ export default function TrophyCabinet({ stats = {}, checkInStreak = 0, cardColor
                   alignItems: 'center',
                   marginBottom: 12,
                   borderWidth: 1,
-                  borderColor: achieved ? 'rgba(204,255,0,0.3)' : 'transparent',
+                  borderColor: achieved ? 'rgba(212,245,60,0.3)' : 'transparent',
                 }}
               >
                 <Image
