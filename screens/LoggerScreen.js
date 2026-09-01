@@ -733,7 +733,7 @@ export default function LoggerScreen({
   if (workoutData.length === 0) {
     return (
       <View style={[styles.screen, { justifyContent: 'center', alignItems: 'center', padding: 32 }]}>
-        <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(204,255,0,0.08)', justifyContent: 'center', alignItems: 'center', marginBottom: 24 }}>
+        <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(212,245,60,0.08)', justifyContent: 'center', alignItems: 'center', marginBottom: 24 }}>
           <Dumbbell color={theme.colors.primary} size={36} />
         </View>
         <AppText weight="bold" style={{ fontSize: 22, marginBottom: 8 }}>Ready to Train?</AppText>
@@ -836,7 +836,7 @@ export default function LoggerScreen({
               <Pressable key={ex.id} onPress={() => setCurrentIndex(i)} style={{
                 flexDirection: 'row', alignItems: 'center', gap: 6,
                 paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, marginRight: 8,
-                backgroundColor: isActive ? 'rgba(204,255,0,0.06)' : allDone ? 'rgba(16,185,129,0.05)' : theme.colors.card,
+                backgroundColor: isActive ? 'rgba(212,245,60,0.06)' : allDone ? 'rgba(16,185,129,0.05)' : theme.colors.card,
                 borderWidth: 1,
                 borderColor: isActive ? theme.colors.primary : allDone ? 'rgba(16,185,129,0.25)' : theme.colors.border,
               }}>
@@ -852,7 +852,7 @@ export default function LoggerScreen({
                 </AppText>
                 {total > 0 && (
                   <View style={{
-                    backgroundColor: isActive ? 'rgba(204,255,0,0.12)' : allDone ? 'rgba(16,185,129,0.1)' : theme.colors.inputBg,
+                    backgroundColor: isActive ? 'rgba(212,245,60,0.12)' : allDone ? 'rgba(16,185,129,0.1)' : theme.colors.inputBg,
                     paddingHorizontal: 5, paddingVertical: 1, borderRadius: 6, marginLeft: 2
                   }}>
                     <AppText weight="bold" style={{ fontSize: 9, color: isActive ? theme.colors.primary : allDone ? '#10B981' : theme.colors.textMuted }}>
@@ -873,8 +873,8 @@ export default function LoggerScreen({
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <AppText weight="bold" style={{ fontSize: 16, color: '#FFF' }}>{curEx.name}</AppText>
                   {proMode && (
-                    <Pressable onPress={() => setShowPlateModal(true)} style={{ backgroundColor: 'rgba(204,255,0,0.15)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: '#CCFF00', zIndex: 10 }}>
-                      <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 10 }}>PLATES</AppText>
+                    <Pressable onPress={() => setShowPlateModal(true)} style={{ backgroundColor: 'rgba(212,245,60,0.15)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: '#D4F53C', zIndex: 10 }}>
+                      <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 10 }}>PLATES</AppText>
                     </Pressable>
                   )}
                 </View>
@@ -884,7 +884,7 @@ export default function LoggerScreen({
                     const bio = getBiomechanicalCue(curEx.name);
                     return (
                       <View style={{ backgroundColor: 'rgba(255,255,255,0.12)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
-                        <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 9 }}>TEMPO {bio.tempo}</AppText>
+                        <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 9 }}>TEMPO {bio.tempo}</AppText>
                       </View>
                     );
                   })()}
@@ -921,7 +921,7 @@ export default function LoggerScreen({
               <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
                   <View style={{ 
-                    backgroundColor: isBackoff ? '#F59E0B' : '#CCFF00', 
+                    backgroundColor: isBackoff ? '#F59E0B' : '#D4F53C', 
                     paddingHorizontal: 6, 
                     paddingVertical: 2, 
                     borderRadius: 4 
@@ -930,7 +930,7 @@ export default function LoggerScreen({
                       {isBackoff ? 'BACK-OFF SET' : 'AI TARGET'}
                     </AppText>
                   </View>
-                  <AppText weight="bold" style={{ color: isBackoff ? '#F59E0B' : '#CCFF00', fontSize: 13 }}>
+                  <AppText weight="bold" style={{ color: isBackoff ? '#F59E0B' : '#D4F53C', fontSize: 13 }}>
                     {overloadRec.recommendedWeightKg} kg × {overloadRec.recommendedReps} reps
                   </AppText>
                 </View>
@@ -969,7 +969,7 @@ export default function LoggerScreen({
                   });
                 }}
                 style={{
-                  backgroundColor: isBackoff ? '#F59E0B' : '#CCFF00',
+                  backgroundColor: isBackoff ? '#F59E0B' : '#D4F53C',
                   paddingHorizontal: 12,
                   paddingVertical: 8,
                   borderRadius: 8,
@@ -1015,7 +1015,7 @@ export default function LoggerScreen({
               <View key={set.id} style={{
                 flexDirection: 'row', alignItems: 'center', gap: 8,
                 padding: 10, borderRadius: 12,
-                backgroundColor: set.completed ? 'rgba(16,185,129,0.08)' : isCurrentlyActive ? 'rgba(204,255,0,0.04)' : theme.colors.card,
+                backgroundColor: set.completed ? 'rgba(16,185,129,0.08)' : isCurrentlyActive ? 'rgba(212,245,60,0.04)' : theme.colors.card,
                 borderWidth: 1,
                 borderColor: set.completed ? 'rgba(16,185,129,0.2)' : isCurrentlyActive ? theme.colors.primary : theme.colors.border,
               }}>
@@ -1216,7 +1216,7 @@ export default function LoggerScreen({
           position: 'absolute', bottom: 20, left: 20, right: 20,
           backgroundColor: theme.colors.card, borderRadius: 14,
           flexDirection: 'row', alignItems: 'center', padding: 14,
-          borderWidth: 1.5, borderColor: 'rgba(204,255,0,0.3)',
+          borderWidth: 1.5, borderColor: 'rgba(212,245,60,0.3)',
           shadowColor: theme.colors.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12, elevation: 8,
         }}>
           <Clock color={theme.colors.primary} size={22} style={{ marginRight: 12 }} />
@@ -1287,9 +1287,9 @@ export default function LoggerScreen({
 
             {/* Comparison Text Card */}
             <View style={{ 
-              backgroundColor: 'rgba(204,255,0,0.06)', 
+              backgroundColor: 'rgba(212,245,60,0.06)', 
               borderWidth: 1, 
-              borderColor: 'rgba(204,255,0,0.15)',
+              borderColor: 'rgba(212,245,60,0.15)',
               borderRadius: 16, 
               padding: 16, 
               marginTop: 16,

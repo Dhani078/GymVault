@@ -37,8 +37,8 @@ export default function OnboardingScreen({ onComplete }) {
               key={opt.id}
               style={{
                 padding: 24, borderRadius: 16, borderWidth: 2,
-                borderColor: goal === opt.id ? '#CCFF00' : '#222',
-                backgroundColor: goal === opt.id ? 'rgba(204,255,0,0.1)' : '#111',
+                borderColor: goal === opt.id ? '#D4F53C' : '#222',
+                backgroundColor: goal === opt.id ? 'rgba(212,245,60,0.1)' : '#111',
                 flexDirection: 'row', alignItems: 'center'
               }}
               onPress={() => {
@@ -46,7 +46,7 @@ export default function OnboardingScreen({ onComplete }) {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
             >
-              <opt.icon color={goal === opt.id ? '#CCFF00' : '#888'} size={24} style={{ marginRight: 16 }} />
+              <opt.icon color={goal === opt.id ? '#D4F53C' : '#888'} size={24} style={{ marginRight: 16 }} />
               <AppText weight="bold" style={{ color: goal === opt.id ? '#FFF' : '#888', fontSize: 18 }}>{opt.label}</AppText>
             </Pressable>
           ))}
@@ -64,8 +64,8 @@ export default function OnboardingScreen({ onComplete }) {
               key={opt.id}
               style={{
                 padding: 24, borderRadius: 16, borderWidth: 2,
-                borderColor: level === opt.id ? '#CCFF00' : '#222',
-                backgroundColor: level === opt.id ? 'rgba(204,255,0,0.1)' : '#111',
+                borderColor: level === opt.id ? '#D4F53C' : '#222',
+                backgroundColor: level === opt.id ? 'rgba(212,245,60,0.1)' : '#111',
               }}
               onPress={() => {
                 setLevel(opt.id);
@@ -81,7 +81,7 @@ export default function OnboardingScreen({ onComplete }) {
 
       <Pressable
         style={{
-          marginTop: 40, backgroundColor: (step === 1 ? goal : level) ? '#CCFF00' : '#333',
+          marginTop: 40, backgroundColor: (step === 1 ? goal : level) ? '#D4F53C' : '#333',
           padding: 20, borderRadius: 16, flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
           opacity: (step === 1 ? goal : level) ? 1 : 0.5
         }}

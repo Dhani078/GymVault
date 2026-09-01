@@ -31,9 +31,9 @@ const LaserScanner = () => {
 
   return (
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}>
-      <Reanimated.View style={[{ width: '100%', height: 4, backgroundColor: '#CCFF00', shadowColor: '#CCFF00', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 1, shadowRadius: 10, elevation: 10 }, animatedStyle]}>
+      <Reanimated.View style={[{ width: '100%', height: 4, backgroundColor: '#D4F53C', shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 1, shadowRadius: 10, elevation: 10 }, animatedStyle]}>
         <LinearGradient
-          colors={['transparent', 'rgba(204,255,0,0.8)', 'transparent']}
+          colors={['transparent', 'rgba(212,245,60,0.8)', 'transparent']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={{ width: '100%', height: '100%' }}
@@ -41,7 +41,7 @@ const LaserScanner = () => {
       </Reanimated.View>
       <Reanimated.View style={[{ position: 'absolute', top: -50, width: '100%', height: 50, opacity: 0.3 }, animatedStyle]}>
         <LinearGradient
-          colors={['transparent', 'rgba(204,255,0,0.4)']}
+          colors={['transparent', 'rgba(212,245,60,0.4)']}
           style={{ width: '100%', height: '100%' }}
         />
       </Reanimated.View>
@@ -309,15 +309,15 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
           const maxUsage = checkedInToday ? 15 : 3;
           return (
             <View style={{ backgroundColor: 'rgba(204, 255, 0, 0.1)', padding: 12, borderRadius: 12, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(204, 255, 0, 0.3)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <AppText style={{ color: '#CCFF00', fontSize: 14 }}>Sisa AI Nutrition Hari Ini:</AppText>
-              <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 16 }}>{Math.max(0, maxUsage - usageCount)} / {maxUsage}</AppText>
+              <AppText style={{ color: '#D4F53C', fontSize: 14 }}>Sisa AI Nutrition Hari Ini:</AppText>
+              <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 16 }}>{Math.max(0, maxUsage - usageCount)} / {maxUsage}</AppText>
             </View>
           );
         })()}
 
         {showPaywall ? (
           <View style={{ alignItems: 'center', marginTop: 24 }}>
-            <Award color="#CCFF00" size={48} style={{ marginBottom: 16 }} />
+            <Award color="#D4F53C" size={48} style={{ marginBottom: 16 }} />
             <AppText weight="bold" style={{ fontSize: 24, color: '#FFF', marginBottom: 8, textAlign: 'center' }}>Limit AI Habis</AppText>
             <AppText style={{ color: '#888', textAlign: 'center', marginBottom: 24, lineHeight: 20 }}>
               Biaya server AI cukup mahal. Dukung developer Rp 10.000 via DANA (QRIS) untuk membuka fitur ini tanpa batas selama 1 Bulan!
@@ -384,7 +384,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                     onPress={() => setShowOverrideSearch(!showOverrideSearch)}
                     style={{ backgroundColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}
                   >
-                    <AppText style={{ color: '#CCFF00', fontSize: 11 }}>✏️ Edit</AppText>
+                    <AppText style={{ color: '#D4F53C', fontSize: 11 }}>✏️ Edit</AppText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -431,9 +431,9 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                             setSearchQuery('');
                             setPortionScale(1);
                           }}
-                          style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 6, borderWidth: 1, borderColor: 'rgba(204,255,0,0.2)' }}
+                          style={{ backgroundColor: 'rgba(212,245,60,0.1)', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 6, borderWidth: 1, borderColor: 'rgba(212,245,60,0.2)' }}
                         >
-                          <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 13 }}>{item.name}</AppText>
+                          <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 13 }}>{item.name}</AppText>
                           <AppText style={{ color: '#888', fontSize: 11 }}>100% Acc: {item.cal} kcal • P: {item.p}g • C: {item.c}g • F: {item.f}g</AppText>
                         </TouchableOpacity>
                       ))}
@@ -481,7 +481,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                 </TouchableOpacity>
                 <TouchableOpacity 
                   onPress={() => setPortionScale(1.0)}
-                  style={{ flex: 1, backgroundColor: portionScale === 1.0 ? '#CCFF00' : '#222', padding: 10, borderRadius: 8, alignItems: 'center' }}
+                  style={{ flex: 1, backgroundColor: portionScale === 1.0 ? '#D4F53C' : '#222', padding: 10, borderRadius: 8, alignItems: 'center' }}
                 >
                   <AppText weight="bold" style={{ color: portionScale === 1.0 ? '#000' : '#FFF', fontSize: 13 }}>Reset (1x)</AppText>
                 </TouchableOpacity>

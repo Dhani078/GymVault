@@ -11,7 +11,7 @@ const AdminDashboard = lazy(() => import('../screens/AdminDashboard'));
 function DesktopFallbackLoader() {
   return (
     <View style={[styles.center, { backgroundColor: '#000000' }]}>
-      <ActivityIndicator size="large" color="#CCFF00" />
+      <ActivityIndicator size="large" color="#D4F53C" />
     </View>
   );
 }
@@ -71,7 +71,7 @@ export default function AdaptiveLayout({ children, session }) {
   if (loadingRole) {
     return (
       <View style={[styles.center, { backgroundColor: colors.background || '#000000' }]}>
-        <ActivityIndicator size="large" color="#CCFF00" />
+        <ActivityIndicator size="large" color="#D4F53C" />
       </View>
     );
   }
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 8,
     borderColor: '#1A1A1A',
-    shadowColor: '#CCFF00',
+    shadowColor: '#D4F53C',
     shadowOffset: { width: 0, height: 20 },
     shadowOpacity: 0.1,
     shadowRadius: 50,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   switchChipActive: {
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
   },
   switchChipText: {
     color: '#888888',

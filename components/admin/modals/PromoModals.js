@@ -23,7 +23,7 @@ export default function PromoModals({
             </View>
             <Text style={styles.modalTitle}>Hapus Kode Promo?</Text>
             <Text style={styles.modalText}>
-              Anda yakin ingin menghapus promo <Text style={{ color: '#CCFF00', fontFamily: 'Inter_700Bold' }}>{promoToDelete?.code}</Text>?
+              Anda yakin ingin menghapus promo <Text style={{ color: '#D4F53C', fontFamily: 'Inter_700Bold' }}>{promoToDelete?.code}</Text>?
             </Text>
             
             <View style={styles.modalActions}>
@@ -48,7 +48,7 @@ export default function PromoModals({
           <View style={[styles.modalContent, { alignItems: 'stretch' }]}>
             <View style={[styles.detailHeader, { borderBottomWidth: 0, marginBottom: 10 }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <Ticket color="#CCFF00" size={28} />
+                <Ticket color="#D4F53C" size={28} />
                 <Text style={styles.modalTitle}>Buat Kode Promo</Text>
               </View>
               <TouchableOpacity onPress={() => setShowPromoModal(false)} style={styles.closeBtn}>
@@ -233,12 +233,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   generateBtnText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontFamily: 'Inter_600SemiBold',
     fontSize: 14,
   },
   submitBtn: {
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',

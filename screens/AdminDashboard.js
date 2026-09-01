@@ -49,7 +49,7 @@ export default function AdminDashboard() {
       {/* HEADER NAVBAR */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <ShieldAlert color="#CCFF00" size={28} />
+          <ShieldAlert color="#D4F53C" size={28} />
           <Text style={styles.headerTitle}>CONTROL PANEL</Text>
           <View style={styles.adminBadge}>
             <Text style={styles.adminBadgeText}>ADMIN SUITE</Text>
@@ -108,8 +108,8 @@ export default function AdminDashboard() {
           <RefreshControl 
             refreshing={isRefreshing} 
             onRefresh={onRefresh} 
-            tintColor="#CCFF00" 
-            colors={['#CCFF00']}
+            tintColor="#D4F53C" 
+            colors={['#D4F53C']}
             progressBackgroundColor="#1A1A1A"
           />
         }
@@ -137,9 +137,9 @@ export default function AdminDashboard() {
                   gap: 12
                 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(204,255,0,0.08)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(204,255,0,0.25)' }}>
-                      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#CCFF00' }} />
-                      <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold' }}>Gemini 3.7 Flash Cascade</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(212,245,60,0.08)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(212,245,60,0.25)' }}>
+                      <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#D4F53C' }} />
+                      <Text style={{ color: '#D4F53C', fontSize: 12, fontWeight: 'bold' }}>Gemini 3.7 Flash Cascade</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(56,189,248,0.08)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: 'rgba(56,189,248,0.25)' }}>
                       <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#38BDF8' }} />
@@ -150,10 +150,10 @@ export default function AdminDashboard() {
                   <View style={{ flexDirection: 'row', gap: 8 }}>
                     <TouchableOpacity
                       onPress={() => setShowNotifModal(true)}
-                      style={{ backgroundColor: 'rgba(204,255,0,0.12)', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(204,255,0,0.3)', flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                      style={{ backgroundColor: 'rgba(212,245,60,0.12)', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(212,245,60,0.3)', flexDirection: 'row', alignItems: 'center', gap: 6 }}
                     >
-                      <Send color="#CCFF00" size={14} />
-                      <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold' }}>+ Broadcast</Text>
+                      <Send color="#D4F53C" size={14} />
+                      <Text style={{ color: '#D4F53C', fontSize: 12, fontWeight: 'bold' }}>+ Broadcast</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   },
   navTabBtnActive: {
     backgroundColor: 'rgba(204, 255, 0, 0.15)',
-    borderColor: '#CCFF00',
+    borderColor: '#D4F53C',
   },
   navTabText: {
     color: '#8E8E9F',
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   navTabTextActive: {
-    color: '#CCFF00',
+    color: '#D4F53C',
   },
   navTabBadge: {
     backgroundColor: 'rgba(204, 255, 0, 0.2)',
@@ -360,10 +360,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   navTabBadgeActive: {
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
   },
   navTabBadgeText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 10,
     fontWeight: 'bold',
   },
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(204, 255, 0, 0.3)',
   },
   adminBadgeText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontFamily: 'Inter_700Bold',
     fontSize: 10,
     letterSpacing: 1,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     borderRadius: 100,
   },
   exportText: {
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(204, 255, 0, 0.3)',
   },
   chartTrendText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontFamily: 'Inter_700Bold',
     fontSize: 14,
   },
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
   },
   barFill: {
     width: '100%',
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     borderRadius: 8,
   },
   barLabel: {
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   roleTextAdmin: {
-    color: '#CCFF00',
+    color: '#D4F53C',
   },
   statusBadge: {
     alignSelf: 'flex-start',
@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   statusTextActive: {
-    color: '#CCFF00',
+    color: '#D4F53C',
   },
   statusTextSuspended: {
     color: '#FFA500',
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
   },
   workoutDuration: {
     fontFamily: 'Inter_600SemiBold',
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 14,
   },
   emptyDetailBox: {
@@ -853,11 +853,11 @@ const styles = StyleSheet.create({
   },
   generateBtnText: {
     fontFamily: 'Inter_600SemiBold',
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 14,
   },
   submitBtn: {
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',

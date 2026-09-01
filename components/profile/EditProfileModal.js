@@ -100,7 +100,7 @@ export default function EditProfileModal({
             </View>
 
             <TouchableOpacity
-              style={{ backgroundColor: '#CCFF00', padding: 16, borderRadius: 16, marginTop: 16, marginBottom: 32, alignItems: 'center', shadowColor: '#CCFF00', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 5 }}
+              style={{ backgroundColor: '#D4F53C', padding: 16, borderRadius: 16, marginTop: 16, marginBottom: 32, alignItems: 'center', shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 5 }}
               onPress={() => {
                 onSave();
                 onClose();

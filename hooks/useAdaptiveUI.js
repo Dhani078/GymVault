@@ -94,7 +94,7 @@ export function useAdaptiveUI() {
   const modeInfo = useMemo(() => ({
     label: isGym ? 'Gym Mode' : 'Home Mode',
     icon: isGym ? '🏢' : '🏠',
-    color: isGym ? '#CCFF00' : '#3B82F6',
+    color: isGym ? '#D4F53C' : '#3B82F6',
     description: isGym
       ? 'Full equipment access. Weight-based tracking.'
       : 'Adapted for home equipment. Bodyweight-focused.',

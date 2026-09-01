@@ -4,14 +4,14 @@ import { useTheme } from './contexts/ThemeContext';
 
 // --- ACTIVE COLOR STATE FOR DYNAMIC GETTERS ---
 export let activeColors = {
-  background: '#000000',
-  surface: '#111112',
-  border: '#222225',
-  primary: '#CCFF00',
+  background: '#0E0E0F',
+  surface: '#161618',
+  border: '#252528',
+  primary: '#D4F53C',
   text: '#FFFFFF',
-  textMuted: '#8E8E93',
-  card: '#0A0A0C',
-  inputBg: '#1C1C22',
+  textMuted: '#909096',
+  card: '#131315',
+  inputBg: '#1E1E21',
 };
 
 export const updateActiveColors = (newColors) => {
@@ -70,7 +70,7 @@ export const styles = {
       borderRadius: 24,
       backgroundColor: activeColors.surface,
       borderWidth: 1,
-      borderColor: 'rgba(204,255,0,0.25)',
+      borderColor: 'rgba(212,245,60,0.25)',
       justifyContent: 'center',
       alignItems: 'center',
       shadowColor: activeColors.primary,

@@ -17,7 +17,7 @@ export default function AuditLogs({ adminLogs }) {
           const isEven = index % 2 === 0;
           return (
             <View key={log.id || index} style={[styles.tableRow, isEven && styles.tableRowEven]}>
-              <Text style={[styles.tableCell, styles.cellFlex1, styles.cellTextBold, { color: log.action.includes('DELETE') ? '#FF4444' : log.action.includes('SUSPEND') ? '#FFA500' : '#CCFF00' }]}>
+              <Text style={[styles.tableCell, styles.cellFlex1, styles.cellTextBold, { color: log.action.includes('DELETE') ? '#FF4444' : log.action.includes('SUSPEND') ? '#FFA500' : '#D4F53C' }]}>
                 {log.action}
               </Text>
               <Text style={[styles.tableCell, styles.cellFlex2, styles.cellText]}>

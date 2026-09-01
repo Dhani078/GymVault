@@ -60,13 +60,13 @@ export default function CnsReadinessWidget({ session, userProfile, dbError, onSt
         gap: 16,
         marginBottom: 24
       }}>
-        <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: 'rgba(204,255,0,0.06)', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: 'rgba(212,245,60,0.06)', justifyContent: 'center', alignItems: 'center' }}>
           <Activity color={theme.colors.primary} size={22} />
         </View>
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <AppText weight="bold" style={{ fontSize: 15, color: theme.colors.text }}>CNS Readiness</AppText>
-            <AppText weight="bold" style={{ fontSize: 12, color: (userProfile?.cns_fatigue || 3) >= 4 ? '#10B981' : ((userProfile?.cns_fatigue || 3) === 3 ? '#CCFF00' : '#FF9F0A') }}>
+            <AppText weight="bold" style={{ fontSize: 12, color: (userProfile?.cns_fatigue || 3) >= 4 ? '#10B981' : ((userProfile?.cns_fatigue || 3) === 3 ? '#D4F53C' : '#FF9F0A') }}>
               Level {userProfile?.cns_fatigue || 3}/5
             </AppText>
           </View>
@@ -81,7 +81,7 @@ export default function CnsReadinessWidget({ session, userProfile, dbError, onSt
             {[1, 2, 3, 4, 5].map((level) => {
               const score = userProfile?.cns_fatigue || 3;
               const isLit = level <= score;
-              const activeColor = score >= 4 ? '#10B981' : (score === 3 ? '#CCFF00' : '#FF9F0A');
+              const activeColor = score >= 4 ? '#10B981' : (score === 3 ? '#D4F53C' : '#FF9F0A');
               return (
                 <View 
                   key={level} 

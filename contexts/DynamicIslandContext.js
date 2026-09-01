@@ -26,8 +26,8 @@ const NOTIFICATION_TYPES = {
   success: { icon: CheckCircle, color: '#10B981', bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.25)' },
   pr: { icon: Trophy, color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.25)' },
   rest: { icon: Clock, color: '#3B82F6', bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.25)' },
-  fire: { icon: Flame, color: '#CCFF00', bg: 'rgba(204,255,0,0.08)', border: 'rgba(204,255,0,0.20)' },
-  workout: { icon: Dumbbell, color: '#CCFF00', bg: 'rgba(204,255,0,0.08)', border: 'rgba(204,255,0,0.20)' },
+  fire: { icon: Flame, color: '#D4F53C', bg: 'rgba(212,245,60,0.08)', border: 'rgba(212,245,60,0.20)' },
+  workout: { icon: Dumbbell, color: '#D4F53C', bg: 'rgba(212,245,60,0.08)', border: 'rgba(212,245,60,0.20)' },
   warning: { icon: AlertCircle, color: '#EF4444', bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.25)' },
   streak: { icon: Zap, color: '#A855F7', bg: 'rgba(168,85,247,0.12)', border: 'rgba(168,85,247,0.25)' },
 };

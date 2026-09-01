@@ -254,7 +254,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
                 {t('ready_to_break_limits')}
               </AppText>
             </View>
-            <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(204,255,0,0.08)', borderWidth: 1.5, borderColor: 'rgba(204,255,0,0.25)', justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(212,245,60,0.08)', borderWidth: 1.5, borderColor: 'rgba(212,245,60,0.25)', justifyContent: 'center', alignItems: 'center' }}>
               <Flame color={theme.colors.primary} size={26} />
             </View>
           </View>
@@ -262,7 +262,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           {/* Quick Streak Pill & Leaderboard */}
           <View style={{ flexDirection: 'row', gap: 10 }}>
             {stats.streak > 0 && (
-              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(204,255,0,0.06)', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(204,255,0,0.15)' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(212,245,60,0.06)', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8, alignSelf: 'flex-start', borderWidth: 1, borderColor: 'rgba(212,245,60,0.15)' }}>
                 <Flame color={theme.colors.primary} size={14} />
                 <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 13, marginLeft: 6 }}>{stats.streak} day streak</AppText>
               </View>
@@ -277,14 +277,14 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
         {/* ═══ ADAPTIVE ENGINE TOGGLE ═══ */}
         <View style={{ flexDirection: 'row', backgroundColor: theme.colors.inputBg, borderRadius: 20, padding: 4, marginBottom: 20, borderWidth: 1, borderColor: theme.colors.border }}>
           <TouchableOpacity 
-            style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, backgroundColor: !isHome ? 'rgba(204,255,0,0.1)' : 'transparent', borderWidth: !isHome ? 1 : 0, borderColor: !isHome ? 'rgba(204,255,0,0.3)' : 'transparent' }}
+            style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, backgroundColor: !isHome ? 'rgba(212,245,60,0.1)' : 'transparent', borderWidth: !isHome ? 1 : 0, borderColor: !isHome ? 'rgba(212,245,60,0.3)' : 'transparent' }}
             onPress={() => setMode('gym')}
           >
             <Dumbbell color={!isHome ? theme.colors.primary : theme.colors.textMuted} size={18} style={{ marginRight: 8 }} />
             <AppText weight="bold" style={{ color: !isHome ? theme.colors.text : theme.colors.textMuted, fontSize: 14 }}>Gym Mode</AppText>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, backgroundColor: isHome ? 'rgba(204,255,0,0.1)' : 'transparent', borderWidth: isHome ? 1 : 0, borderColor: isHome ? 'rgba(204,255,0,0.3)' : 'transparent' }}
+            style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 16, backgroundColor: isHome ? 'rgba(212,245,60,0.1)' : 'transparent', borderWidth: isHome ? 1 : 0, borderColor: isHome ? 'rgba(212,245,60,0.3)' : 'transparent' }}
             onPress={() => setMode('home')}
           >
             <Home color={isHome ? theme.colors.primary : theme.colors.textMuted} size={18} style={{ marginRight: 8 }} />
@@ -308,7 +308,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
                     activeOpacity={isBodyOnly ? 1 : 0.7}
                     style={{ 
                       flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20,
-                      backgroundColor: hasEq ? 'rgba(204,255,0,0.08)' : theme.colors.surface,
+                      backgroundColor: hasEq ? 'rgba(212,245,60,0.08)' : theme.colors.surface,
                       borderWidth: 1, borderColor: hasEq ? theme.colors.primary : theme.colors.border
                     }}
                   >
@@ -367,7 +367,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           borderRadius: 24, 
           padding: 18, 
           borderWidth: 1, 
-          borderColor: 'rgba(204,255,0,0.15)', 
+          borderColor: 'rgba(212,245,60,0.15)', 
           marginBottom: 16,
           position: 'relative',
           overflow: 'hidden'
@@ -380,11 +380,11 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
               <AICoachLogo size={20} />
               <AppText weight="bold" style={{ fontSize: 14, color: theme.colors.text }}>AI Coach Quick Log</AppText>
             </View>
-            <View style={{ backgroundColor: 'rgba(204,255,0,0.08)', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }}>
+            <View style={{ backgroundColor: 'rgba(212,245,60,0.08)', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }}>
               <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 9 }}>ONLINE</AppText>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(204,255,0,0.2)', paddingRight: 6 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(212,245,60,0.2)', paddingRight: 6 }}>
             <TextInput
               style={{ 
                 flex: 1, 
@@ -429,7 +429,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
         <View style={{ marginBottom: 24 }}>
           <TouchableOpacity
             activeOpacity={0.7}
-            style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, backgroundColor: 'rgba(204,255,0,0.08)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(204,255,0,0.35)' }}
+            style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, backgroundColor: 'rgba(212,245,60,0.08)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(212,245,60,0.35)' }}
             onPress={() => setAiModalVisible(true)}
           >
             <AICoachLogo size={20} />
@@ -469,8 +469,8 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
               progress={Math.min(stats.thisWeek / 4, 1)} 
               size={120} 
               strokeWidth={12} 
-              primaryColor="#CCFF00" 
-              secondaryColor="rgba(204,255,0,0.1)"
+              primaryColor="#D4F53C" 
+              secondaryColor="rgba(212,245,60,0.1)"
               title={stats.thisWeek.toString()}
               subtitle="This Week"
               label="Goal: 4"
@@ -479,7 +479,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
 
           <View style={{ flex: 1, gap: 12 }}>
             <View style={{ flex: 1, backgroundColor: theme.colors.card, padding: 16, borderRadius: 20, borderWidth: 1, borderColor: theme.colors.border, position: 'relative', justifyContent: 'center' }}>
-              <View style={{ width: 30, height: 30, borderRadius: 8, backgroundColor: 'rgba(204,255,0,0.06)', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
+              <View style={{ width: 30, height: 30, borderRadius: 8, backgroundColor: 'rgba(212,245,60,0.06)', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
                 <Flame color={theme.colors.primary} size={14} />
               </View>
               <AppText weight="bold" style={{ fontSize: 22, color: theme.colors.text, fontVariant: ['tabular-nums'] }}>{stats.totalWorkouts}</AppText>

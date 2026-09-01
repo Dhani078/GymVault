@@ -62,12 +62,12 @@ export default function NotificationModals({
                       { flex: 1, paddingVertical: 12 },
                       newNotif.type === type && { 
                         backgroundColor: type === 'warning' ? 'rgba(255, 165, 0, 0.2)' : type === 'info' ? 'rgba(68, 136, 255, 0.2)' : 'rgba(204, 255, 0, 0.2)',
-                        borderColor: type === 'warning' ? '#FFA500' : type === 'info' ? '#4488FF' : '#CCFF00'
+                        borderColor: type === 'warning' ? '#FFA500' : type === 'info' ? '#4488FF' : '#D4F53C'
                       }
                     ]}
                     onPress={() => setNewNotif(prev => ({ ...prev, type }))}
                   >
-                    <Text style={[styles.generateBtnText, { color: type === 'warning' ? '#FFA500' : type === 'info' ? '#4488FF' : '#CCFF00' }]}>
+                    <Text style={[styles.generateBtnText, { color: type === 'warning' ? '#FFA500' : type === 'info' ? '#4488FF' : '#D4F53C' }]}>
                       {type.toUpperCase()}
                     </Text>
                   </TouchableOpacity>
@@ -239,12 +239,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   generateBtnText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontFamily: 'Inter_600SemiBold',
     fontSize: 14,
   },
   submitBtn: {
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',

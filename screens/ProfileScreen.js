@@ -353,11 +353,11 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         {/* Profile Header */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: theme.colors.inputBg, overflow: 'hidden', borderWidth: 2, borderColor: '#CCFF00', justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: theme.colors.inputBg, overflow: 'hidden', borderWidth: 2, borderColor: '#D4F53C', justifyContent: 'center', alignItems: 'center' }}>
               {profile?.avatar_url ? (
                 <Image source={{ uri: profile.avatar_url }} style={{ width: '100%', height: '100%' }} />
               ) : (
-                <User color="#CCFF00" size={32} />
+                <User color="#D4F53C" size={32} />
               )}
             </View>
             <View>
@@ -365,8 +365,8 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
               <AppText style={{ fontSize: 13, color: textMuted }}>@{profile?.username || 'gymvault_user'}</AppText>
               {isPremium && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 }}>
-                  <Crown color="#CCFF00" size={14} />
-                  <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 11 }}>PRO LIFTER</AppText>
+                  <Crown color="#D4F53C" size={14} />
+                  <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 11 }}>PRO LIFTER</AppText>
                 </View>
               )}
             </View>
@@ -388,14 +388,14 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
             style={{
               backgroundColor: '#121208',
               borderWidth: 1,
-              borderColor: '#CCFF00',
+              borderColor: '#D4F53C',
               borderRadius: 16,
               padding: 16,
               marginBottom: 20,
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              shadowColor: '#CCFF00',
+              shadowColor: '#D4F53C',
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.15,
               shadowRadius: 8,
@@ -403,14 +403,14 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, flex: 1 }}>
               <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(204, 255, 0, 0.15)', justifyContent: 'center', alignItems: 'center' }}>
-                <Crown color="#CCFF00" size={22} />
+                <Crown color="#D4F53C" size={22} />
               </View>
               <View style={{ flex: 1 }}>
                 <AppText weight="bold" style={{ color: '#FFFFFF', fontSize: 15 }}>Upgrade ke GymVault Pro</AppText>
-                <AppText style={{ color: '#CCFF00', fontSize: 11, marginTop: 2 }}>Scan QRIS Otomatis • Bebas Iklan • AI Unlimited</AppText>
+                <AppText style={{ color: '#D4F53C', fontSize: 11, marginTop: 2 }}>Scan QRIS Otomatis • Bebas Iklan • AI Unlimited</AppText>
               </View>
             </View>
-            <View style={{ backgroundColor: '#CCFF00', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
+            <View style={{ backgroundColor: '#D4F53C', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
               <AppText weight="bold" style={{ color: '#000000', fontSize: 12 }}>UPGRADE</AppText>
             </View>
           </TouchableOpacity>
@@ -439,9 +439,9 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => setTdeeModalVisible(true)}
-            style={{ flex: 1, backgroundColor: cardColor, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#CCFF00' }}
+            style={{ flex: 1, backgroundColor: cardColor, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#D4F53C' }}
           >
-            <AppText style={{ color: '#CCFF00', fontSize: 11, marginBottom: 4 }}>BMI / TDEE</AppText>
+            <AppText style={{ color: '#D4F53C', fontSize: 11, marginBottom: 4 }}>BMI / TDEE</AppText>
             <AppText weight="bold" style={{ color: textColor, fontSize: 18 }}>{getBmi()}</AppText>
           </TouchableOpacity>
         </View>
@@ -462,7 +462,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         {/* ─── Deload & Injury Risk ─── */}
         <View style={{ backgroundColor: darkMode ? 'rgba(204, 255, 0, 0.05)' : '#FFFFFF', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: deloadSuggestion.status === 'Danger' ? '#EF4444' : (darkMode ? 'rgba(204, 255, 0, 0.2)' : '#E5E7EB'), marginBottom: 16, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
           <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: deloadSuggestion.status === 'Danger' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(204, 255, 0, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
-            {deloadSuggestion.status === 'Danger' ? <AlertTriangle color="#EF4444" size={24} /> : <Zap color="#CCFF00" size={24} />}
+            {deloadSuggestion.status === 'Danger' ? <AlertTriangle color="#EF4444" size={24} /> : <Zap color="#D4F53C" size={24} />}
           </View>
           <View style={{ flex: 1 }}>
             <AppText weight="bold" style={{ color: textColor, fontSize: 16, marginBottom: 4 }}>{t('recovery_status')}</AppText>
@@ -476,7 +476,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         <AppText weight="bold" style={{ fontSize: 14, color: textMuted, letterSpacing: 1, marginBottom: 12 }}>{t('lifetime_stats')}</AppText>
         <View style={{ flexDirection: 'row', gap: 12, marginBottom: 32 }}>
           <View style={{ flex: 1, backgroundColor: cardColor, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: borderColor }}>
-            <Target color="#CCFF00" size={20} style={{ marginBottom: 12 }} />
+            <Target color="#D4F53C" size={20} style={{ marginBottom: 12 }} />
             {loading ? <SkeletonBox width={40} height={24} style={{ marginBottom: 4 }} /> : (
               <AppText weight="bold" style={{ color: textColor, fontSize: 24, fontVariant: ['tabular-nums'], marginBottom: 2 }}>{stats.totalWorkouts || 0}</AppText>
             )}
@@ -489,9 +489,9 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
             style={{ flex: 1, backgroundColor: cardColor, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: borderColor }}
           >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <TrendingUp color="#CCFF00" size={20} />
-              <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
-                <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 10 }}>SHARE</AppText>
+              <TrendingUp color="#D4F53C" size={20} />
+              <View style={{ backgroundColor: 'rgba(212,245,60,0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 10 }}>SHARE</AppText>
               </View>
             </View>
             {loading ? <SkeletonBox width={60} height={24} style={{ marginBottom: 4 }} /> : (

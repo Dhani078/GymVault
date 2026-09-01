@@ -387,7 +387,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
   const getMuscleStroke = (muscleId) => {
     const recovery = muscleRecoveryStates[muscleId];
     if (!recovery) return 'rgba(255,255,255,0.05)';
-    if (recovery.percentage >= 95) return '#CCFF00';
+    if (recovery.percentage >= 95) return '#D4F53C';
     if (recovery.percentage >= 40) return '#F59E0B';
     return '#EF4444';
   };
@@ -417,7 +417,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
           <Svg width={svgWidth} height={svgHeight} viewBox="50 10 170 190">
             <Defs>
               <LinearGradient id="grad-fresh" x1="0%" y1="0%" x2="100%" y2="100%">
-                <Stop offset="0%" stopColor="#CCFF00" stopOpacity="0.85" />
+                <Stop offset="0%" stopColor="#D4F53C" stopOpacity="0.85" />
                 <Stop offset="100%" stopColor="#88B800" stopOpacity="0.85" />
               </LinearGradient>
               <LinearGradient id="grad-recovering" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -515,11 +515,11 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <View style={[styles.statusBadge, {
-                backgroundColor: selectedMuscle.percentage >= 95 ? 'rgba(204,255,0,0.08)' : selectedMuscle.percentage >= 40 ? 'rgba(245,158,11,0.08)' : 'rgba(239,68,68,0.08)',
-                borderColor: selectedMuscle.percentage >= 95 ? '#CCFF00' : selectedMuscle.percentage >= 40 ? '#F59E0B' : '#EF4444'
+                backgroundColor: selectedMuscle.percentage >= 95 ? 'rgba(212,245,60,0.08)' : selectedMuscle.percentage >= 40 ? 'rgba(245,158,11,0.08)' : 'rgba(239,68,68,0.08)',
+                borderColor: selectedMuscle.percentage >= 95 ? '#D4F53C' : selectedMuscle.percentage >= 40 ? '#F59E0B' : '#EF4444'
               }]}>
                 <AppText weight="bold" style={{
-                  color: selectedMuscle.percentage >= 95 ? '#CCFF00' : selectedMuscle.percentage >= 40 ? '#F59E0B' : '#EF4444',
+                  color: selectedMuscle.percentage >= 95 ? '#D4F53C' : selectedMuscle.percentage >= 40 ? '#F59E0B' : '#EF4444',
                   fontSize: 10
                 }}>
                   {selectedMuscle.percentage}% Pemulihan
@@ -536,7 +536,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
             <View style={{
               height: '100%',
               width: `${selectedMuscle.percentage}%`,
-              backgroundColor: selectedMuscle.percentage >= 95 ? '#CCFF00' : selectedMuscle.percentage >= 40 ? '#F59E0B' : '#EF4444',
+              backgroundColor: selectedMuscle.percentage >= 95 ? '#D4F53C' : selectedMuscle.percentage >= 40 ? '#F59E0B' : '#EF4444',
               borderRadius: 3
             }} />
           </View>
@@ -568,7 +568,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
               </View>
             ) : (
               <View>
-                <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 11, marginBottom: 4, letterSpacing: 0.5 }}>💪 LATIHAN YANG DIREKOMENDASIKAN (FRESH):</AppText>
+                <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 11, marginBottom: 4, letterSpacing: 0.5 }}>💪 LATIHAN YANG DIREKOMENDASIKAN (FRESH):</AppText>
                 {(MUSCLE_DETAILS[selectedMuscle.id]?.workouts || []).map((ex, idx) => (
                   <AppText key={idx} style={{ color: colors.text, fontSize: 12, lineHeight: 18 }}>• {ex}</AppText>
                 ))}
@@ -598,16 +598,16 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
                     onPress={() => saveOverride(selectedMuscle.id, preset.value)}
                     style={{
                       flex: 1,
-                      backgroundColor: isSelected ? 'rgba(204,255,0,0.06)' : 'transparent',
+                      backgroundColor: isSelected ? 'rgba(212,245,60,0.06)' : 'transparent',
                       borderWidth: 1,
-                      borderColor: isSelected ? '#CCFF00' : 'rgba(255, 255, 255, 0.08)',
+                      borderColor: isSelected ? '#D4F53C' : 'rgba(255, 255, 255, 0.08)',
                       borderRadius: 10,
                       paddingVertical: 8,
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}
                   >
-                    <AppText weight="bold" style={{ fontSize: 11, color: isSelected ? '#CCFF00' : colors.textMuted }}>
+                    <AppText weight="bold" style={{ fontSize: 11, color: isSelected ? '#D4F53C' : colors.textMuted }}>
                       {preset.label}
                     </AppText>
                   </TouchableOpacity>
@@ -620,7 +620,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
         /* Status Legends */
         <View style={[styles.legendContainer, { borderTopColor: colors.border }]}>
           {[
-            { label: 'Segar (95-100%)', color: '#CCFF00', bg: 'rgba(204,255,0,0.05)' },
+            { label: 'Segar (95-100%)', color: '#D4F53C', bg: 'rgba(212,245,60,0.05)' },
             { label: 'Pemulihan (40-94%)', color: '#F59E0B', bg: 'rgba(245,158,11,0.05)' },
             { label: 'Sore / Lelah (<40%)', color: '#EF4444', bg: 'rgba(239,68,68,0.05)' }
           ].map((leg, index) => (

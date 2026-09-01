@@ -31,10 +31,10 @@ export default function SystemHealthWidget({ onPing }) {
         </View>
         <TouchableOpacity style={styles.pingBtn} onPress={handlePing} disabled={isPinging}>
           {isPinging ? (
-            <ActivityIndicator size="small" color="#CCFF00" />
+            <ActivityIndicator size="small" color="#D4F53C" />
           ) : (
             <>
-              <RefreshCw size={14} color="#CCFF00" />
+              <RefreshCw size={14} color="#D4F53C" />
               <Text style={styles.pingText}>Ping Telemetry</Text>
             </>
           )}
@@ -45,13 +45,13 @@ export default function SystemHealthWidget({ onPing }) {
         {/* Node 1: Supabase PostgreSQL */}
         <View style={styles.nodeCard}>
           <View style={styles.nodeTop}>
-            <Database size={18} color="#CCFF00" />
+            <Database size={18} color="#D4F53C" />
             <View style={styles.statusBadgeGreen}>
               <Text style={styles.statusTextGreen}>CONNECTED</Text>
             </View>
           </View>
           <Text style={styles.nodeName}>PostgreSQL 15 (Supabase)</Text>
-          <Text style={styles.nodeSub}>Latency: <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{latency} ms</Text> • RLS Active</Text>
+          <Text style={styles.nodeSub}>Latency: <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>{latency} ms</Text> • RLS Active</Text>
         </View>
 
         {/* Node 2: Google Gemini AI Cascade */}
@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#CCFF00',
-    shadowColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
+    shadowColor: '#D4F53C',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 6,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   pingText: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#CCFF00',
+    color: '#D4F53C',
   },
   grid: {
     flexDirection: 'row',

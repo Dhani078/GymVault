@@ -47,7 +47,7 @@ export default function UserModals({
           <View style={styles.modalContent}>
             <View style={[styles.modalIconBox, userToToggleStatus?.status === 'suspended' ? { backgroundColor: 'rgba(204, 255, 0, 0.1)' } : { backgroundColor: 'rgba(255, 165, 0, 0.1)' }]}>
               {userToToggleStatus?.status === 'suspended' ? (
-                <UserCheck color="#CCFF00" size={32} />
+                <UserCheck color="#D4F53C" size={32} />
               ) : (
                 <Ban color="#FFA500" size={32} />
               )}
@@ -65,7 +65,7 @@ export default function UserModals({
                 <Text style={styles.modalBtnCancelText}>Batal</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={[styles.modalBtnConfirm, userToToggleStatus?.status === 'suspended' ? { backgroundColor: '#CCFF00' } : { backgroundColor: '#FFA500' }]} 
+                style={[styles.modalBtnConfirm, userToToggleStatus?.status === 'suspended' ? { backgroundColor: '#D4F53C' } : { backgroundColor: '#FFA500' }]} 
                 onPress={confirmToggleStatus}
               >
                 <Text style={[styles.modalBtnConfirmText, userToToggleStatus?.status === 'suspended' ? { color: '#000' } : { color: '#000' }]}>
@@ -100,7 +100,7 @@ export default function UserModals({
               
               {loadingDetail ? (
                 <View style={{ padding: 40, alignItems: 'center' }}>
-                  <ActivityIndicator color="#CCFF00" />
+                  <ActivityIndicator color="#D4F53C" />
                 </View>
               ) : userWorkouts && userWorkouts.length > 0 ? (
                 userWorkouts.map((session, idx) => (
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   workoutDuration: {
     fontFamily: 'Inter_700Bold',
     fontSize: 14,
-    color: '#CCFF00',
+    color: '#D4F53C',
   },
   emptyDetailBox: {
     backgroundColor: '#111',

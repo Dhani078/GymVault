@@ -133,13 +133,13 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
           height: 200,
           borderRadius: 20,
           backgroundColor: reactionGameState === 'flash' 
-            ? '#CCFF00' 
+            ? '#D4F53C' 
             : (reactionGameState === 'waiting' 
               ? 'rgba(255, 69, 0, 0.12)' 
               : 'rgba(255, 255, 255, 0.04)'),
           borderWidth: 1,
           borderColor: reactionGameState === 'flash' 
-            ? '#CCFF00' 
+            ? '#D4F53C' 
             : (reactionGameState === 'waiting' 
               ? '#FF4500' 
               : theme.colors.border),
@@ -171,7 +171,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
         )}
         {reactionGameState === 'result' && (
           <View style={{ alignItems: 'center' }}>
-            <Trophy color="#CCFF00" size={40} style={{ marginBottom: 10 }} />
+            <Trophy color="#D4F53C" size={40} style={{ marginBottom: 10 }} />
             <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 18 }}>Hasil Uji Saraf</AppText>
             <View style={{ flexDirection: 'row', gap: 10, marginVertical: 10 }}>
               {reactionTrials.map((t, i) => (
@@ -180,7 +180,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
                 </View>
               ))}
             </View>
-            <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 15, marginTop: 2 }}>{reactionMsg}</AppText>
+            <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 15, marginTop: 2 }}>{reactionMsg}</AppText>
           </View>
         )}
       </TouchableOpacity>
@@ -219,7 +219,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
             activeOpacity={0.8}
             style={{
               flex: 1,
-              backgroundColor: '#CCFF00',
+              backgroundColor: '#D4F53C',
               paddingVertical: 14,
               borderRadius: 12,
               alignItems: 'center'

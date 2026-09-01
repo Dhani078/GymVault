@@ -353,7 +353,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
                               paddingVertical: 16, 
                               borderBottomWidth: 1, 
                               borderBottomColor: theme.colors.border,
-                              backgroundColor: user.isMe ? 'rgba(204,255,0,0.05)' : 'transparent',
+                              backgroundColor: user.isMe ? 'rgba(212,245,60,0.05)' : 'transparent',
                               borderRadius: user.isMe ? 12 : 0,
                               paddingHorizontal: user.isMe ? 8 : 0
                             }}
@@ -363,15 +363,15 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
                             </View>
                             
                             <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 8 }}>
-                              <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: user.isMe ? 'rgba(204,255,0,0.2)' : theme.colors.inputBg, justifyContent: 'center', alignItems: 'center', marginRight: 12, overflow: 'hidden' }}>
+                              <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: user.isMe ? 'rgba(212,245,60,0.2)' : theme.colors.inputBg, justifyContent: 'center', alignItems: 'center', marginRight: 12, overflow: 'hidden' }}>
                                 {user.avatar ? (
                                   <Image source={{ uri: user.avatar }} style={{ width: '100%', height: '100%' }} />
                                 ) : (
-                                  user.isMe ? <User color="#CCFF00" size={20} /> : <User color={theme.colors.textMuted} size={20} />
+                                  user.isMe ? <User color="#D4F53C" size={20} /> : <User color={theme.colors.textMuted} size={20} />
                                 )}
                               </View>
                               <View style={{ flex: 1 }}>
-                                <AppText weight="bold" style={{ color: user.isMe ? '#CCFF00' : theme.colors.text, fontSize: 15 }} numberOfLines={1}>{user.name}</AppText>
+                                <AppText weight="bold" style={{ color: user.isMe ? '#D4F53C' : theme.colors.text, fontSize: 15 }} numberOfLines={1}>{user.name}</AppText>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
                                   <Flame color="#FF4500" size={12} style={{ marginRight: 4 }} />
                                   <AppText style={{ color: theme.colors.textMuted, fontSize: 11 }}>{user.streak} {t('day_streak')}</AppText>
@@ -386,8 +386,8 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
 
                             <View style={{ width: 40, alignItems: 'flex-end', justifyContent: 'center' }}>
                               {!user.isMe && (
-                                <TouchableOpacity onPress={() => toggleFollow(user.id, user.name)} style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: isFollowing ? 'rgba(204,255,0,0.1)' : theme.colors.inputBg, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: isFollowing ? 'rgba(204,255,0,0.3)' : theme.colors.border }}>
-                                  {isFollowing ? <UserCheck color="#CCFF00" size={16} /> : <UserPlus color={theme.colors.textMuted} size={16} />}
+                                <TouchableOpacity onPress={() => toggleFollow(user.id, user.name)} style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: isFollowing ? 'rgba(212,245,60,0.1)' : theme.colors.inputBg, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: isFollowing ? 'rgba(212,245,60,0.3)' : theme.colors.border }}>
+                                  {isFollowing ? <UserCheck color="#D4F53C" size={16} /> : <UserPlus color={theme.colors.textMuted} size={16} />}
                                 </TouchableOpacity>
                               )}
                             </View>

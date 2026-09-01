@@ -107,7 +107,7 @@ export default function RedeemCodeModal({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={{ flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#CCFF00', alignItems: 'center', justifyContent: 'center' }}
+              style={{ flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#D4F53C', alignItems: 'center', justifyContent: 'center' }}
               onPress={handleRedeem}
               disabled={loading}
             >

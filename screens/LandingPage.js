@@ -221,7 +221,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.header, { paddingHorizontal: isLarge ? 80 : 24 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <View style={styles.logoBadge}>
-            <Dumbbell color="#CCFF00" size={24} />
+            <Dumbbell color="#D4F53C" size={24} />
           </View>
           <View>
             <Text style={styles.logoText}>GYMVAULT</Text>
@@ -249,13 +249,13 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── HERO SECTION (CINEMATIC WIDE 2-LINE) ─── */}
       <View style={[styles.heroSection, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.badge}>
-          <Sparkles color="#CCFF00" size={14} />
+          <Sparkles color="#D4F53C" size={14} />
           <Text style={styles.badgeText}>ELITE FITNESS & ADAPTIVE RECOVERY ENGINE 2.0</Text>
         </View>
 
         <Text style={[styles.heroTitle, { fontSize: isLarge ? 64 : isMedium ? 44 : 32, lineHeight: isLarge ? 74 : isMedium ? 52 : 40 }]}>
           ENGINEERED FOR{'\n'}
-          <Text style={{ color: '#CCFF00' }}>ABSOLUTE PHYSICAL DOMINANCE.</Text>
+          <Text style={{ color: '#D4F53C' }}>ABSOLUTE PHYSICAL DOMINANCE.</Text>
         </Text>
 
         <Text style={[styles.heroSubtitle, { maxWidth: isLarge ? 760 : 600 }]}>
@@ -300,7 +300,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Smartphone color="#CCFF00" size={14} />
+            <Smartphone color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>LIVE INTERACTIVE INTERFACE</Text>
           </View>
           <Text style={styles.sectionHeading}>Eksplorasi Antarmuka Aplikasi</Text>
@@ -339,32 +339,32 @@ export default function LandingPage({ onLoginPress }) {
             <View style={{ gap: 14 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <View>
-                  <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>SESI LATIHAN AKTIF</Text>
+                  <Text style={{ color: '#D4F53C', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>SESI LATIHAN AKTIF</Text>
                   <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Heavy Push Day (Barbell Focus)</Text>
                 </View>
-                <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
-                  <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 13 }}>00:42:18</Text>
+                <View style={{ backgroundColor: 'rgba(212,245,60,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
+                  <Text style={{ color: '#D4F53C', fontWeight: 'bold', fontSize: 13 }}>00:42:18</Text>
                 </View>
               </View>
 
               <View style={styles.loggerSetRow}>
                 <Text style={{ color: '#888', fontWeight: 'bold', width: 50 }}>SET 1</Text>
                 <Text style={{ color: '#FFF', fontWeight: 'bold', flex: 1 }}>Barbell Bench Press</Text>
-                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>100 kg × 8 reps</Text>
+                <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>100 kg × 8 reps</Text>
                 <View style={styles.checkPill}><Check color="#000" size={14} /></View>
               </View>
 
               <View style={styles.loggerSetRow}>
                 <Text style={{ color: '#888', fontWeight: 'bold', width: 50 }}>SET 2</Text>
                 <Text style={{ color: '#FFF', fontWeight: 'bold', flex: 1 }}>Incline Dumbbell Press</Text>
-                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>36 kg × 10 reps</Text>
+                <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>36 kg × 10 reps</Text>
                 <View style={styles.checkPill}><Check color="#000" size={14} /></View>
               </View>
 
               <View style={styles.loggerSetRow}>
                 <Text style={{ color: '#888', fontWeight: 'bold', width: 50 }}>SET 3</Text>
                 <Text style={{ color: '#FFF', fontWeight: 'bold', flex: 1 }}>Overhead Barbell Press</Text>
-                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>60 kg × 8 reps</Text>
+                <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>60 kg × 8 reps</Text>
                 <View style={styles.checkPill}><Check color="#000" size={14} /></View>
               </View>
             </View>
@@ -483,7 +483,7 @@ export default function LandingPage({ onLoginPress }) {
                   <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold' }}>{fridgeTargetCal} kcal</Text>
                 </View>
                 <View style={{ flexDirection: 'row', gap: 12, marginVertical: 8 }}>
-                  <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold' }}>P: 42g Protein</Text>
+                  <Text style={{ color: '#D4F53C', fontSize: 12, fontWeight: 'bold' }}>P: 42g Protein</Text>
                   <Text style={{ color: '#60A5FA', fontSize: 12, fontWeight: 'bold' }}>C: 58g Karbo</Text>
                   <Text style={{ color: '#F59E0B', fontSize: 12, fontWeight: 'bold' }}>F: 16g Lemak</Text>
                 </View>
@@ -498,7 +498,7 @@ export default function LandingPage({ onLoginPress }) {
             <View style={{ gap: 14 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <View>
-                  <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>CNS FATIGUE ENGINE</Text>
+                  <Text style={{ color: '#D4F53C', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>CNS FATIGUE ENGINE</Text>
                   <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Peta Pemulihan 12 Kelompok Otot</Text>
                 </View>
                 <Text style={{ color: '#10B981', fontWeight: 'bold', fontSize: 13 }}>Status: Optimal</Text>
@@ -528,13 +528,13 @@ export default function LandingPage({ onLoginPress }) {
             <View style={{ gap: 14 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <View>
-                  <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>GOOGLE GEMINI 3.7 COACH</Text>
+                  <Text style={{ color: '#D4F53C', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>GOOGLE GEMINI 3.7 COACH</Text>
                   <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Analisis Beban & Progresi Otomatis</Text>
                 </View>
               </View>
 
               <View style={styles.aiChatBubbleBox}>
-                <Sparkles color="#CCFF00" size={18} />
+                <Sparkles color="#D4F53C" size={18} />
                 <Text style={{ color: '#DDD', fontSize: 13, flex: 1, lineHeight: 20 }}>
                   "Volume Bench Press Anda minggu ini meningkat 12% menjadi 8.400 kg. CNS fatigue pada pectorals berada di zona adaptasi optimal. Disarankan menambah 2.5 kg pada sesi berikutnya untuk progressive overload."
                 </Text>
@@ -548,7 +548,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Calculator color="#CCFF00" size={14} />
+            <Calculator color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>SCIENTIFIC 1RM ENGINE</Text>
           </View>
           <Text style={styles.sectionHeading}>Kalkulator 1-Rep Max & Strength Tier</Text>
@@ -587,13 +587,13 @@ export default function LandingPage({ onLoginPress }) {
           <View style={styles.oneRmResultBanner}>
             <View>
               <Text style={{ color: '#888', fontSize: 12, letterSpacing: 1 }}>ESTIMASI 1-REP MAX (100% 1RM)</Text>
-              <Text style={{ color: '#CCFF00', fontSize: 44, fontWeight: 'bold', marginTop: 4 }}>
+              <Text style={{ color: '#D4F53C', fontSize: 44, fontWeight: 'bold', marginTop: 4 }}>
                 {estimated1RM} <Text style={{ fontSize: 20, color: '#FFF' }}>kg</Text>
               </Text>
             </View>
             <View style={styles.strengthBadge}>
-              <Award color="#CCFF00" size={20} />
-              <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 13 }}>
+              <Award color="#D4F53C" size={20} />
+              <Text style={{ color: '#D4F53C', fontWeight: 'bold', fontSize: 13 }}>
                 {estimated1RM >= 140 ? 'ELITE LIFTER' : estimated1RM >= 100 ? 'ADVANCED' : 'INTERMEDIATE'}
               </Text>
             </View>
@@ -611,7 +611,7 @@ export default function LandingPage({ onLoginPress }) {
               { pct: '70%', reps: '11-12 reps', val: Math.round(estimated1RM * 0.70) },
             ].map((item, idx) => (
               <View key={idx} style={styles.pctBox}>
-                <Text style={{ color: '#CCFF00', fontSize: 12, fontWeight: 'bold' }}>{item.pct} ({item.reps})</Text>
+                <Text style={{ color: '#D4F53C', fontSize: 12, fontWeight: 'bold' }}>{item.pct} ({item.reps})</Text>
                 <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold', marginTop: 2 }}>{item.val} kg</Text>
               </View>
             ))}
@@ -623,7 +623,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Sliders color="#CCFF00" size={14} />
+            <Sliders color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>PLATE LOADING SIMULATOR</Text>
           </View>
           <Text style={styles.sectionHeading}>Kalkulator Plate Barbell Olympic</Text>
@@ -668,7 +668,7 @@ export default function LandingPage({ onLoginPress }) {
             </View>
 
             <Text style={{ color: '#AAA', fontSize: 12, textAlign: 'center', marginTop: 8 }}>
-              Total: 20kg Olympic Bar + {plateResult.platesPerSide.map(p => p.label).join(' + ') || 'Tanpa Plate'} (x2 Sisi) = <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{targetPlateWeight} kg</Text>
+              Total: 20kg Olympic Bar + {plateResult.platesPerSide.map(p => p.label).join(' + ') || 'Tanpa Plate'} (x2 Sisi) = <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>{targetPlateWeight} kg</Text>
             </Text>
           </View>
         </View>
@@ -678,7 +678,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Scale color="#CCFF00" size={14} />
+            <Scale color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>PRECISION METABOLIC ENGINE</Text>
           </View>
           <Text style={styles.sectionHeading}>Kalkulator TDEE & Target Makronutrisi</Text>
@@ -724,10 +724,10 @@ export default function LandingPage({ onLoginPress }) {
 
           {/* Target Results Cards */}
           <View style={{ flexDirection: isMedium ? 'row' : 'column', gap: 12 }}>
-            <View style={[styles.macroItemLarge, { borderColor: '#CCFF00' }]}>
-              <Flame color="#CCFF00" size={24} style={{ marginBottom: 6 }} />
+            <View style={[styles.macroItemLarge, { borderColor: '#D4F53C' }]}>
+              <Flame color="#D4F53C" size={24} style={{ marginBottom: 6 }} />
               <Text style={{ color: '#888', fontSize: 11, fontWeight: 'bold' }}>TARGET KALORI</Text>
-              <Text style={{ color: '#CCFF00', fontSize: 28, fontWeight: 'bold', marginTop: 4 }}>{tdeeResult.targetCals} <Text style={{ fontSize: 14 }}>kcal</Text></Text>
+              <Text style={{ color: '#D4F53C', fontSize: 28, fontWeight: 'bold', marginTop: 4 }}>{tdeeResult.targetCals} <Text style={{ fontSize: 14 }}>kcal</Text></Text>
             </View>
             <View style={[styles.macroItemLarge, { borderColor: '#10B981' }]}>
               <Text style={{ color: '#10B981', fontSize: 11, fontWeight: 'bold' }}>PROTEIN HARIAN</Text>
@@ -752,7 +752,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Compass color="#CCFF00" size={14} />
+            <Compass color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>WEEKLY SPLIT ARCHITECT</Text>
           </View>
           <Text style={styles.sectionHeading}>Generator Program Latihan Mingguan</Text>
@@ -779,11 +779,11 @@ export default function LandingPage({ onLoginPress }) {
         <View style={[styles.toolCard, { width: '100%', maxWidth: 880, alignSelf: 'center' }]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#222', paddingBottom: 16 }}>
             <View>
-              <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 18 }}>{SPLIT_PROGRAMS[splitDays].name}</Text>
+              <Text style={{ color: '#D4F53C', fontWeight: 'bold', fontSize: 18 }}>{SPLIT_PROGRAMS[splitDays].name}</Text>
               <Text style={{ color: '#888', fontSize: 13, marginTop: 2 }}>{SPLIT_PROGRAMS[splitDays].tagline}</Text>
             </View>
-            <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
-              <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 12 }}>{splitDays}x Sesi Aktif</Text>
+            <View style={{ backgroundColor: 'rgba(212,245,60,0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}>
+              <Text style={{ color: '#D4F53C', fontWeight: 'bold', fontSize: 12 }}>{splitDays}x Sesi Aktif</Text>
             </View>
           </View>
 
@@ -791,7 +791,7 @@ export default function LandingPage({ onLoginPress }) {
             {SPLIT_PROGRAMS[splitDays].days.map((d, i) => (
               <View key={i} style={styles.splitDayRow}>
                 <View style={styles.splitDayBadge}>
-                  <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 12 }}>{d.day}</Text>
+                  <Text style={{ color: '#D4F53C', fontWeight: 'bold', fontSize: 12 }}>{d.day}</Text>
                 </View>
                 <Text style={{ color: '#FFF', fontSize: 14, fontWeight: 'bold', flex: 1 }}>{d.focus}</Text>
                 <Text style={{ color: '#888', fontSize: 12 }}>{d.vol}</Text>
@@ -805,7 +805,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Heart color="#CCFF00" size={14} />
+            <Heart color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>CARDIOVASCULAR TELEMETRY</Text>
           </View>
           <Text style={styles.sectionHeading}>Zona Detak Jantung Latihan (HR Zones)</Text>
@@ -823,7 +823,7 @@ export default function LandingPage({ onLoginPress }) {
               onChangeText={setUserAge}
               keyboardType="numeric"
             />
-            <Text style={{ color: '#888', fontSize: 13 }}>Max HR Estimasi: <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{maxHR} BPM</Text></Text>
+            <Text style={{ color: '#888', fontSize: 13 }}>Max HR Estimasi: <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>{maxHR} BPM</Text></Text>
           </View>
 
           <View style={{ gap: 10 }}>
@@ -850,7 +850,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Activity color="#CCFF00" size={14} />
+            <Activity color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>INTERACTIVE TELEMETRY</Text>
           </View>
           <Text style={styles.sectionHeading}>Simulasi Peta Kelelahan Otot & CNS</Text>
@@ -873,11 +873,11 @@ export default function LandingPage({ onLoginPress }) {
                   activeOpacity={0.7}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Text style={[styles.simTabTitle, isSelected && { color: '#CCFF00' }]}>{item.name}</Text>
-                    <Text style={[styles.simTabPercent, isSelected ? { color: '#CCFF00' } : { color: '#888' }]}>{item.fatigue}%</Text>
+                    <Text style={[styles.simTabTitle, isSelected && { color: '#D4F53C' }]}>{item.name}</Text>
+                    <Text style={[styles.simTabPercent, isSelected ? { color: '#D4F53C' } : { color: '#888' }]}>{item.fatigue}%</Text>
                   </View>
                   <View style={styles.simProgressBarBg}>
-                    <View style={[styles.simProgressBarFill, { width: `${item.fatigue}%`, backgroundColor: item.fatigue > 80 ? '#EF4444' : item.fatigue > 50 ? '#F59E0B' : '#CCFF00' }]} />
+                    <View style={[styles.simProgressBarFill, { width: `${item.fatigue}%`, backgroundColor: item.fatigue > 80 ? '#EF4444' : item.fatigue > 50 ? '#F59E0B' : '#D4F53C' }]} />
                   </View>
                 </TouchableOpacity>
               );
@@ -892,8 +892,8 @@ export default function LandingPage({ onLoginPress }) {
                   <Text style={styles.telemetryTitle}>{muscle.name}</Text>
                   <Text style={styles.telemetrySubtitle}>Status: {muscle.fatigue >= 80 ? 'Heavy Fatigue (Adaptation Zone)' : 'Ready for Volume'}</Text>
                 </View>
-                <View style={[styles.fatigueBadge, { backgroundColor: muscle.fatigue > 80 ? 'rgba(239,68,68,0.15)' : 'rgba(204,255,0,0.15)' }]}>
-                  <Text style={[styles.fatigueBadgeText, { color: muscle.fatigue > 80 ? '#EF4444' : '#CCFF00' }]}>
+                <View style={[styles.fatigueBadge, { backgroundColor: muscle.fatigue > 80 ? 'rgba(239,68,68,0.15)' : 'rgba(212,245,60,0.15)' }]}>
+                  <Text style={[styles.fatigueBadgeText, { color: muscle.fatigue > 80 ? '#EF4444' : '#D4F53C' }]}>
                     {muscle.fatigue}% FATIGUE
                   </Text>
                 </View>
@@ -901,12 +901,12 @@ export default function LandingPage({ onLoginPress }) {
 
               <View style={styles.telemetryMetricsRow}>
                 <View style={styles.metricCard}>
-                  <Timer color="#CCFF00" size={20} style={{ marginBottom: 6 }} />
+                  <Timer color="#D4F53C" size={20} style={{ marginBottom: 6 }} />
                   <Text style={styles.metricLabel}>WAKTU RECOVERY</Text>
                   <Text style={styles.metricVal}>{muscle.recoveryHours} Jam</Text>
                 </View>
                 <View style={styles.metricCard}>
-                  <Zap color="#CCFF00" size={20} style={{ marginBottom: 6 }} />
+                  <Zap color="#D4F53C" size={20} style={{ marginBottom: 6 }} />
                   <Text style={styles.metricLabel}>CNS STRESS</Text>
                   <Text style={styles.metricVal}>{muscle.cnsStrain}</Text>
                 </View>
@@ -924,7 +924,7 @@ export default function LandingPage({ onLoginPress }) {
               </View>
 
               <View style={styles.aiAdviceBox}>
-                <Sparkles color="#CCFF00" size={16} />
+                <Sparkles color="#D4F53C" size={16} />
                 <Text style={styles.aiAdviceText}>{muscle.advice}</Text>
               </View>
             </View>
@@ -936,7 +936,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Layers color="#CCFF00" size={14} />
+            <Layers color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>THE ADAPTIVE ENGINE</Text>
           </View>
           <Text style={styles.sectionHeading}>Satu Aplikasi, Dua Mode Adaptif</Text>
@@ -982,7 +982,7 @@ export default function LandingPage({ onLoginPress }) {
                 : ['HIIT & Tabata Interval Smart Beeper', 'Variasi Gerakan Kalistenik & Band', 'Kalori Terbakar Berdasarkan Metronom', 'Tidak Perlu Alat Gym Mahal']
               ).map((feat, idx) => (
                 <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <CheckCircle2 color="#CCFF00" size={18} />
+                  <CheckCircle2 color="#D4F53C" size={18} />
                   <Text style={{ color: '#DDD', fontSize: 14 }}>{feat}</Text>
                 </View>
               ))}
@@ -992,22 +992,22 @@ export default function LandingPage({ onLoginPress }) {
           <View style={{ flex: 1, backgroundColor: '#0D0D0F', padding: 32, justifyContent: 'center', alignItems: 'center', borderLeftWidth: isLarge ? 1 : 0, borderTopWidth: !isLarge ? 1 : 0, borderColor: '#222' }}>
             <View style={styles.modeMockBox}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#CCFF00' }} />
+                <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#D4F53C' }} />
                 <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 14 }}>
                   {activeMode === 'gym' ? 'SESI: CHEST & SHOULDER (RPE 9)' : 'SESI: FULL BODY HIIT (30s WORK / 15s REST)'}
                 </Text>
               </View>
               <View style={styles.mockRow}>
                 <Text style={{ color: '#888', fontSize: 12 }}>{activeMode === 'gym' ? 'Set 1: Barbell Bench Press' : 'Round 1: Diamond Push Up'}</Text>
-                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{activeMode === 'gym' ? '100 kg × 8 reps' : '20 reps • 45s'}</Text>
+                <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>{activeMode === 'gym' ? '100 kg × 8 reps' : '20 reps • 45s'}</Text>
               </View>
               <View style={styles.mockRow}>
                 <Text style={{ color: '#888', fontSize: 12 }}>{activeMode === 'gym' ? 'Set 2: Overhead Barbell Press' : 'Round 2: Jump Squats'}</Text>
-                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{activeMode === 'gym' ? '60 kg × 10 reps' : '25 reps • 45s'}</Text>
+                <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>{activeMode === 'gym' ? '60 kg × 10 reps' : '25 reps • 45s'}</Text>
               </View>
               <View style={styles.mockRow}>
                 <Text style={{ color: '#888', fontSize: 12 }}>{activeMode === 'gym' ? 'Set 3: Incline Dumbbell Fly' : 'Round 3: Mountain Climbers'}</Text>
-                <Text style={{ color: '#CCFF00', fontWeight: 'bold' }}>{activeMode === 'gym' ? '28 kg × 12 reps' : '40 reps • 45s'}</Text>
+                <Text style={{ color: '#D4F53C', fontWeight: 'bold' }}>{activeMode === 'gym' ? '28 kg × 12 reps' : '40 reps • 45s'}</Text>
               </View>
             </View>
           </View>
@@ -1018,7 +1018,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Cpu color="#CCFF00" size={14} />
+            <Cpu color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>GOOGLE GEMINI 3.7 MULTIMODAL</Text>
           </View>
           <Text style={styles.sectionHeading}>Instant AI Nutrition & Meal Scanner</Text>
@@ -1048,8 +1048,8 @@ export default function LandingPage({ onLoginPress }) {
               <Text style={{ color: '#888', fontSize: 12, letterSpacing: 1 }}>HASIL DETEKSI GEMINI AI</Text>
               <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 4 }}>{selectedFood.name}</Text>
             </View>
-            <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, borderWidth: 1, borderColor: '#CCFF00' }}>
-              <Text style={{ color: '#CCFF00', fontWeight: 'bold', fontSize: 22 }}>{selectedFood.calories} <Text style={{ fontSize: 13 }}>kcal</Text></Text>
+            <View style={{ backgroundColor: 'rgba(212,245,60,0.1)', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, borderWidth: 1, borderColor: '#D4F53C' }}>
+              <Text style={{ color: '#D4F53C', fontWeight: 'bold', fontSize: 22 }}>{selectedFood.calories} <Text style={{ fontSize: 13 }}>kcal</Text></Text>
             </View>
           </View>
 
@@ -1069,7 +1069,7 @@ export default function LandingPage({ onLoginPress }) {
           </View>
 
           <View style={{ backgroundColor: '#16161A', padding: 14, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-            <Sparkles color="#CCFF00" size={16} />
+            <Sparkles color="#D4F53C" size={16} />
             <Text style={{ color: '#AAA', fontSize: 13, flex: 1 }}>{selectedFood.verdict}</Text>
           </View>
         </View>
@@ -1079,7 +1079,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <TrendingUp color="#CCFF00" size={14} />
+            <TrendingUp color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>GAMIFICATION & VIRAL SHARING</Text>
           </View>
           <Text style={styles.sectionHeading}>Strava-Style Volume Comparison</Text>
@@ -1090,7 +1090,7 @@ export default function LandingPage({ onLoginPress }) {
 
         <View style={[styles.volumeCalcBox, { width: '100%', maxWidth: 740, alignSelf: 'center' }]}>
           <Text style={{ color: '#888', fontSize: 12, letterSpacing: 1, textAlign: 'center' }}>GESER VOLUME ANGKATAN ANDA (KG):</Text>
-          <Text style={{ color: '#CCFF00', fontSize: 42, fontWeight: 'bold', textAlign: 'center', marginVertical: 12 }}>
+          <Text style={{ color: '#D4F53C', fontSize: 42, fontWeight: 'bold', textAlign: 'center', marginVertical: 12 }}>
             {volumeSlider.toLocaleString('id-ID')} <Text style={{ fontSize: 20, color: '#FFF' }}>kg</Text>
           </Text>
 
@@ -1112,7 +1112,7 @@ export default function LandingPage({ onLoginPress }) {
           {/* Output Card */}
           <View style={styles.volResultCard}>
             <Text style={{ color: '#FFF', fontSize: 22, fontWeight: 'bold', textAlign: 'center' }}>
-              Setara Mengangkat <Text style={{ color: '#CCFF00' }}>{equiv.qty}x {equiv.item}</Text>!
+              Setara Mengangkat <Text style={{ color: '#D4F53C' }}>{equiv.qty}x {equiv.item}</Text>!
             </Text>
             <Text style={{ color: '#888', fontSize: 12, marginTop: 6, textAlign: 'center' }}>
               Langsung generate story beresolusi tinggi 4:5 hanya dengan 1-klik di aplikasi.
@@ -1125,7 +1125,7 @@ export default function LandingPage({ onLoginPress }) {
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
           <View style={styles.miniTag}>
-            <Crown color="#CCFF00" size={14} />
+            <Crown color="#D4F53C" size={14} />
             <Text style={styles.miniTagText}>TRANSPARENT PRICING</Text>
           </View>
           <Text style={styles.sectionHeading}>Investasi Terbaik untuk Fisik Anda</Text>
@@ -1142,7 +1142,7 @@ export default function LandingPage({ onLoginPress }) {
             <View style={{ gap: 12, marginVertical: 24 }}>
               {['Unlimited Workout Sessions', 'Skia 120 FPS Progress Charts', 'Offline-First Local Vault', 'Daily Check-In Scan Limits (15x AI)'].map((p, i) => (
                 <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <Check color="#CCFF00" size={16} />
+                  <Check color="#D4F53C" size={16} />
                   <Text style={{ color: '#CCC', fontSize: 13 }}>{p}</Text>
                 </View>
               ))}
@@ -1158,7 +1158,7 @@ export default function LandingPage({ onLoginPress }) {
             <View style={styles.popularBadge}>
               <Text style={{ color: '#000', fontSize: 10, fontWeight: 'bold' }}>PALING POPULER</Text>
             </View>
-            <Text style={[styles.planName, { color: '#CCFF00' }]}>PRO LIFTER</Text>
+            <Text style={[styles.planName, { color: '#D4F53C' }]}>PRO LIFTER</Text>
             <Text style={styles.planPrice}>Rp 29.900 <Text style={styles.planPeriod}>/ bulan</Text></Text>
             <Text style={styles.planDesc}>Akses unlimited ke Gemini 3.7 AI Coach & Instant Verifikasi.</Text>
 
@@ -1171,7 +1171,7 @@ export default function LandingPage({ onLoginPress }) {
                 'QRIS DANA 1-Click Instant Activation'
               ].map((p, i) => (
                 <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <Check color="#CCFF00" size={16} />
+                  <Check color="#D4F53C" size={16} />
                   <Text style={{ color: '#FFF', fontSize: 13, fontWeight: 'bold' }}>{p}</Text>
                 </View>
               ))}
@@ -1202,7 +1202,7 @@ export default function LandingPage({ onLoginPress }) {
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Text style={styles.faqQ}>{faq.q}</Text>
-                  {isOpen ? <ChevronUp color="#CCFF00" size={20} /> : <ChevronDown color="#888" size={20} />}
+                  {isOpen ? <ChevronUp color="#D4F53C" size={20} /> : <ChevronDown color="#888" size={20} />}
                 </View>
                 {isOpen && (
                   <Text style={styles.faqA}>{faq.a}</Text>
@@ -1216,7 +1216,7 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── FOOTER ─── */}
       <View style={[styles.footer, { paddingHorizontal: isLarge ? 80 : 24 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Dumbbell color="#CCFF00" size={24} />
+          <Dumbbell color="#D4F53C" size={24} />
           <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 18, letterSpacing: 1 }}>GYMVAULT</Text>
         </View>
         <Text style={styles.footerText}>
@@ -1246,11 +1246,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(204,255,0,0.1)',
+    backgroundColor: 'rgba(212,245,60,0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(204,255,0,0.3)',
+    borderColor: 'rgba(212,245,60,0.3)',
   },
   logoText: {
     fontFamily: 'Inter_700Bold',
@@ -1261,7 +1261,7 @@ const styles = StyleSheet.create({
   logoTagline: {
     fontFamily: 'Inter_500Medium',
     fontSize: 9,
-    color: '#CCFF00',
+    color: '#D4F53C',
     letterSpacing: 2,
   },
   navLinks: {
@@ -1295,9 +1295,9 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     borderRadius: 100,
-    shadowColor: '#CCFF00',
+    shadowColor: '#D4F53C',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -1325,7 +1325,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   badgeText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontFamily: 'Inter_700Bold',
     fontSize: 11,
     letterSpacing: 1.5,
@@ -1354,11 +1354,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     paddingHorizontal: 28,
     paddingVertical: 16,
     borderRadius: 14,
-    shadowColor: '#CCFF00',
+    shadowColor: '#D4F53C',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
@@ -1382,7 +1382,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statNumber: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 28,
     fontFamily: 'Inter_700Bold',
   },
@@ -1407,16 +1407,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(204,255,0,0.08)',
+    backgroundColor: 'rgba(212,245,60,0.08)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(204,255,0,0.2)',
+    borderColor: 'rgba(212,245,60,0.2)',
     marginBottom: 12,
   },
   miniTagText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 10,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 1,
@@ -1448,8 +1448,8 @@ const styles = StyleSheet.create({
     borderColor: '#2A2A2A',
   },
   mockupTabBtnActive: {
-    backgroundColor: '#CCFF00',
-    borderColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
+    borderColor: '#D4F53C',
   },
   mockupTabBtnText: {
     color: '#888',
@@ -1476,7 +1476,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1492,11 +1492,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
-    backgroundColor: 'rgba(204,255,0,0.06)',
+    backgroundColor: 'rgba(212,245,60,0.06)',
     padding: 18,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(204,255,0,0.2)',
+    borderColor: 'rgba(212,245,60,0.2)',
   },
   toolCard: {
     backgroundColor: '#0F0F12',
@@ -1539,12 +1539,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: 'rgba(204,255,0,0.1)',
+    backgroundColor: 'rgba(212,245,60,0.1)',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(204,255,0,0.3)',
+    borderColor: 'rgba(212,245,60,0.3)',
   },
   pctBox: {
     backgroundColor: '#16161A',
@@ -1602,8 +1602,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   goalBtnActive: {
-    backgroundColor: '#CCFF00',
-    borderColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
+    borderColor: '#D4F53C',
   },
   goalBtnText: {
     color: '#888',
@@ -1630,7 +1630,7 @@ const styles = StyleSheet.create({
     borderColor: '#2A2A2A',
   },
   splitDayBadge: {
-    backgroundColor: 'rgba(204,255,0,0.1)',
+    backgroundColor: 'rgba(212,245,60,0.1)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
@@ -1670,8 +1670,8 @@ const styles = StyleSheet.create({
     borderColor: '#2A2A2A',
   },
   simTabActive: {
-    backgroundColor: 'rgba(204,255,0,0.06)',
-    borderColor: '#CCFF00',
+    backgroundColor: 'rgba(212,245,60,0.06)',
+    borderColor: '#D4F53C',
   },
   simTabTitle: {
     color: '#FFF',
@@ -1772,14 +1772,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: 'rgba(204,255,0,0.06)',
+    backgroundColor: 'rgba(212,245,60,0.06)',
     borderRadius: 10,
     padding: 12,
     borderWidth: 1,
-    borderColor: 'rgba(204,255,0,0.2)',
+    borderColor: 'rgba(212,245,60,0.2)',
   },
   aiAdviceText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 12,
     flex: 1,
   },
@@ -1801,7 +1801,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   modeToggleBtnActive: {
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
   },
   modeToggleText: {
     color: '#888',
@@ -1815,7 +1815,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   modeCardBadge: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 11,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 1.5,
@@ -1857,8 +1857,8 @@ const styles = StyleSheet.create({
     borderColor: '#2A2A2A',
   },
   foodChipActive: {
-    backgroundColor: '#CCFF00',
-    borderColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
+    borderColor: '#D4F53C',
   },
   foodChipText: {
     color: '#888',
@@ -1894,8 +1894,8 @@ const styles = StyleSheet.create({
     borderColor: '#333',
   },
   volPresetBtnActive: {
-    backgroundColor: '#CCFF00',
-    borderColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
+    borderColor: '#D4F53C',
   },
   volPresetText: {
     color: '#888',
@@ -1921,14 +1921,14 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   pricingCardPro: {
-    borderColor: '#CCFF00',
-    backgroundColor: 'rgba(204,255,0,0.03)',
+    borderColor: '#D4F53C',
+    backgroundColor: 'rgba(212,245,60,0.03)',
   },
   popularBadge: {
     position: 'absolute',
     top: -12,
     right: 24,
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 8,
@@ -1962,11 +1962,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   planBtnPrimary: {
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
-    shadowColor: '#CCFF00',
+    shadowColor: '#D4F53C',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 10,

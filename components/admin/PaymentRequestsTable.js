@@ -37,7 +37,7 @@ export default function PaymentRequestsTable({
       {/* ─── HEADER & METRICS ─── */}
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-          <CreditCard color="#CCFF00" size={22} />
+          <CreditCard color="#D4F53C" size={22} />
           <View>
             <Text style={styles.title}>VERIFIKASI PEMBAYARAN QRIS DANA</Text>
             <Text style={styles.subtitle}>Sinkronisasi Realtime dengan Webhook Telegram Bot & Supabase</Text>
@@ -86,7 +86,7 @@ export default function PaymentRequestsTable({
 
       {loading ? (
         <View style={{ padding: 40, alignItems: 'center' }}>
-          <ActivityIndicator color="#CCFF00" size="large" />
+          <ActivityIndicator color="#D4F53C" size="large" />
         </View>
       ) : filteredRequests.length === 0 ? (
         <View style={styles.emptyContainer}>
@@ -125,7 +125,7 @@ export default function PaymentRequestsTable({
                 {/* Plan */}
                 <View style={{ flex: 1.2 }}>
                   <View style={[styles.planBadge, item.plan === 'yearly' ? styles.yearlyBadge : styles.monthlyBadge]}>
-                    <Text style={[styles.planText, item.plan === 'yearly' ? { color: '#CCFF00' } : { color: '#60A5FA' }]}>
+                    <Text style={[styles.planText, item.plan === 'yearly' ? { color: '#D4F53C' } : { color: '#60A5FA' }]}>
                       {item.plan === 'yearly' ? 'Tahunan' : 'Bulanan'}
                     </Text>
                   </View>
@@ -148,7 +148,7 @@ export default function PaymentRequestsTable({
                       style={styles.proofThumbBtn}
                       onPress={() => setPreviewImage(proofUrl)}
                     >
-                      <Eye size={12} color="#CCFF00" />
+                      <Eye size={12} color="#D4F53C" />
                       <Text style={styles.proofThumbText}>Lihat</Text>
                     </TouchableOpacity>
                   ) : (
@@ -175,7 +175,7 @@ export default function PaymentRequestsTable({
                 <View style={{ flex: 2, flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
                   {isPending ? (
                     isBusy ? (
-                      <ActivityIndicator size="small" color="#CCFF00" />
+                      <ActivityIndicator size="small" color="#D4F53C" />
                     ) : (
                       <>
                         <TouchableOpacity
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   countText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   },
   pillActive: {
     backgroundColor: 'rgba(204, 255, 0, 0.15)',
-    borderColor: '#CCFF00',
+    borderColor: '#D4F53C',
   },
   pillText: {
     color: '#8E8E9F',
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   pillTextActive: {
-    color: '#CCFF00',
+    color: '#D4F53C',
   },
   searchBox: {
     flexDirection: 'row',
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   proofThumbText: {
-    color: '#CCFF00',
+    color: '#D4F53C',
     fontSize: 10,
     fontWeight: 'bold',
   },
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#CCFF00',
+    backgroundColor: '#D4F53C',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 6,

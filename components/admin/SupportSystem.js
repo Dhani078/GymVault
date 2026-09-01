@@ -36,7 +36,7 @@ export default function SupportSystem({ supportTickets, setSelectedTicket }) {
                   borderColor: ticket.status === 'open' ? 'rgba(255, 165, 0, 0.3)' : 'rgba(204, 255, 0, 0.3)'
                 }]}>
                   <Text style={[styles.statusText, {
-                    color: ticket.status === 'open' ? '#FFA500' : '#CCFF00'
+                    color: ticket.status === 'open' ? '#FFA500' : '#D4F53C'
                   }]}>
                     {ticket.status.toUpperCase()}
                   </Text>
@@ -47,7 +47,7 @@ export default function SupportSystem({ supportTickets, setSelectedTicket }) {
                   style={styles.actionBtnInfo}
                   onPress={() => setSelectedTicket(ticket)}
                 >
-                  <Eye color="#CCFF00" size={16} />
+                  <Eye color="#D4F53C" size={16} />
                 </TouchableOpacity>
               </View>
             </View>

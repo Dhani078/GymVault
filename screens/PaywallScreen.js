@@ -143,17 +143,17 @@ export default function PaywallScreen({ onSkip, session }) {
     return (
       <View style={[styles.screen, { justifyContent: 'center', alignItems: 'center', padding: 32 }]}>
         <GymVaultLogo size={90} />
-        <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(204,255,0,0.15)', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
-          <Crown color="#CCFF00" size={36} />
+        <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(212,245,60,0.15)', justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
+          <Crown color="#D4F53C" size={36} />
         </View>
-        <AppText weight="bold" style={{ fontSize: 24, color: '#CCFF00', textAlign: 'center', marginBottom: 8 }}>
+        <AppText weight="bold" style={{ fontSize: 24, color: '#D4F53C', textAlign: 'center', marginBottom: 8 }}>
           Status Premium Aktif! 👑
         </AppText>
         <AppText style={{ color: theme.colors.textMuted, textAlign: 'center', fontSize: 14, lineHeight: 20, marginBottom: 32 }}>
           Anda memiliki akses tanpa batas ke seluruh fitur cerdas GymVault.
         </AppText>
         <TouchableOpacity
-          style={{ backgroundColor: '#CCFF00', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 }}
+          style={{ backgroundColor: '#D4F53C', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 14 }}
           onPress={onSkip}
         >
           <AppText weight="bold" style={{ color: '#000', fontSize: 16 }}>Mulai Latihan</AppText>
@@ -174,11 +174,11 @@ export default function PaywallScreen({ onSkip, session }) {
 
       {/* Hero Badge */}
       <View style={{ alignItems: 'center', marginBottom: 24 }}>
-        <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(204,255,0,0.12)', justifyContent: 'center', alignItems: 'center', marginBottom: 12 }}>
-          <Crown color="#CCFF00" size={28} />
+        <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(212,245,60,0.12)', justifyContent: 'center', alignItems: 'center', marginBottom: 12 }}>
+          <Crown color="#D4F53C" size={28} />
         </View>
         <AppText weight="bold" style={{ fontSize: 26, color: theme.colors.text, textAlign: 'center' }}>
-          GymVault <AppText weight="bold" style={{ color: '#CCFF00' }}>PRO</AppText>
+          GymVault <AppText weight="bold" style={{ color: '#D4F53C' }}>PRO</AppText>
         </AppText>
         <AppText style={{ color: theme.colors.textMuted, fontSize: 13, textAlign: 'center', marginTop: 4 }}>
           Buka potensi maksimal latihan & nutrisi Anda
@@ -187,10 +187,10 @@ export default function PaywallScreen({ onSkip, session }) {
 
       {/* Submitted Status Banner */}
       {isSubmitted && (
-        <View style={{ backgroundColor: 'rgba(204,255,0,0.08)', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#CCFF00', marginBottom: 24, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Clock color="#CCFF00" size={24} />
+        <View style={{ backgroundColor: 'rgba(212,245,60,0.08)', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#D4F53C', marginBottom: 24, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <Clock color="#D4F53C" size={24} />
           <View style={{ flex: 1 }}>
-            <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 14 }}>Menunggu Verifikasi Admin</AppText>
+            <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 14 }}>Menunggu Verifikasi Admin</AppText>
             <AppText style={{ color: theme.colors.textMuted, fontSize: 12, marginTop: 2 }}>
               Bukti pembayaran Anda sudah diterima. Akun akan otomatis aktif dalam 1–3 menit.
             </AppText>
@@ -204,14 +204,14 @@ export default function PaywallScreen({ onSkip, session }) {
           const Icon = f.icon;
           return (
             <View key={i} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: i < FEATURES.length - 1 ? 1 : 0, borderBottomColor: theme.colors.border }}>
-              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(204,255,0,0.1)', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
-                <Icon color="#CCFF00" size={18} />
+              <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(212,245,60,0.1)', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+                <Icon color="#D4F53C" size={18} />
               </View>
               <View style={{ flex: 1 }}>
                 <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 14 }}>{f.text}</AppText>
                 <AppText style={{ color: theme.colors.textMuted, fontSize: 11 }}>{f.desc}</AppText>
               </View>
-              <Check color="#CCFF00" size={16} />
+              <Check color="#D4F53C" size={16} />
             </View>
           );
         })}
@@ -225,20 +225,20 @@ export default function PaywallScreen({ onSkip, session }) {
             <TouchableOpacity
               key={p.id}
               style={{
-                flex: 1, backgroundColor: isSelected ? 'rgba(204,255,0,0.06)' : theme.colors.card,
+                flex: 1, backgroundColor: isSelected ? 'rgba(212,245,60,0.06)' : theme.colors.card,
                 borderRadius: 16, padding: 16, borderWidth: 2,
-                borderColor: isSelected ? '#CCFF00' : theme.colors.border,
+                borderColor: isSelected ? '#D4F53C' : theme.colors.border,
                 position: 'relative',
               }}
               onPress={() => setSelectedPlan(p.id)}
             >
               {p.popular && (
-                <View style={{ position: 'absolute', top: -10, right: 12, backgroundColor: '#CCFF00', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
+                <View style={{ position: 'absolute', top: -10, right: 12, backgroundColor: '#D4F53C', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
                   <AppText weight="bold" style={{ color: '#000', fontSize: 10 }}>{p.save || 'POPULER'}</AppText>
                 </View>
               )}
-              <AppText weight="bold" style={{ fontSize: 14, color: isSelected ? '#CCFF00' : theme.colors.text, marginBottom: 4 }}>{p.label}</AppText>
-              <AppText weight="bold" style={{ fontSize: 18, color: isSelected ? '#CCFF00' : theme.colors.text }}>{p.price}</AppText>
+              <AppText weight="bold" style={{ fontSize: 14, color: isSelected ? '#D4F53C' : theme.colors.text, marginBottom: 4 }}>{p.label}</AppText>
+              <AppText weight="bold" style={{ fontSize: 18, color: isSelected ? '#D4F53C' : theme.colors.text }}>{p.price}</AppText>
               <AppText style={{ fontSize: 11, color: theme.colors.textMuted }}>{p.period}</AppText>
             </TouchableOpacity>
           );
@@ -248,9 +248,9 @@ export default function PaywallScreen({ onSkip, session }) {
       {/* CTA */}
       <TouchableOpacity
         style={{
-          backgroundColor: '#CCFF00', borderRadius: 14, paddingVertical: 16,
+          backgroundColor: '#D4F53C', borderRadius: 14, paddingVertical: 16,
           flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10,
-          shadowColor: '#CCFF00', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
+          shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
         }}
         onPress={() => setShowPayment(true)}
       >
@@ -291,7 +291,7 @@ export default function PaywallScreen({ onSkip, session }) {
                     resizeMode="contain"
                   />
                 </View>
-                <AppText weight="bold" style={{ color: '#CCFF00', fontSize: 16, marginTop: 12 }}>
+                <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 16, marginTop: 12 }}>
                   GymVault QRIS DANA
                 </AppText>
                 <AppText style={{ color: colors.textMuted, fontSize: 11, marginTop: 2, textAlign: 'center' }}>
@@ -310,8 +310,8 @@ export default function PaywallScreen({ onSkip, session }) {
                   'Upload screenshot bukti transfer di bawah ini',
                 ].map((step, i) => (
                   <View key={i} style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, gap: 10 }}>
-                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(204,255,0,0.12)', justifyContent: 'center', alignItems: 'center', marginTop: 1 }}>
-                      <AppText weight="bold" style={{ fontSize: 11, color: '#CCFF00' }}>{i + 1}</AppText>
+                    <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(212,245,60,0.12)', justifyContent: 'center', alignItems: 'center', marginTop: 1 }}>
+                      <AppText weight="bold" style={{ fontSize: 11, color: '#D4F53C' }}>{i + 1}</AppText>
                     </View>
                     <AppText style={{ color: theme.colors.text, fontSize: 13, flex: 1, lineHeight: 18 }}>{step}</AppText>
                   </View>
@@ -346,7 +346,7 @@ export default function PaywallScreen({ onSkip, session }) {
             </View>
 
             <AppText style={{ color: theme.colors.textMuted, fontSize: 13, marginBottom: 16, lineHeight: 18 }}>
-              Pilih foto screenshot bukti transfer DANA sebesar <AppText weight="bold" style={{ color: '#CCFF00' }}>{plan?.price}</AppText>.
+              Pilih foto screenshot bukti transfer DANA sebesar <AppText weight="bold" style={{ color: '#D4F53C' }}>{plan?.price}</AppText>.
             </AppText>
 
             {/* Image Preview Box */}
@@ -354,7 +354,7 @@ export default function PaywallScreen({ onSkip, session }) {
               onPress={handlePickProof}
               style={{
                 width: '100%', height: 180, borderRadius: 12, backgroundColor: theme.colors.inputBg,
-                borderWidth: 1.5, borderColor: proofImage ? '#CCFF00' : theme.colors.border, borderStyle: proofImage ? 'solid' : 'dashed',
+                borderWidth: 1.5, borderColor: proofImage ? '#D4F53C' : theme.colors.border, borderStyle: proofImage ? 'solid' : 'dashed',
                 justifyContent: 'center', alignItems: 'center', marginBottom: 20, overflow: 'hidden'
               }}
             >
@@ -362,7 +362,7 @@ export default function PaywallScreen({ onSkip, session }) {
                 <Image source={{ uri: proofImage.uri }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
               ) : (
                 <View style={{ alignItems: 'center' }}>
-                  <Upload color="#CCFF00" size={32} style={{ marginBottom: 8 }} />
+                  <Upload color="#D4F53C" size={32} style={{ marginBottom: 8 }} />
                   <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 13 }}>Pilih Screenshot dari Galeri</AppText>
                   <AppText style={{ color: theme.colors.textMuted, fontSize: 11, marginTop: 4 }}>Format JPG / PNG</AppText>
                 </View>
@@ -379,7 +379,7 @@ export default function PaywallScreen({ onSkip, session }) {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#CCFF00', justifyContent: 'center', alignItems: 'center' }}
+                style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#D4F53C', justifyContent: 'center', alignItems: 'center' }}
                 onPress={handleSendPaymentNotification}
                 disabled={isSubmitting}
               >
