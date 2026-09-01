@@ -115,7 +115,7 @@ export default function DailyCheckInCard({
               borderRadius: 12,
               justifyContent: 'center',
               alignItems: 'center',
-              shadowColor: '#D4F53C',
+              shadowColor: '#000000',
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.3,
               shadowRadius: 8,
@@ -130,7 +130,7 @@ export default function DailyCheckInCard({
       {/* ─── Auto Daily Check-In Prompt Modal ─── */}
       <Modal visible={showCheckInPrompt} transparent animationType="fade" onRequestClose={() => setShowCheckInPrompt(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-          <View style={{ backgroundColor: '#0A0A0C', borderRadius: 24, borderWidth: 1.5, borderColor: '#D4F53C', width: '100%', maxWidth: 360, padding: 24, alignItems: 'center', shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.25, shadowRadius: 20 }}>
+          <View style={{ backgroundColor: '#0A0A0C', borderRadius: 24, borderWidth: 1.5, borderColor: '#D4F53C', width: '100%', maxWidth: 360, padding: 24, alignItems: 'center', shadowColor: '#000000', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.25, shadowRadius: 20 }}>
             
             <TouchableOpacity onPress={() => setShowCheckInPrompt(false)} style={{ position: 'absolute', top: 16, right: 16, padding: 4 }}>
               <X color="#888" size={20} />
@@ -165,7 +165,7 @@ export default function DailyCheckInCard({
                         borderWidth: isCurrent ? 2 : 1,
                         borderColor: isPast ? '#D4F53C' : (isCurrent ? '#D4F53C' : '#333'),
                         justifyContent: 'center', alignItems: 'center',
-                        shadowColor: isCurrent ? '#D4F53C' : 'transparent',
+                        shadowColor: isCurrent ? '#000000' : 'transparent',
                         shadowOffset: { width: 0, height: 0 },
                         shadowOpacity: isCurrent ? 0.5 : 0,
                         shadowRadius: 8,
@@ -208,7 +208,7 @@ export default function DailyCheckInCard({
                 borderRadius: 14,
                 justifyContent: 'center',
                 alignItems: 'center',
-                shadowColor: '#D4F53C',
+                shadowColor: '#000000',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,

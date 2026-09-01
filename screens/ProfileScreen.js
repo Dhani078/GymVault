@@ -395,7 +395,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              shadowColor: '#D4F53C',
+              shadowColor: '#000000',
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.15,
               shadowRadius: 8,

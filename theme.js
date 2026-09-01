@@ -10,7 +10,7 @@ export let activeColors = {
   primary: '#D4F53C',
   text: '#FFFFFF',
   textMuted: '#909096',
-  card: '#131315',
+  card: '#1A1A1D',
   inputBg: '#1E1E21',
 };
 

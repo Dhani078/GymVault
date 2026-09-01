@@ -31,7 +31,7 @@ const LaserScanner = () => {
 
   return (
     <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}>
-      <Reanimated.View style={[{ width: '100%', height: 4, backgroundColor: '#D4F53C', shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 1, shadowRadius: 10, elevation: 10 }, animatedStyle]}>
+      <Reanimated.View style={[{ width: '100%', height: 4, backgroundColor: '#D4F53C', shadowColor: '#000000', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 1, shadowRadius: 10, elevation: 10 }, animatedStyle]}>
         <LinearGradient
           colors={['transparent', 'rgba(212,245,60,0.8)', 'transparent']}
           start={{ x: 0, y: 0 }}

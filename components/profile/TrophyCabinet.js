@@ -34,7 +34,7 @@ export default function TrophyCabinet({ stats = {}, checkInStreak = 0, cardColor
                 alignItems: 'center',
                 marginRight: idx === arr.length - 1 ? 48 : 16,
                 opacity: achieved ? 1 : 0.4,
-                shadowColor: achieved ? '#D4F53C' : '#000',
+                shadowColor: '#000000',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: achieved ? 0.25 : 0.1,
                 shadowRadius: 8,
