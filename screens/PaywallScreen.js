@@ -250,7 +250,7 @@ export default function PaywallScreen({ onSkip, session }) {
         style={{
           backgroundColor: '#D4F53C', borderRadius: 14, paddingVertical: 16,
           flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10,
-          shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
+          shadowColor: '#000000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
         }}
         onPress={() => setShowPayment(true)}
       >

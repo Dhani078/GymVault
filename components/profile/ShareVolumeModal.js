@@ -108,7 +108,7 @@ export default function ShareVolumeModal({
                     {/* Center Floating Object */}
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginVertical: 10 }}>
                       <Image source={{ uri: comp.imageUrl }} style={{ width: '100%', height: 220, resizeMode: 'contain', 
-                        shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.15, shadowRadius: 30 
+                        shadowColor: '#000000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.15, shadowRadius: 30 
                       }} />
                       <AppText weight="bold" style={{ color: '#FFFFFF', fontSize: 28, textAlign: 'center', marginTop: 16, letterSpacing: 1 }}>{comp.qty}x {comp.item.toUpperCase()}</AppText>
                       <AppText style={{ color: '#888', fontSize: 12, textAlign: 'center', marginTop: 6, letterSpacing: 2 }}>{subtitle}</AppText>

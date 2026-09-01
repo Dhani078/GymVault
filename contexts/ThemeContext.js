@@ -47,7 +47,7 @@ export function ThemeProvider({ children }) {
     primary: '#D4F53C',
     text: darkMode ? '#FFFFFF' : '#121214',
     textMuted: darkMode ? '#909096' : '#6C757D',
-    card: darkMode ? '#131315' : '#FFFFFF',
+    card: darkMode ? '#1A1A1D' : '#FFFFFF',
     inputBg: darkMode ? '#1E1E21' : '#F1F3F5',
   };
 
@@ -120,7 +120,7 @@ export function useTheme() {
         primary: '#D4F53C',
         text: '#FFFFFF',
         textMuted: '#909096',
-        card: '#131315',
+        card: '#1A1A1D',
         inputBg: '#1E1E21',
       }
     };

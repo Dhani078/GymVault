@@ -121,7 +121,7 @@ export default function TdeeCalculatorModal({
             </View>
 
             <TouchableOpacity
-              style={{ backgroundColor: '#D4F53C', padding: 16, borderRadius: 16, marginTop: 16, marginBottom: 32, alignItems: 'center', shadowColor: '#D4F53C', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 5 }}
+              style={{ backgroundColor: '#D4F53C', padding: 16, borderRadius: 16, marginTop: 16, marginBottom: 32, alignItems: 'center', shadowColor: '#000000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 5 }}
               onPress={handleCalculateAndSave}
             >
               <AppText weight="bold" style={{ color: '#000', fontSize: 16, textAlign: 'center' }}>Hitung & Simpan Target</AppText>
