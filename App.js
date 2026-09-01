@@ -134,6 +134,10 @@ function AppContent() {
     };
   }, []);
 
+  if (!fontsLoaded) {
+    return <View style={{ flex: 1, backgroundColor: '#0E0E0F' }} />;
+  }
+
   // Save active workout state to AsyncStorage whenever it changes
   useEffect(() => {
     const saveActiveWorkout = async () => {
