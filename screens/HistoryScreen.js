@@ -642,6 +642,8 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout }) {
                   shadowOpacity: 0.2,
                   shadowRadius: 8,
                 }}
+                accessibilityLabel="Mulai latihan pertama Anda sekarang"
+                accessibilityRole="button"
               >
                 <Dumbbell color="#000" size={16} />
                 <AppText weight="bold" style={{ color: '#000', fontSize: 14 }}>Mulai Latihan Sekarang</AppText>

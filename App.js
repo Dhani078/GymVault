@@ -145,7 +145,6 @@ function AppContent() {
     const saveActiveWorkout = async () => {
       if (!session?.user?.id) return;
       try {
-        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
         if (workoutData && workoutData.length > 0) {
           await AsyncStorage.setItem(`active_workout_data_${session.user.id}`, JSON.stringify(workoutData));
           await AsyncStorage.setItem(`active_workout_index_${session.user.id}`, String(workoutIndex));
@@ -255,7 +254,6 @@ function AppContent() {
     let defaultReps = 10;
 
     try {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       const lastKey = `@gymvault_last_ex_${session?.user?.id || 'guest'}_${ex.name.toLowerCase().trim()}`;
       const saved = await AsyncStorage.getItem(lastKey);
       if (saved) {

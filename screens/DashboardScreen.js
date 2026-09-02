@@ -340,6 +340,9 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           }}
           onPress={handleQuickStart}
           disabled={loading}
+          accessibilityLabel={hasActiveWorkout ? 'Lanjutkan sesi latihan yang belum selesai' : 'Mulai latihan hari ini'}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: loading }}
         >
           <View style={{ paddingVertical: 20, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
             {loading ? <ActivityIndicator color="#000" /> : (
@@ -409,6 +412,9 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
                   setQuickLogText('');
                 }
               }}
+              accessibilityLabel="Quick log input untuk makanan, minum, atau latihan"
+              accessibilityHint="Ketik atau bicara, lalu tekan tombol Log untuk mencatat"
+              accessibilityRole="textbox"
             />
             <TouchableOpacity 
               onPress={() => {
@@ -424,6 +430,8 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
                 paddingVertical: 8, 
                 paddingHorizontal: 16 
               }}
+              accessibilityLabel="Kirim quick log ke AI Coach"
+              accessibilityRole="button"
             >
               <AppText weight="bold" style={{ color: '#000', fontSize: 12 }}>Log</AppText>
             </TouchableOpacity>
@@ -435,6 +443,8 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
             activeOpacity={0.7}
             style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, backgroundColor: 'rgba(212,245,60,0.08)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(212,245,60,0.35)' }}
             onPress={() => setAiModalVisible(true)}
+            accessibilityLabel="Buka AI Routine Assistant untuk buat jadwal latihan"
+            accessibilityRole="button"
           >
             <AICoachLogo size={20} />
             <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 15, letterSpacing: 0.5 }}>AI Routine Assistant</AppText>
