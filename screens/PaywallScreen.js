@@ -167,7 +167,7 @@ export default function PaywallScreen({ onSkip, session }) {
       {/* Header */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, marginTop: 10 }}>
         <GymVaultLogo size={44} />
-        <TouchableOpacity onPress={onSkip} style={{ padding: 8 }}>
+        <TouchableOpacity onPress={onSkip} style={{ padding: 8 }} accessibilityLabel="Tutup halaman premium" accessibilityRole="button">
           <X color={theme.colors.textMuted} size={24} />
         </TouchableOpacity>
       </View>
@@ -231,6 +231,9 @@ export default function PaywallScreen({ onSkip, session }) {
                 position: 'relative',
               }}
               onPress={() => setSelectedPlan(p.id)}
+              accessibilityLabel={isSelected ? `${p.label} dipilih, ${p.price} ${p.period}` : `${p.label}, ${p.price} ${p.period}${p.popular ? ', paling populer' : ''}`}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: isSelected }}
             >
               {p.popular && (
                 <View style={{ position: 'absolute', top: -10, right: 12, backgroundColor: '#D4F53C', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
@@ -253,6 +256,8 @@ export default function PaywallScreen({ onSkip, session }) {
           shadowColor: '#000000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
         }}
         onPress={() => setShowPayment(true)}
+        accessibilityLabel={`Bayar via QRIS DANA ${plan?.price}`}
+        accessibilityRole="button"
       >
         <CreditCard color="#000" size={20} />
         <AppText weight="bold" style={{ color: '#000', fontSize: 16 }}>Bayar via QRIS DANA ({plan?.price})</AppText>
@@ -263,7 +268,7 @@ export default function PaywallScreen({ onSkip, session }) {
       </AppText>
 
       {/* Skip */}
-      <TouchableOpacity style={{ marginTop: 24, alignItems: 'center', paddingVertical: 12 }} onPress={onSkip}>
+      <TouchableOpacity style={{ marginTop: 24, alignItems: 'center', paddingVertical: 12 }} onPress={onSkip} accessibilityLabel="Lewati, gunakan versi gratis" accessibilityRole="button">
         <AppText weight="medium" style={{ color: theme.colors.textMuted, fontSize: 14 }}>Nanti saja, pakai versi gratis</AppText>
       </TouchableOpacity>
 
@@ -277,7 +282,7 @@ export default function PaywallScreen({ onSkip, session }) {
                   <AppText weight="bold" style={{ fontSize: 20, color: theme.colors.text }}>Pembayaran QRIS DANA</AppText>
                   <AppText style={{ color: theme.colors.textMuted, fontSize: 12, marginTop: 2 }}>{plan?.label} - {plan?.price}</AppText>
                 </View>
-                <TouchableOpacity onPress={() => setShowPayment(false)} style={{ padding: 4 }}>
+                <TouchableOpacity onPress={() => setShowPayment(false)} style={{ padding: 4 }} accessibilityLabel="Tutup modal pembayaran" accessibilityRole="button">
                   <X color={theme.colors.textMuted} size={24} />
                 </TouchableOpacity>
               </View>
@@ -340,7 +345,7 @@ export default function PaywallScreen({ onSkip, session }) {
           <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.text }}>Kirim Bukti Transfer</AppText>
-              <TouchableOpacity onPress={() => setShowProofModal(false)}>
+              <TouchableOpacity onPress={() => setShowProofModal(false)} accessibilityLabel="Tutup modal bukti transfer" accessibilityRole="button">
                 <X color={theme.colors.textMuted} size={20} />
               </TouchableOpacity>
             </View>
@@ -357,6 +362,9 @@ export default function PaywallScreen({ onSkip, session }) {
                 borderWidth: 1.5, borderColor: proofImage ? '#D4F53C' : theme.colors.border, borderStyle: proofImage ? 'solid' : 'dashed',
                 justifyContent: 'center', alignItems: 'center', marginBottom: 20, overflow: 'hidden'
               }}
+              accessibilityLabel={proofImage ? "Pratinjau bukti transfer, tekan untuk ganti" : "Pilih screenshot bukti transfer dari galeri"}
+              accessibilityRole="button"
+              accessibilityHint={proofImage ? "Dobel tap untuk mengganti screenshot" : "Dobel tap untuk membuka galeri dan memilih screenshot"}
             >
               {proofImage ? (
                 <Image source={{ uri: proofImage.uri }} style={{ width: '100%', height: '100%' }} resizeMode="contain" />
@@ -374,6 +382,9 @@ export default function PaywallScreen({ onSkip, session }) {
                 style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: theme.colors.inputBg, justifyContent: 'center', alignItems: 'center' }}
                 onPress={() => setShowProofModal(false)}
                 disabled={isSubmitting}
+                accessibilityLabel="Batal upload bukti transfer"
+                accessibilityRole="button"
+                accessibilityState={{ disabled: isSubmitting }}
               >
                 <AppText weight="bold" style={{ color: theme.colors.textMuted }}>Batal</AppText>
               </TouchableOpacity>
@@ -382,6 +393,9 @@ export default function PaywallScreen({ onSkip, session }) {
                 style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#D4F53C', justifyContent: 'center', alignItems: 'center' }}
                 onPress={handleSendPaymentNotification}
                 disabled={isSubmitting}
+                accessibilityLabel={isSubmitting ? "Sedang mengirim bukti transfer ke admin" : "Kirim bukti transfer ke admin untuk verifikasi"}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: isSubmitting }}
               >
                 {isSubmitting ? (
                   <ActivityIndicator size="small" color="#000" />

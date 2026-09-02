@@ -20,6 +20,7 @@ import * as Crypto from 'expo-crypto';
 import { makeId } from '../utils/makeId';
 import { getVolumeComparison } from '../utils/volumeComparison';
 import { calculateProgressiveOverload, calculateRecommendedRestTime, getBiomechanicalCue, parseVoiceWorkoutCommand } from '../utils/fitnessMath';
+import LoggerSetRow from '../components/LoggerSetRow';
 
 
 
@@ -114,20 +115,33 @@ export default function LoggerScreen({
         };
 
         recognition.onerror = (e) => {
+          
+                  if (e.error === 'not-allowed') {
+                    setIsListening(false);
+                    setMicStatusMsg('Izin mikrofon ditolak. Izinkan mic di browser.');
+                  } else if (e.error === 'no-speech') {
+                    // Auto-restart on no-speech (user paused)
+                    setMicStatusMsg('Tidak ada suara. Mencoba lagi...');
+                    setTimeout(() => {
+                      if (recognitionRef.current) {
+                        try { recognitionRef.current.start(); } catch(_){}
+                      }
+                    }, 500);
+                  } else if (e.error === 'audio-capture') {
+                    setIsListening(false);
+                    setMicStatusMsg('Gagal akses audio. Cek mikrofon.');
+                  } else {
+                    setIsListening(false);
+                    setMicStatusMsg('Gagal mendengarkan: ' + (e.error || 'error'));
+                  }
+                };
 
-          setIsListening(false);
-          if (e.error === 'not-allowed') {
-            setMicStatusMsg('Izin mikrofon ditolak. Izinkan mic di browser.');
-          } else if (e.error === 'no-speech') {
-            setMicStatusMsg('Tidak ada suara terdeteksi. Silakan coba lagi.');
-          } else {
-            setMicStatusMsg('Gagal mendengarkan: ' + (e.error || 'error'));
-          }
-        };
-
-        recognition.onend = () => {
-          setIsListening(false);
-        };
+                recognition.onend = () => {
+                  // Only set isListening to false if we didn't auto-restart
+                  if (recognitionRef.current) {
+                    setIsListening(false);
+                  }
+                };
 
         recognitionRef.current = recognition;
         recognition.start();
@@ -434,13 +448,14 @@ export default function LoggerScreen({
 
   useEffect(() => {
     if (!workoutStartTime) return;
+    let rafId;
     const update = () => {
       const ms = Date.now() - new Date(workoutStartTime).getTime();
       setSessionDuration(Math.max(0, Math.floor(ms / 1000)));
+      rafId = requestAnimationFrame(update);
     };
-    update();
-    const iv = setInterval(update, 1000);
-    return () => clearInterval(iv);
+    rafId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(rafId);
   }, [workoutStartTime]);
 
   const fmtDuration = (sec) => {
@@ -1021,6 +1036,8 @@ export default function LoggerScreen({
                 borderWidth: 1,
                 borderColor: 'rgba(212,245,60,0.25)',
               })}
+              accessibilityLabel={`Tambah ${amt} kilogram`}
+              accessibilityRole="button"
             >
               <AppText weight="bold" style={{ fontSize: 11, color: theme.colors.primary }}>+{amt}kg</AppText>
             </Pressable>
@@ -1042,6 +1059,8 @@ export default function LoggerScreen({
                 borderWidth: 1,
                 borderColor: theme.colors.border,
               })}
+              accessibilityLabel={`Tambah ${amt} repetisi`}
+              accessibilityRole="button"
             >
               <AppText weight="bold" style={{ fontSize: 11, color: theme.colors.text }}>+{amt} rep</AppText>
             </Pressable>
@@ -1075,127 +1094,22 @@ export default function LoggerScreen({
           {curEx.sets.map((set, index) => {
             const isCurrentlyActive = index === activeSetIndex;
             return (
-              <View key={set.id} style={{
-                flexDirection: 'row', alignItems: 'center', gap: 8,
-                padding: 10, borderRadius: 12,
-                backgroundColor: set.completed ? 'rgba(16,185,129,0.08)' : isCurrentlyActive ? 'rgba(212,245,60,0.04)' : theme.colors.card,
-                borderWidth: 1,
-                borderColor: set.completed ? 'rgba(16,185,129,0.2)' : isCurrentlyActive ? theme.colors.primary : theme.colors.border,
-              }}>
-                {/* Set Number */}
-                <View style={{ width: 28, alignItems: 'center' }}>
-                  {proMode ? (
-                    <Pressable onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); toggleSetType(set.id, set.type); }} style={{width: 24, height: 24, borderRadius: 12, backgroundColor: set.type === 'W' ? '#F59E0B' : set.type === 'D' ? '#EF4444' : set.type === 'F' ? '#8B5CF6' : 'transparent', justifyContent: 'center', alignItems: 'center'}}>
-                      <AppText weight="bold" style={{ fontSize: 13, color: (set.type && set.type !== 'N') ? '#FFF' : (set.completed ? '#10B981' : isCurrentlyActive ? theme.colors.primary : theme.colors.textMuted) }}>{set.type === 'W' ? 'W' : set.type === 'D' ? 'D' : set.type === 'F' ? 'F' : index + 1}</AppText>
-                    </Pressable>
-                  ) : (
-                    <AppText weight="bold" style={{ fontSize: 13, color: set.completed ? '#10B981' : isCurrentlyActive ? theme.colors.primary : theme.colors.textMuted }}>{index + 1}</AppText>
-                  )}
-                </View>
-
-                 {/* KG Stepper — 44px Big Tap Target */}
-                <View style={{ flex: 1.1, minWidth: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 10, height: 44, borderWidth: 1, borderColor: isCurrentlyActive ? theme.colors.primary : theme.colors.border, overflow: 'hidden' }}>
-                  <Pressable
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); adjust(set.id, 'kg', -2.5); }}
-                    style={({ pressed }) => ({
-                      width: 36, height: '100%', justifyContent: 'center', alignItems: 'center',
-                      backgroundColor: pressed ? theme.colors.border : 'transparent'
-                    })}
-                    hitSlop={6}
-                  >
-                    <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.textMuted }}>-</AppText>
-                  </Pressable>
-                  
-                  <TextInput
-                    keyboardType="decimal-pad"
-                    selectTextOnFocus
-                    style={{ flex: 1, minWidth: 0, color: theme.colors.text, fontSize: 16, fontFamily: 'Inter_700Bold', textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false }}
-                    value={String(set.kg)}
-                    onChangeText={(txt) => updateSetValueText(set.id, 'kg', txt)}
-                  />
-
-                  <Pressable
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); adjust(set.id, 'kg', 2.5); }}
-                    style={({ pressed }) => ({
-                      width: 36, height: '100%', justifyContent: 'center', alignItems: 'center',
-                      backgroundColor: pressed ? theme.colors.border : 'transparent'
-                    })}
-                    hitSlop={6}
-                  >
-                    <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.primary }}>+</AppText>
-                  </Pressable>
-                </View>
-
-                {/* Reps Stepper — 44px Big Tap Target */}
-                <View style={{ flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 10, height: 44, borderWidth: 1, borderColor: isCurrentlyActive ? theme.colors.primary : theme.colors.border, overflow: 'hidden' }}>
-                  <Pressable
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); adjust(set.id, 'reps', -1); }}
-                    style={({ pressed }) => ({
-                      width: 36, height: '100%', justifyContent: 'center', alignItems: 'center',
-                      backgroundColor: pressed ? theme.colors.border : 'transparent'
-                    })}
-                    hitSlop={6}
-                  >
-                    <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.textMuted }}>-</AppText>
-                  </Pressable>
-                  
-                  <TextInput
-                    keyboardType="number-pad"
-                    selectTextOnFocus
-                    style={{ flex: 1, minWidth: 0, color: theme.colors.text, fontSize: 16, fontFamily: 'Inter_700Bold', textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false }}
-                    value={String(set.reps)}
-                    onChangeText={(txt) => updateSetValueText(set.id, 'reps', txt)}
-                  />
-
-                  <Pressable
-                    onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); adjust(set.id, 'reps', 1); }}
-                    style={({ pressed }) => ({
-                      width: 36, height: '100%', justifyContent: 'center', alignItems: 'center',
-                      backgroundColor: pressed ? theme.colors.border : 'transparent'
-                    })}
-                    hitSlop={6}
-                  >
-                    <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.primary }}>+</AppText>
-                  </Pressable>
-                </View>
-
-                {/* RPE Column (Pro Mode) */}
-                {proMode && (
-                  <View style={{ width: 44, flexDirection: 'row', alignItems: 'stretch', justifyContent: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 10, height: 44, borderWidth: 1, borderColor: theme.colors.border, overflow: 'hidden' }}>
-                    <TextInput
-                      keyboardType="number-pad"
-                      selectTextOnFocus
-                      placeholder="10"
-                      placeholderTextColor={theme.colors.textMuted}
-                      style={{ flex: 1, color: theme.colors.text, fontSize: 15, fontFamily: 'Inter_700Bold', textAlign: 'center', padding: 0 }}
-                      value={String(set.rpe || '')}
-                      onChangeText={(txt) => {
-                        let val = parseInt(txt) || '';
-                        if (val > 10) val = 10;
-                        updateSetValueText(set.id, 'rpe', val);
-                      }}
-                    />
-                  </View>
-                )}
-
-                {/* Check Button — Big Tap Target */}
-                <Pressable onPress={() => toggleSet(set.id)} style={{
-                  width: 44, height: 44, borderRadius: 12,
-                  backgroundColor: set.completed ? '#10B981' : 'transparent',
-                  borderWidth: 1.5,
-                  borderColor: set.completed ? '#10B981' : theme.colors.border,
-                  justifyContent: 'center', alignItems: 'center',
-                }}>
-                  <Check size={20} color={set.completed ? '#FFF' : theme.colors.textMuted} strokeWidth={3} />
-                </Pressable>
-
-                {/* Delete Set (swipe-like) */}
-                {curEx.sets.length > 1 && (
-                  <Pressable onPress={() => removeSet(set.id)} hitSlop={6} style={{ padding: 4 }}>
-                    <X size={12} color={theme.colors.textMuted} />
-                  </Pressable>
-                )}
-              </View>
+              <LoggerSetRow
+                key={set.id}
+                set={set}
+                index={index}
+                proMode={proMode}
+                isCurrentlyActive={isCurrentlyActive}
+                activeSetIndex={activeSetIndex}
+                curEx={curEx}
+                adjust={adjust}
+                updateSetValueText={updateSetValueText}
+                toggleSetType={toggleSetType}
+                toggleSet={toggleSet}
+                onSetPress={(setId, action) => {
+                  if (action === 'delete') removeSet(setId);
+                }}
+              />
             );
           })}
 
