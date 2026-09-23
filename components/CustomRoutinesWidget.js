@@ -122,7 +122,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
               borderWidth: 1,
               position: 'relative'
             }}
-            onPress={() => onStartRoutine(routine)}
+            onPress={() => typeof onStartRoutine === 'function' && onStartRoutine(routine)}
             onLongPress={() => confirmDeleteRoutine(routine)}
           >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>

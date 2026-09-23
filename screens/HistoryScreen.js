@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, SectionList, ActivityIndicator, RefreshControl, Dimensions, TouchableOpacity, Alert, Modal, ScrollView, Share } from 'react-native';
-import { Clock, Dumbbell, Trash2, Calendar, Flame, AlertCircle, TrendingUp, ChevronRight, X, CheckCircle2, RotateCcw, Share2, Layers, AlertTriangle, Droplets, Info } from 'lucide-react-native';
+import { View, SectionList, ActivityIndicator, RefreshControl, Dimensions, TouchableOpacity, Alert, Modal, ScrollView, Share, Platform } from 'react-native';
+import { Clock, Dumbbell, Trash2, Calendar, Flame, AlertCircle, TrendingUp, ChevronRight, ChevronLeft, X, CheckCircle2, RotateCcw, Share2, Layers, AlertTriangle, Droplets, Info } from 'lucide-react-native';
 import Svg, { Path, Circle, Defs, LinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { AppText, theme, styles } from '../theme';
 import { useTheme } from '../contexts/ThemeContext';
@@ -27,7 +27,7 @@ const formatTimeStr = (d) => {
   return `${displayHours}:${minutes} ${ampm}`;
 };
 
-export default function HistoryScreen({ session, dbReady, onStartWorkout, onStartRoutine }) {
+export default function HistoryScreen({ session, dbReady, onStartWorkout, onStartRoutine, onBack }) {
   const { t } = useTranslation();
   const { graphicsQuality } = useTheme();
   const [historyData, setHistoryData] = useState([]);
@@ -281,6 +281,20 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
 🔥 Total Volume: ${volCount > 1000 ? `${(volCount/1000).toFixed(1)}k` : volCount} kg
 ⚡ Sets Completed: ${setsCount} Sets
 Tracked with GymVault`;
+
+      if (Platform.OS === 'web') {
+        if (typeof navigator !== 'undefined' && navigator.share) {
+          try {
+            await navigator.share({ title: 'GymVault Workout Log', text });
+            return;
+          } catch(e) {}
+        }
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+          await navigator.clipboard.writeText(text);
+          Alert.alert('Tersalin! 📋', 'Ringkasan latihan berhasil disalin ke clipboard.');
+          return;
+        }
+      }
       await Share.share({ message: text, title: 'GymVault Workout Log' });
     } catch(e) {}
   };
@@ -736,9 +750,21 @@ Tracked with GymVault`;
 
   return (
     <View style={styles.screen}>
-      <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16 }}>
-        <AppText weight="bold" style={{ fontSize: 24, marginBottom: 4 }}>{t('history_title')}</AppText>
-        <AppText style={{ color: theme.colors.textMuted }}>Review your workouts, water, and nutrition history.</AppText>
+      <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        {typeof onBack === 'function' && (
+          <TouchableOpacity 
+            onPress={onBack}
+            style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: theme.colors.card, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.border }}
+            accessibilityLabel="Kembali ke profil"
+            accessibilityRole="button"
+          >
+            <ChevronLeft color={theme.colors.text} size={20} />
+          </TouchableOpacity>
+        )}
+        <View style={{ flex: 1 }}>
+          <AppText weight="bold" style={{ fontSize: 24, marginBottom: 4 }}>{t('history_title')}</AppText>
+          <AppText style={{ color: theme.colors.textMuted }}>Review your workouts, water, and nutrition history.</AppText>
+        </View>
       </View>
 
       {/* Tabs Switcher */}

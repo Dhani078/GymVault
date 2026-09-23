@@ -197,7 +197,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
           handleScanFood();
         });
         if (!shown) {
-          alert("Iklan Reward sedang dimuat, mohon tunggu sebentar lalu coba lagi.");
+          Alert.alert("Mohon Tunggu", "Iklan Reward sedang dimuat, mohon tunggu sebentar lalu coba lagi.");
         }
         return;
       }
@@ -206,7 +206,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
       const libraryPerm = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (!cameraPerm.granted && !libraryPerm.granted) {
-        alert("Akses kamera atau galeri dibutuhkan!");
+        Alert.alert("Izin Dibutuhkan", "Akses kamera atau galeri dibutuhkan untuk memindai makanan.");
         return;
       }
 
@@ -509,7 +509,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                   if (!nutritionResult) return;
                   const { data: { session } } = await supabase.auth.getSession();
                   if (!session?.user?.id) {
-                    alert("Gagal: Anda belum login!");
+                    Alert.alert("Gagal", "Anda belum login! Silakan login untuk menyimpan log nutrisi.");
                     return;
                   }
 

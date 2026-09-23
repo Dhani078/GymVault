@@ -104,7 +104,9 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
     else if (avg < 400) score = 2;
     else score = 1;
     
-    onResult(score);
+    if (typeof onResult === 'function') {
+      onResult(score);
+    }
   };
 
   return (
@@ -114,7 +116,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
           Uji Saraf Neuro-Tap 🎮
         </AppText>
         <TouchableOpacity 
-          onPress={onCancel}
+          onPress={() => typeof onCancel === 'function' && onCancel()}
           style={{ backgroundColor: 'rgba(255,255,255,0.05)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 }}
         >
           <AppText style={{ color: theme.colors.textMuted, fontSize: 11 }}>Batal</AppText>

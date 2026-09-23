@@ -289,17 +289,26 @@ export default function AuthScreen() {
     }
   };
 
-  // ─── OAUTH ───
-  const handleOAuth = async (provider) => {
+  // ─── FORGOT PASSWORD ───
+  const handleForgotPassword = async () => {
     clearNotif();
-    showNotif('info', `Connecting to ${provider}...`, 'Opening authentication window...');
+    const cleanId = identifier.trim();
+    if (!cleanId || !cleanId.includes('@')) {
+      showNotif('warning', 'Enter Your Email', 'Please type your registered email address in the field above, then click "Forgot Password?" again.');
+      return;
+    }
+    setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider });
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanId);
+      setLoading(false);
       if (error) {
-        showNotif('error', `${provider} Login Failed`, error.message);
+        showNotif('error', 'Reset Failed', error.message);
+      } else {
+        showNotif('success', 'Reset Link Sent! 📩', `We have sent a password reset link to ${cleanId}. Please check your inbox and spam folder.`);
       }
     } catch (err) {
-      showNotif('error', 'Connection Error', err.message);
+      setLoading(false);
+      showNotif('error', 'Error', err.message);
     }
   };
 
@@ -387,12 +396,21 @@ export default function AuthScreen() {
       )}
 
       {/* Password */}
-      <View style={{ marginBottom: 24 }}>
+      <View style={{ marginBottom: isLogin ? 12 : 24 }}>
         <View style={styles.inputWrapper}>
           <Lock color={theme.colors.textMuted} size={20} style={{ marginRight: 12 }} />
           <TextInput style={styles.textInput} placeholder="Password (min 6 chars)" placeholderTextColor={theme.colors.textMuted} value={password} onChangeText={setPassword} secureTextEntry />
         </View>
       </View>
+
+      {/* Forgot Password Link */}
+      {isLogin && (
+        <View style={{ alignItems: 'flex-end', marginBottom: 20 }}>
+          <TouchableOpacity onPress={handleForgotPassword} disabled={loading} style={{ paddingVertical: 4 }}>
+            <AppText style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>Forgot Password?</AppText>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Action Button */}
       <TouchableOpacity

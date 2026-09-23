@@ -118,8 +118,8 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
         setUsageCount(newCount);
       }
 
-      onClose();
-      onStartRoutine(routine);
+      if (typeof onClose === 'function') onClose();
+      if (typeof onStartRoutine === 'function') onStartRoutine(routine);
 
     } catch (e) {
 

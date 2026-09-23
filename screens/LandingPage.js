@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, TextInput, Platform } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, TextInput, Platform, useWindowDimensions } from 'react-native';
 import {
   Dumbbell, Activity, Cpu, ShieldCheck, Zap, Flame, Award, ChevronRight,
   TrendingUp, Sparkles, Smartphone, Check, ArrowRight, Star, Heart,
@@ -146,6 +146,7 @@ const FAQS = [
 ];
 
 export default function LandingPage({ onLoginPress }) {
+  const { width } = useWindowDimensions();
   const isLarge = width >= 1024;
   const isMedium = width >= 768;
 

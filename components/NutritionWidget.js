@@ -153,7 +153,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
 
   const handleLogManualNutrition = async () => {
     if (!manualNutForm.food || !manualNutForm.cal) {
-      alert("Please enter food name and calories.");
+      Alert.alert("Input Kurang", "Mohon isi nama makanan dan jumlah kalori.");
       return;
     }
     setLoading(true);
@@ -171,7 +171,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
       setManualNutForm({ food: '', cal: '', p: '', c: '', f: '' });
       fetchNutritionData();
     } else {
-      alert("Failed to save meal: " + error.message);
+      Alert.alert("Gagal Menyimpan", "Gagal menyimpan makanan: " + error.message);
     }
   };
 
@@ -180,7 +180,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
     const { error } = await supabase.from('nutrition_logs').delete().eq('id', mealId);
     setLoading(false);
     if (error) {
-      alert("Failed to delete meal: " + error.message);
+      Alert.alert("Gagal Menghapus", "Gagal menghapus makanan: " + error.message);
     } else {
       fetchNutritionData();
     }
