@@ -208,7 +208,7 @@ export default function PaymentRequestsTable({
       )}
 
       {/* ─── MODAL ZOOM BUKTI BAYAR ─── */}
-      <Modal visible={!!previewImage} transparent animationType="fade">
+      <Modal visible={!!previewImage} transparent animationType="fade" onRequestClose={() => setPreviewImage(null)}>
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
             <View style={styles.modalHeader}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { Zap } from 'lucide-react-native';
+import { View, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
+import { Zap, Trash2 } from 'lucide-react-native';
 import { AppText, theme } from '../theme';
 import { supabase } from '../supabaseClient';
 import { useDynamicIsland } from '../contexts/DynamicIslandContext';
@@ -12,6 +12,23 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
   useEffect(() => {
     fetchCustomRoutines();
   }, [session, dbReady]);
+
+  const confirmDeleteRoutine = (routine) => {
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined' && window.confirm(`Hapus routine "${routine.name}"?`)) {
+        deleteRoutine(routine.id);
+      }
+    } else {
+      Alert.alert(
+        "Delete Routine 🗑️",
+        `Are you sure you want to delete "${routine.name}"?`,
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Delete", style: "destructive", onPress: () => deleteRoutine(routine.id) }
+        ]
+      );
+    }
+  };
 
   const fetchCustomRoutines = async () => {
     try {
@@ -106,21 +123,25 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
               position: 'relative'
             }}
             onPress={() => onStartRoutine(routine)}
-            onLongPress={() => {
-              Alert.alert(
-                "Delete Routine 🗑️",
-                `Are you sure you want to delete "${routine.name}"?`,
-                [
-                  { text: "Cancel", style: "cancel" },
-                  { text: "Delete", style: "destructive", onPress: () => deleteRoutine(routine.id) }
-                ]
-              );
-            }}
+            onLongPress={() => confirmDeleteRoutine(routine)}
           >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <AppText weight="bold" style={{ fontSize: 16, color: theme.colors.text, flex: 1, paddingRight: 8 }} numberOfLines={1}>{routine.name}</AppText>
-              <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(204,255,0,0.06)', justifyContent: 'center', alignItems: 'center' }}>
-                <Zap color={theme.colors.primary} size={14} />
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <TouchableOpacity
+                  onPress={(e) => {
+                    e?.stopPropagation?.();
+                    confirmDeleteRoutine(routine);
+                  }}
+                  style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(239, 68, 68, 0.08)', justifyContent: 'center', alignItems: 'center' }}
+                  accessibilityLabel={`Hapus routine ${routine.name}`}
+                  accessibilityRole="button"
+                >
+                  <Trash2 color="#EF4444" size={13} />
+                </TouchableOpacity>
+                <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(204,255,0,0.06)', justifyContent: 'center', alignItems: 'center' }}>
+                  <Zap color={theme.colors.primary} size={14} />
+                </View>
               </View>
             </View>
             <AppText style={{ color: theme.colors.textMuted, fontSize: 12, marginBottom: 14 }}>

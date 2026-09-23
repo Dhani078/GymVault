@@ -130,7 +130,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'flex-end' }}>
         <View style={{ backgroundColor: theme.colors.background, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
           
@@ -177,7 +177,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up). Limit to 4-6 exercises
                 activeOpacity={0.8}
                 style={{ backgroundColor: '#25D366', width: '100%', paddingVertical: 16, borderRadius: 12, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 12 }}
                 onPress={() => {
-                  Linking.openURL('whatsapp://send?phone=6282148564979&text=Halo%20min%20Dhani,%20saya%20sudah%20transfer%20Rp10.000%20untuk%20GymVault%20Premium.%20Berikut%20buktinya...');
+                  Linking.openURL('https://wa.me/6282148564979?text=Halo%20min%20Dhani,%20saya%20sudah%20transfer%20Rp10.000%20untuk%20GymVault%20Premium.%20Berikut%20buktinya...');
                 }}
               >
                 <MessageCircle color="#FFF" size={20} style={{ marginRight: 8 }} />

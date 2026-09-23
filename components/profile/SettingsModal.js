@@ -243,7 +243,7 @@ export default function SettingsModal({
       </Modal>
 
       {/* ─── Language Selector Modal ─── */}
-      <Modal visible={languageModalVisible} transparent animationType="fade">
+      <Modal visible={languageModalVisible} transparent animationType="fade" onRequestClose={() => setLanguageModalVisible(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
           <View style={{ backgroundColor: cardColor, borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, borderWidth: 1, borderColor: borderColor }}>
             <AppText weight="bold" style={{ fontSize: 20, color: textColor, marginBottom: 24 }}>{t('language')}</AppText>
@@ -291,7 +291,7 @@ export default function SettingsModal({
       </Modal>
 
       {/* ─── Weight Units Modal ─── */}
-      <Modal visible={unitsModalVisible} transparent animationType="fade">
+      <Modal visible={unitsModalVisible} transparent animationType="fade" onRequestClose={() => setUnitsModalVisible(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
           <View style={{ backgroundColor: cardColor, borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, borderWidth: 1, borderColor: borderColor }}>
             <AppText weight="bold" style={{ fontSize: 20, color: textColor, marginBottom: 24 }}>{t('units_title')}</AppText>
@@ -311,7 +311,7 @@ export default function SettingsModal({
       </Modal>
 
       {/* ─── Graphics Quality Modal ─── */}
-      <Modal visible={graphicsModalVisible} transparent animationType="fade">
+      <Modal visible={graphicsModalVisible} transparent animationType="fade" onRequestClose={() => setGraphicsModalVisible(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
           <View style={{ backgroundColor: cardColor, borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, borderWidth: 1, borderColor: borderColor }}>
             <AppText weight="bold" style={{ fontSize: 20, color: textColor, marginBottom: 24 }}>Graphics Quality</AppText>
@@ -325,7 +325,7 @@ export default function SettingsModal({
               <TouchableOpacity 
                 key={g.code} 
                 onPress={() => { 
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {}); } catch(e){}
                   setGraphicsQuality(g.code); 
                   setGraphicsModalVisible(false); 
                   showToast('success', `Graphics set to ${g.label}`); 
@@ -358,7 +358,7 @@ export default function SettingsModal({
       </Modal>
 
       {/* ─── FPS Limit Modal ─── */}
-      <Modal visible={fpsModalVisible} transparent animationType="fade">
+      <Modal visible={fpsModalVisible} transparent animationType="fade" onRequestClose={() => setFpsModalVisible(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
           <View style={{ backgroundColor: cardColor, borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, borderWidth: 1, borderColor: borderColor }}>
             <AppText weight="bold" style={{ fontSize: 20, color: textColor, marginBottom: 24 }}>Framerate Limit</AppText>
@@ -371,7 +371,7 @@ export default function SettingsModal({
               <TouchableOpacity 
                 key={f.code} 
                 onPress={() => { 
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
                   setFpsLimit(f.code); 
                   setFpsModalVisible(false); 
                   showToast('success', `FPS set to ${f.label}`); 
@@ -404,7 +404,7 @@ export default function SettingsModal({
       </Modal>
 
       {/* ─── Export Data Modal ─── */}
-      <Modal visible={exportModalVisible} transparent animationType="fade">
+      <Modal visible={exportModalVisible} transparent animationType="fade" onRequestClose={() => setExportModalVisible(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
           <View style={{ backgroundColor: cardColor, borderRadius: 20, padding: 24, width: '100%', maxWidth: 400, borderWidth: 1, borderColor: borderColor }}>
             <Download color="#D4F53C" size={40} style={{ alignSelf: 'center', marginBottom: 16 }} />
