@@ -11,6 +11,7 @@ import * as Notifications from 'expo-notifications';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import AdaptiveLayout from './components/AdaptiveLayout';
+import VercelTelemetry from './components/VercelTelemetry';
 
 if (Platform.OS !== 'web') {
   Notifications.setNotificationHandler({
@@ -464,6 +465,7 @@ export default function App() {
         <AppModeProvider>
           <DynamicIslandProvider>
             <AppContent />
+            <VercelTelemetry />
           </DynamicIslandProvider>
         </AppModeProvider>
       </LanguageProvider>
