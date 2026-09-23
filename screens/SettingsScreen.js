@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { ChevronRight, Shield, Eye, Cpu, Settings } from 'lucide-react-native';
 import { AppText, theme, styles } from '../theme';
 import SmoothScrollView from '../components/SmoothScrollView';
@@ -20,7 +20,12 @@ export default function SettingsScreen() {
       </AppText>
 
       {SECTIONS.map((section, i) => (
-        <TouchableOpacity key={i} style={[styles.card, { marginBottom: 12, flexDirection: 'row', alignItems: 'center' }]}>
+        <TouchableOpacity 
+          key={i} 
+          onPress={() => Alert.alert(section.title, section.desc)}
+          activeOpacity={0.7}
+          style={[styles.card, { marginBottom: 12, flexDirection: 'row', alignItems: 'center' }]}
+        >
           <View style={styles.iconButton}>
             <section.icon color={theme.colors.primary} size={20} />
           </View>

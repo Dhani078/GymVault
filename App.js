@@ -60,8 +60,16 @@ function AppContent() {
   const [loading, setLoading] = useState(true);
   const [showPaywall, setShowPaywall] = useState(false);
   const [tab, setTab] = useState('Dashboard');
+  const [prevTab, setPrevTab] = useState('Profile');
   const [dbReady, setDbReady] = useState(false);
   const [scannerVisible, setScannerVisible] = useState(false);
+
+  const handleTabChange = useCallback((newTab) => {
+    setTab(current => {
+      if (current !== newTab) setPrevTab(current);
+      return newTab;
+    });
+  }, []);
 
   // Workout state lives here so it survives tab switches
   const [workoutData, setWorkoutData] = useState([]);
@@ -222,11 +230,11 @@ function AppContent() {
   const handleStartWorkout = useCallback(() => {
     if (workoutData.length === 0) {
       setWorkoutStartTime(new Date().toISOString());
-      setTab('Library');
+      handleTabChange('Library');
     } else {
-      setTab('Logger');
+      handleTabChange('Logger');
     }
-  }, [workoutData]);
+  }, [workoutData, handleTabChange]);
 
   // Dashboard "Start Routine"
   const handleStartRoutine = useCallback((routine) => {
@@ -242,8 +250,8 @@ function AppContent() {
     });
     setWorkoutData(newWorkoutData);
     setWorkoutStartTime(new Date().toISOString());
-    setTab('Logger');
-  }, []);
+    handleTabChange('Logger');
+  }, [handleTabChange]);
 
   // Library "Start Exercise" → APPEND to workout
   const handleAddExercise = useCallback(async (ex) => {
@@ -287,16 +295,16 @@ function AppContent() {
       setWorkoutIndex(newData.length - 1);
       return newData;
     });
-    setTab('Logger');
-  }, [workoutStartTime, session]);
+    handleTabChange('Logger');
+  }, [workoutStartTime, session, handleTabChange]);
 
   // Logger finished → clear workout, go to History
   const handleFinishWorkout = useCallback(() => {
     setWorkoutData([]);
     setWorkoutIndex(0);
     setWorkoutStartTime(null);
-    setTab('History');
-  }, []);
+    handleTabChange('History');
+  }, [handleTabChange]);
 
   // Sync Notifee Foreground actions to React state
   useEffect(() => {
@@ -341,10 +349,10 @@ function AppContent() {
       setWorkoutData(newWorkoutData);
       setWorkoutIndex(0);
       setWorkoutStartTime(new Date().toISOString());
-      setTab('Logger');
+      handleTabChange('Logger');
     });
     return () => sub.remove();
-  }, []);
+  }, [handleTabChange]);
 
   if (loading || !fontsLoaded) {
     return (
@@ -385,15 +393,30 @@ function AppContent() {
                   setCurrentIndex={setWorkoutIndex}
                   workoutStartTime={workoutStartTime}
                   onFinish={handleFinishWorkout}
-                  onGoToLibrary={() => setTab('Library')}
+                  onGoToLibrary={() => handleTabChange('Library')}
                 />
               )}
             </View>
             <View style={{ flex: 1, display: tab === 'History' ? 'flex' : 'none' }}>
-              {visitedTabs.includes('History') && <HistoryScreen session={session} dbReady={dbReady} onStartWorkout={handleStartWorkout} onStartRoutine={handleStartRoutine} />}
+              {visitedTabs.includes('History') && (
+                <HistoryScreen 
+                  session={session} 
+                  dbReady={dbReady} 
+                  onStartWorkout={handleStartWorkout} 
+                  onStartRoutine={handleStartRoutine}
+                  onBack={() => handleTabChange(prevTab === 'History' ? 'Profile' : prevTab)} 
+                />
+              )}
             </View>
             <View style={{ flex: 1, display: tab === 'Profile' ? 'flex' : 'none' }}>
-              {visitedTabs.includes('Profile') && <ProfileScreen session={session} dbReady={dbReady} onSignOut={() => supabase.auth.signOut()} onGoToHistory={() => setTab('History')} />}
+              {visitedTabs.includes('Profile') && (
+                <ProfileScreen 
+                  session={session} 
+                  dbReady={dbReady} 
+                  onSignOut={() => supabase.auth.signOut()} 
+                  onGoToHistory={() => handleTabChange('History')} 
+                />
+              )}
             </View>
           </View>
 
@@ -430,7 +453,7 @@ function AppContent() {
 
               const active = tab === t.key;
               return (
-                <TouchableOpacity key={t.key} style={styles.tabItem} onPress={() => setTab(t.key)}>
+                <TouchableOpacity key={t.key} style={styles.tabItem} onPress={() => handleTabChange(t.key)}>
                   <t.icon color={active ? theme.colors.primary : theme.colors.textMuted} size={24} />
                   <AppText style={[styles.tabLabel, active && { color: theme.colors.primary }]}>{t.label}</AppText>
                 </TouchableOpacity>

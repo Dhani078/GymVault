@@ -176,17 +176,19 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
 
   const handleApply = () => {
     if (!mealPlan) return;
-    onApplyTarget(mealPlan.total_calories, mealPlan.total_protein);
+    if (typeof onApplyTarget === 'function') {
+      onApplyTarget(mealPlan.total_calories, mealPlan.total_protein);
+    }
     if (Platform.OS === 'web') {
       if (typeof window !== 'undefined') {
         window.alert(`Berhasil Diterapkan! 🎯\nTarget kalori harian Anda diset ke ${mealPlan.total_calories} kcal dan protein ke ${mealPlan.total_protein}g.`);
       }
-      onClose();
+      if (typeof onClose === 'function') onClose();
     } else {
       Alert.alert(
         "Berhasil Diterapkan! 🎯",
         `Target kalori harian Anda diset ke ${mealPlan.total_calories} kcal dan protein ke ${mealPlan.total_protein}g.`,
-        [{ text: "OK", onPress: onClose }]
+        [{ text: "OK", onPress: () => typeof onClose === 'function' && onClose() }]
       );
     }
   };
