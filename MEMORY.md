@@ -144,3 +144,10 @@ To prevent data collision between different logged-in users or guest sessions, a
 7. **Complete Output Enforcement**: Never truncate code with placeholders like `// ... rest of code unchanged`. Always provide exact, complete code blocks.
 8. **Automated Test Integrity**: Run `npm test` before major releases to guarantee zero mathematical regressions across 1RM, TDEE, Plate Loading, Progressive Overload, Kinetic Chain Fatigue, and Voice Parsing (61/61 Assertions).
 
+---
+
+## 7. Database & UI Invariants (Learned Lessons)
+
+- **`workout_sets` Foreign Key Safety**: `exercise_id` in `workout_sets` references `exercises(id)`. Client-generated UUIDs (`makeId()`) must NEVER be inserted directly into `exercise_id` without resolving against `exercises(id)`. In `LoggerScreen.js`, fallback to `exercise_id = null` on batch insert error guarantees zero data loss.
+- **`HistoryScreen.js` Interactivity**: Workout, Nutrition, and Water history cards must always be clickable (`TouchableOpacity`) and render comprehensive AMOLED inspection modals (`selectedSession`, `selectedNutrition`, `selectedWater`) with quick action triggers ("Ulangi Sesi", "Hapus Sesi", "Bagikan").
+
