@@ -107,8 +107,8 @@ export default async function handler(req, res) {
     }
 
     // 2. Send Telegram Admin Instant Broadcast
-    const botToken = process.env.TELEGRAM_BOT_TOKEN || '8898525963:AAEKuNhil6t-lia7JvxKBIYQjDSDZOkkXfE';
-    const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID || '1224442718';
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
 
     if (botToken && adminChatId) {
       const telegramMsg = `⚡ <b>PEMBAYARAN QRIS OTOMATIS SUKSES! (QIOSPAY)</b>\n\n` +
