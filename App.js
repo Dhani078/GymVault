@@ -389,7 +389,7 @@ function AppContent() {
               )}
             </View>
             <View style={{ flex: 1, display: tab === 'History' ? 'flex' : 'none' }}>
-              {visitedTabs.includes('History') && <HistoryScreen session={session} dbReady={dbReady} onStartWorkout={handleStartWorkout} />}
+              {visitedTabs.includes('History') && <HistoryScreen session={session} dbReady={dbReady} onStartWorkout={handleStartWorkout} onStartRoutine={handleStartRoutine} />}
             </View>
             <View style={{ flex: 1, display: tab === 'Profile' ? 'flex' : 'none' }}>
               {visitedTabs.includes('Profile') && <ProfileScreen session={session} dbReady={dbReady} onSignOut={() => supabase.auth.signOut()} onGoToHistory={() => setTab('History')} />}

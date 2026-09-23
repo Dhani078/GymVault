@@ -677,20 +677,54 @@ export default function LoggerScreen({
         return;
       }
 
+      // Quick attempt to resolve exercise IDs from master exercises table by name
+      const exMap = {};
+      try {
+        const uniqueNames = [...new Set(workoutData.map(e => e.name).filter(Boolean))];
+        if (uniqueNames.length > 0) {
+          const { data: dbExercises } = await supabase.from('exercises').select('id, name').in('name', uniqueNames);
+          if (dbExercises && Array.isArray(dbExercises)) {
+            dbExercises.forEach(dbEx => {
+              if (dbEx?.name && dbEx?.id) {
+                exMap[dbEx.name.toLowerCase().trim()] = dbEx.id;
+              }
+            });
+          }
+        }
+      } catch (e) {}
+
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       const setRows = [];
       workoutData.forEach((ex) => {
-        const validExId = (ex.id && uuidRegex.test(ex.id)) ? ex.id : null;
+        const resolvedId = exMap[ex.name?.toLowerCase()?.trim()];
+        const validExId = resolvedId || ((ex.id && uuidRegex.test(ex.id) && !ex.id.startsWith('mock-')) ? ex.id : null);
         ex.sets.forEach((s, setIdx) => {
           if (s.completed) {
-            setRows.push({ session_id: sessionData.id, exercise_id: validExId, weight_kg: s.kg, reps: s.reps, set_index: setIdx + 1, is_checked: true });
+            setRows.push({
+              session_id: sessionData.id,
+              exercise_id: validExId,
+              weight_kg: Number(s.kg) || 0,
+              reps: Number(s.reps) || 0,
+              set_index: setIdx + 1,
+              is_checked: true
+            });
           }
         });
       });
 
       if (setRows.length > 0) {
-        const { error: setsErr } = await safeBatchInsert('workout_sets', setRows);
-        if (setsErr) console.warn('[Logger] Sets save partial failure:', setsErr.message);
+        let { error: setsErr } = await safeBatchInsert('workout_sets', setRows);
+        if (setsErr) {
+          console.warn('[Logger] Sets save partial failure, retrying with nullable exercise_id fallback:', setsErr.message);
+          // 🛡️ Zero Data Loss Resilience: retry with exercise_id = null so sets are never lost due to foreign key constraints!
+          const safeFallbackSets = setRows.map(r => ({ ...r, exercise_id: null }));
+          const { error: retryErr } = await safeBatchInsert('workout_sets', safeFallbackSets);
+          if (retryErr) {
+            console.error('[Logger] Fallback sets save error:', retryErr.message);
+          } else {
+            setsErr = null;
+          }
+        }
 
         // Auto-save last weight & reps per exercise for zero-friction autofill
         try {
