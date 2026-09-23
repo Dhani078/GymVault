@@ -141,22 +141,29 @@ export default function WaterTrackerWidget({ userProfile, refreshTrigger }) {
           const partialPercent = isPartial ? ((waterMl - (i * 250)) / 250) * 100 : 0;
           
           return (
-            <View key={i} style={{ 
-              flex: 1, 
-              height: isFilled || isPartial ? 36 : 24, 
-              marginHorizontal: 2,
-              backgroundColor: isFilled ? '#3B82F6' : theme.colors.inputBg, 
-              borderRadius: 16, 
-              borderWidth: 1, 
-              borderColor: isFilled ? '#3B82F6' : 'rgba(59, 130, 246, 0.2)',
-              overflow: 'hidden',
-              justifyContent: 'flex-end',
-              opacity: isFilled || isPartial ? 1 : 0.6
-            }}>
+            <TouchableOpacity 
+              key={i} 
+              onPress={() => addWater(glassValue - waterMl)}
+              activeOpacity={0.7}
+              accessibilityLabel={`Catat air minum ke ${glassValue} ml`}
+              accessibilityRole="button"
+              style={{ 
+                flex: 1, 
+                height: isFilled || isPartial ? 36 : 24, 
+                marginHorizontal: 2,
+                backgroundColor: isFilled ? '#3B82F6' : theme.colors.inputBg, 
+                borderRadius: 16, 
+                borderWidth: 1, 
+                borderColor: isFilled ? '#3B82F6' : 'rgba(59, 130, 246, 0.2)',
+                overflow: 'hidden',
+                justifyContent: 'flex-end',
+                opacity: isFilled || isPartial ? 1 : 0.6
+              }}
+            >
               {isPartial && (
                 <View style={{ width: '100%', height: `${partialPercent}%`, backgroundColor: '#60A5FA', borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }} />
               )}
-            </View>
+            </TouchableOpacity>
           );
         })}
       </View>

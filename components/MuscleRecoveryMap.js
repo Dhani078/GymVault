@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import Svg, { Path, G, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { AppText, theme } from '../theme';
 import { Shield, Zap, Activity, Info, Calendar, X } from 'lucide-react-native';
@@ -145,6 +145,18 @@ const BACK_MUSCLE_PATHS = [
       'M 155 158 C 158 170, 156 182, 148 189 C 143 180, 144 168, 146 158 Z'
     ]
   }
+];
+
+const QUICK_MUSCLE_CHIPS = [
+  { id: 'chest', label: 'Dada' },
+  { id: 'lats', label: 'Punggung' },
+  { id: 'shoulders', label: 'Bahu' },
+  { id: 'biceps', label: 'Bisep' },
+  { id: 'triceps', label: 'Trisep' },
+  { id: 'quads', label: 'Paha' },
+  { id: 'hamstrings', label: 'Hamstring' },
+  { id: 'core', label: 'Core' },
+  { id: 'calves', label: 'Betis' },
 ];
 
 const MUSCLE_DETAILS = {
@@ -408,6 +420,49 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
         </View>
         <Activity size={18} color={theme.colors.primary} />
       </View>
+
+      {/* Quick Interactive Muscle Selection Chips (Fat-finger & Web-click accessible) */}
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false} 
+        contentContainerStyle={{ gap: 6, paddingVertical: 4, paddingHorizontal: 2 }}
+        style={{ marginBottom: 14 }}
+      >
+        {QUICK_MUSCLE_CHIPS.map(chip => {
+          const rec = muscleRecoveryStates[chip.id] || { percentage: 100 };
+          const isSelected = selectedMuscle?.id === chip.id;
+          const statusColor = rec.percentage >= 95 ? '#D4F53C' : rec.percentage >= 40 ? '#F59E0B' : '#EF4444';
+
+          return (
+            <TouchableOpacity
+              key={chip.id}
+              onPress={() => {
+                const targetObj = [...FRONT_MUSCLE_PATHS, ...BACK_MUSCLE_PATHS].find(m => m.id === chip.id) || { id: chip.id, label: chip.label };
+                handleSelectMuscle(targetObj);
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                paddingHorizontal: 12,
+                paddingVertical: 7,
+                borderRadius: 20,
+                backgroundColor: isSelected ? 'rgba(212,245,60,0.12)' : (darkMode ? 'rgba(255,255,255,0.03)' : '#F3F4F6'),
+                borderWidth: 1,
+                borderColor: isSelected ? '#D4F53C' : colors.border
+              }}
+            >
+              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: statusColor }} />
+              <AppText weight={isSelected ? 'bold' : 'normal'} style={{ fontSize: 12, color: isSelected ? colors.text : colors.textMuted }}>
+                {chip.label}
+              </AppText>
+              <AppText style={{ fontSize: 10, color: statusColor, fontWeight: 'bold' }}>
+                {rec.percentage}%
+              </AppText>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
 
       {/* SVG Container for side-by-side silhouette maps */}
       <View style={styles.svgContainer}>

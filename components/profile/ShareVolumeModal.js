@@ -20,7 +20,7 @@ export default function ShareVolumeModal({
   const viewShotRef = useRef();
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center', padding: 16 }}>
         
         {!showSessionSelector && (

@@ -273,7 +273,7 @@ export default function PaywallScreen({ onSkip, session }) {
       </TouchableOpacity>
 
       {/* ═══ Payment Modal ═══ */}
-      <Modal visible={showPayment} transparent animationType="slide">
+      <Modal visible={showPayment} transparent animationType="slide" onRequestClose={() => setShowPayment(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'flex-end' }}>
           <View style={{ backgroundColor: theme.colors.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40, maxHeight: '85%', borderWidth: 1, borderColor: theme.colors.border }}>
             <SmoothScrollView showsVerticalScrollIndicator={false}>
@@ -340,7 +340,7 @@ export default function PaywallScreen({ onSkip, session }) {
       </Modal>
 
       {/* ═══ Proof Upload Modal ═══ */}
-      <Modal visible={showProofModal} transparent animationType="fade">
+      <Modal visible={showProofModal} transparent animationType="fade" onRequestClose={() => setShowProofModal(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', padding: 24 }}>
           <View style={{ backgroundColor: theme.colors.card, borderRadius: 20, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>

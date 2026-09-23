@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Modal, ActivityIndicator, TextInput, Alert } from 'react-native';
-import { Flame, CheckCircle2 } from 'lucide-react-native';
+import { Flame, CheckCircle2, X } from 'lucide-react-native';
 import { AppText, theme } from '../theme';
 import { supabase, safeInsert } from '../supabaseClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -333,13 +333,13 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         </View>
       )}
 
-      <Modal visible={manualNutModal} animationType="slide" transparent>
+      <Modal visible={manualNutModal} animationType="slide" transparent onRequestClose={() => setManualNutModal(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'flex-end' }}>
           <View style={{ backgroundColor: theme.colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <AppText weight="bold" style={{ fontSize: 20 }}>Manual Meal Entry</AppText>
-              <TouchableOpacity onPress={() => setManualNutModal(false)}>
-                <CheckCircle2 color={theme.colors.textMuted} size={24} />
+              <TouchableOpacity onPress={() => setManualNutModal(false)} accessibilityLabel="Tutup manual meal entry" accessibilityRole="button">
+                <X color={theme.colors.textMuted} size={24} />
               </TouchableOpacity>
             </View>
 

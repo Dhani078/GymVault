@@ -25,23 +25,27 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
         // Query distinct exercises from logged sets
         const { data, error } = await supabase
           .from('workout_sets')
-          .select('exercise_id, exercises!inner(id, name), workout_sessions!inner(user_id, is_completed)')
+          .select('exercise_id, exercises(id, name), workout_sessions!inner(user_id, is_completed)')
           .eq('workout_sessions.user_id', userId)
-          .eq('workout_sessions.is_completed', true)
-          .eq('is_checked', true);
-
-        if (error) {
-
-        }
+          .eq('workout_sessions.is_completed', true);
 
         if (!error && data) {
           const uniqueMap = {};
           data.forEach(item => {
-            if (item.exercises) {
+            if (item.exercises?.id && item.exercises?.name) {
               uniqueMap[item.exercises.id] = item.exercises.name;
             }
           });
-          const list = Object.entries(uniqueMap).map(([id, name]) => ({ id, name }));
+          let list = Object.entries(uniqueMap).map(([id, name]) => ({ id, name }));
+          
+          // Fallback: If sets had unlinked exercise_id, fetch catalog exercises to populate chart options
+          if (list.length === 0) {
+            const { data: catData } = await supabase.from('exercises').select('id, name').limit(15);
+            if (catData && catData.length > 0) {
+              list = catData;
+            }
+          }
+          
           setExercisesList(list);
           if (list.length > 0) {
             setSelectedExerciseId(list[0].id);
@@ -72,8 +76,7 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
           .select('weight_kg, reps, workout_sessions!inner(started_at, is_completed)')
           .eq('exercise_id', selectedExerciseId)
           .eq('workout_sessions.user_id', userId)
-          .eq('workout_sessions.is_completed', true)
-          .eq('is_checked', true);
+          .eq('workout_sessions.is_completed', true);
 
         if (error) {
 
@@ -138,7 +141,7 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
         <View style={[styles.modalContent, { backgroundColor: colors.background, borderColor: colors.border }]}>
           
@@ -197,7 +200,7 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
       </View>
 
       {/* INNER EXERCISE PICKER MODAL */}
-      <Modal visible={pickerVisible} transparent animationType="fade">
+      <Modal visible={pickerVisible} transparent animationType="fade" onRequestClose={() => setPickerVisible(false)}>
         <View style={styles.pickerOverlay}>
           <View style={[styles.pickerContent, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <View style={styles.pickerHeader}>

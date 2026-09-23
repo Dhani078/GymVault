@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Modal, ActivityIndicator, Animated, Image, Linking, TextInput, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Modal, ActivityIndicator, Animated, Image, Linking, TextInput, ScrollView, Alert, DeviceEventEmitter } from 'react-native';
 import { X, CheckCircle, Award, MessageCircle } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -295,7 +295,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
   }, [visible, usageCount, isPremium, checkedInToday]);
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.95)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
 
         <TouchableOpacity style={{ position: 'absolute', top: 60, right: 24, zIndex: 10 }} onPress={handleClose}>
@@ -338,7 +338,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
               activeOpacity={0.8}
               style={{ backgroundColor: '#25D366', width: '100%', paddingVertical: 16, borderRadius: 12, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 12 }}
               onPress={() => {
-                Linking.openURL('whatsapp://send?phone=6282148564979&text=Halo%20min%20Dhani,%20saya%20sudah%20transfer%20Rp10.000%20untuk%20GymVault%20Premium.%20Berikut%20buktinya...');
+                Linking.openURL('https://wa.me/6282148564979?text=Halo%20min%20Dhani,%20saya%20sudah%20transfer%20Rp10.000%20untuk%20GymVault%20Premium.%20Berikut%20buktinya...');
               }}
             >
               <MessageCircle color="#FFF" size={20} style={{ marginRight: 8 }} />
@@ -528,9 +528,10 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                   });
 
                   if (error) {
-                    alert("Gagal menyimpan data: " + error.message);
+                    Alert.alert("Gagal", "Gagal menyimpan data: " + error.message);
                   } else {
-                    alert("Sukses! Makanan tercatat di database.");
+                    Alert.alert("Sukses! 🥗", "Makanan berhasil dicatat di log nutrisi!");
+                    DeviceEventEmitter.emit('activity_logged');
                     handleClose();
                   }
                 }}

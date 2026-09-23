@@ -577,7 +577,7 @@ export default function LibraryScreen({ onStartExercise }) {
       </View>
 
       {/* Filter Bottom Sheet Modal */}
-      <Modal visible={filterModalVisible} animationType="slide" transparent={true}>
+      <Modal visible={filterModalVisible} animationType="slide" transparent={true} onRequestClose={() => setFilterModalVisible(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'flex-end' }}>
           <View style={{ 
             backgroundColor: theme.colors.card, 
@@ -698,7 +698,7 @@ export default function LibraryScreen({ onStartExercise }) {
       </Modal>
 
       {/* Exercise Detail Modal */}
-      <Modal visible={!!selectedEx} animationType="slide" transparent={true}>
+      <Modal visible={!!selectedEx} animationType="slide" transparent={true} onRequestClose={() => setSelectedEx(null)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.82)', justifyContent: 'flex-end' }}>
           <View style={{ backgroundColor: theme.colors.card, borderTopLeftRadius: 28, borderTopRightRadius: 28, borderTopWidth: 1, borderTopColor: theme.colors.border, padding: 24, maxHeight: '88%' }}>
             

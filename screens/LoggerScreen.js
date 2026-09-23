@@ -202,7 +202,7 @@ export default function LoggerScreen({
     }));
 
     try {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     } catch (e) {}
 
     // Auto-trigger dynamic rest time
@@ -545,14 +545,14 @@ export default function LoggerScreen({
             setSessionMax1RM(prev => ({ ...prev, [exName]: estimated1RM }));
             title = 'NEW PR! 🏆';
             subtitle = `Est. 1RM: ${estimated1RM}kg`;
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch(e){}
             showNotification({ type: 'fire', title, subtitle, duration: 3000 });
             speakText(
               `Luar biasa! Rekor pribadi baru untuk ${exName}, perkiraan satu repetisi maksimum ${estimated1RM} kilogram. Mulai istirahat.`,
               `Awesome! New personal record for ${exName}, estimated one rep max ${estimated1RM} kilograms. Starting rest.`
             );
           } else {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
             showNotification({ type: 'success', title, subtitle, duration: 2500 });
             
             const currentEx = workoutData[currentIndex];
@@ -572,7 +572,7 @@ export default function LoggerScreen({
             }
           }
         } else {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
         }
         return { ...s, completed: !s.completed };
       })};
@@ -1007,7 +1007,7 @@ export default function LoggerScreen({
               <Pressable
                 onPress={() => {
                   try {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
                   } catch (e) {}
                   setWorkoutData(prev => prev.map((ex, i) => {
                     if (i !== safeIdx) return ex;
@@ -1058,7 +1058,7 @@ export default function LoggerScreen({
             <Pressable
               key={amt}
               onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
                 const activeSet = curEx.sets[activeSetIndex] || curEx.sets[0];
                 if (activeSet) adjust(activeSet.id, 'kg', amt);
               }}
@@ -1081,7 +1081,7 @@ export default function LoggerScreen({
             <Pressable
               key={amt}
               onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
                 const activeSet = curEx.sets[activeSetIndex] || curEx.sets[0];
                 if (activeSet) adjust(activeSet.id, 'reps', amt);
               }}

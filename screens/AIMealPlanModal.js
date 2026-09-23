@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Modal, ActivityIndicator, ScrollView, TextInput, Alert, StyleSheet, Animated } from 'react-native';
+import { View, TouchableOpacity, Modal, ActivityIndicator, ScrollView, TextInput, Alert, StyleSheet, Animated, Platform } from 'react-native';
 import { X, Sparkles, Flame, Check, RefreshCw, Apple, MessageSquare, ChevronDown } from 'lucide-react-native';
 import { AppText, theme, styles } from '../theme';
 import { supabase } from '../supabaseClient';
@@ -177,11 +177,18 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
   const handleApply = () => {
     if (!mealPlan) return;
     onApplyTarget(mealPlan.total_calories, mealPlan.total_protein);
-    Alert.alert(
-      "Berhasil Diterapkan! 🎯",
-      `Target kalori harian Anda diset ke ${mealPlan.total_calories} kcal dan protein ke ${mealPlan.total_protein}g.`,
-      [{ text: "OK", onPress: onClose }]
-    );
+    if (Platform.OS === 'web') {
+      if (typeof window !== 'undefined') {
+        window.alert(`Berhasil Diterapkan! 🎯\nTarget kalori harian Anda diset ke ${mealPlan.total_calories} kcal dan protein ke ${mealPlan.total_protein}g.`);
+      }
+      onClose();
+    } else {
+      Alert.alert(
+        "Berhasil Diterapkan! 🎯",
+        `Target kalori harian Anda diset ke ${mealPlan.total_calories} kcal dan protein ke ${mealPlan.total_protein}g.`,
+        [{ text: "OK", onPress: onClose }]
+      );
+    }
   };
 
   return (
