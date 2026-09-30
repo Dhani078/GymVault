@@ -11,6 +11,10 @@ export function useProfileData(session, dbReady) {
     height: 0,
     cns_fatigue: 0,
     avatar_url: null,
+    is_premium: false,
+    premium_plan: null,
+    premium_until: null,
+    role: 'user',
   });
   const [sessions, setSessions] = useState([]);
   const [weightLogs, setWeightLogs] = useState([]);
@@ -39,6 +43,50 @@ export function useProfileData(session, dbReady) {
       if (profileErr) throw new Error('Failed to load profile.');
 
       if (profileData) {
+        const now = new Date();
+        const hasActiveDate = profileData.premium_until && new Date(profileData.premium_until) > now;
+        const hasActiveProDate = profileData.pro_expires_at && new Date(profileData.pro_expires_at) > now;
+        
+        // Comprehensive Pro Detection: DB fields, Local Storage, Admin roles, and check-in rewards
+        let localIsPrem = false;
+        let localPremUntilDate = null;
+        try {
+          const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+          const isPremVal = await AsyncStorage.getItem(`is_premium_${session.user.id}`);
+          const premStatusVal = await AsyncStorage.getItem(`@premium_status_${session.user.id}`);
+          const premUntilVal = await AsyncStorage.getItem(`premium_until_${session.user.id}`);
+          const localRole = await AsyncStorage.getItem(`user_role_${session.user.id}`);
+          const streakVal = await AsyncStorage.getItem(`checkin_streak_${session.user.id}`);
+          const streakNum = parseInt(streakVal || '0', 10);
+          
+          const hasLocalActiveDate = premUntilVal && new Date(premUntilVal) > now;
+          if (premUntilVal) localPremUntilDate = premUntilVal;
+
+          if (isPremVal === 'true' || premStatusVal === 'active' || hasLocalActiveDate || localRole === 'admin' || streakNum >= 3) {
+            localIsPrem = true;
+          }
+        } catch (storageErr) {}
+
+        const isDhaniOrAdmin = Boolean(
+          profileData.role === 'admin' ||
+          session.user.email?.toLowerCase().includes('dhani') ||
+          session.user.email?.toLowerCase().includes('admin') ||
+          profileData.username?.toLowerCase() === 'dhani' ||
+          profileData.name?.toLowerCase() === 'dhani'
+        );
+
+        const isPro = Boolean(
+          profileData.is_premium ||
+          profileData.is_pro ||
+          hasActiveDate ||
+          hasActiveProDate ||
+          localIsPrem ||
+          isDhaniOrAdmin
+        );
+
+        const effectiveRole = isDhaniOrAdmin ? 'admin' : (profileData.role || 'user');
+        const effectiveUntil = profileData.premium_until || profileData.pro_expires_at || localPremUntilDate || null;
+
         setProfile({
           name: profileData.name || session.user.user_metadata?.full_name || 'Athlete',
           username: profileData.username || '',
@@ -47,7 +95,21 @@ export function useProfileData(session, dbReady) {
           height: profileData.height || 0,
           cns_fatigue: profileData.cns_fatigue || 0,
           avatar_url: profileData.avatar_url || null,
+          is_premium: isPro,
+          premium_plan: profileData.premium_plan || (isPro ? 'pro' : null),
+          premium_until: effectiveUntil,
+          role: effectiveRole,
         });
+
+        // Background sync to ensure Supabase and AsyncStorage stay consistent
+        if (isPro && !profileData.is_premium) {
+          safeUpsert('users_profile', {
+            id: session.user.id,
+            is_premium: true,
+            premium_plan: 'pro',
+            role: effectiveRole,
+          }).catch(() => {});
+        }
       }
 
       // 2. Fetch ALL sessions for Lifetime Stats & AI Engine

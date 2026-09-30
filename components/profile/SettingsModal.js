@@ -177,8 +177,15 @@ export default function SettingsModal({
                 title="Langganan GymVault Pro"
                 value={profile?.is_premium ? 'PRO LIFTER' : 'UPGRADE'}
                 onPress={() => {
-                  onClose();
-                  if (onOpenPaywall) onOpenPaywall();
+                  if (profile?.is_premium) {
+                    Alert.alert(
+                      "GymVault PRO Aktif 👑",
+                      `Status akun Anda adalah PRO LIFTER. Anda menikmati akses tanpa batas ke seluruh fitur cerdas AI, scanner makanan, dan analitik GymVault.${profile?.premium_until ? `\n\nBerlaku hingga: ${new Date(profile.premium_until).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}`
+                    );
+                  } else {
+                    onClose();
+                    if (onOpenPaywall) onOpenPaywall();
+                  }
                 }}
               />
               <SettingItem

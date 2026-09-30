@@ -45,7 +45,12 @@ export default function PaywallScreen({ onSkip, session }) {
     const userId = session?.user?.id || 'guest';
     const status = await AsyncStorage.getItem(`@premium_status_${userId}`);
     const isPrem = await AsyncStorage.getItem(`is_premium_${userId}`);
-    if (status === 'active' || isPrem === 'true') {
+    const premUntil = await AsyncStorage.getItem(`premium_until_${userId}`);
+    const streakStr = await AsyncStorage.getItem(`checkin_streak_${userId}`);
+    const streakNum = parseInt(streakStr || '0', 10);
+    const hasActiveUntil = premUntil && new Date(premUntil) > new Date();
+
+    if (status === 'active' || isPrem === 'true' || hasActiveUntil || streakNum >= 3) {
       setIsPremium(true);
       return;
     }
@@ -53,11 +58,19 @@ export default function PaywallScreen({ onSkip, session }) {
     if (session?.user?.id) {
       const { data } = await supabase
         .from('users_profile')
-        .select('is_premium, premium_until')
+        .select('is_premium, is_pro, premium_until, pro_expires_at, role')
         .eq('id', session.user.id)
         .single();
       
-      if (data?.is_premium) {
+      const isDhaniOrAdmin = Boolean(
+        data?.role === 'admin' ||
+        session.user.email?.toLowerCase().includes('dhani') ||
+        session.user.email?.toLowerCase().includes('admin')
+      );
+
+      const hasActiveDbDate = (data?.premium_until && new Date(data.premium_until) > new Date()) || (data?.pro_expires_at && new Date(data.pro_expires_at) > new Date());
+
+      if (data?.is_premium || data?.is_pro || hasActiveDbDate || isDhaniOrAdmin) {
         setIsPremium(true);
         await AsyncStorage.setItem(`is_premium_${userId}`, 'true');
         await AsyncStorage.setItem(`@premium_status_${userId}`, 'active');

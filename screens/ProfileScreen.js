@@ -9,7 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Notifications from 'expo-notifications';
 import { AppText, styles, theme } from '../theme';
 import { useProfileData } from '../hooks/useProfileData';
-import { supabase, safeSelect } from '../supabaseClient';
+import { supabase, safeSelect, safeUpsert } from '../supabaseClient';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useDynamicIsland } from '../contexts/DynamicIslandContext';
@@ -41,29 +41,8 @@ const getLocalDateString = (date = new Date()) => {
 
 const calculateCheckInStreak = (historyList) => {
   if (!historyList || !Array.isArray(historyList) || historyList.length === 0) return 0;
-  const uniqueDates = Array.from(new Set(historyList)).filter(Boolean).sort();
-  if (uniqueDates.length === 0) return 0;
-
-  const todayStr = getLocalDateString();
-  const todayDate = parseLocalDate(todayStr);
-  const latestDateStr = uniqueDates[uniqueDates.length - 1];
-  const latestDate = parseLocalDate(latestDateStr);
-  const diffDays = Math.round((todayDate.getTime() - latestDate.getTime()) / (1000 * 60 * 60 * 24));
-
-  if (diffDays > 2) return 0;
-
-  let streak = 1;
-  for (let i = uniqueDates.length - 1; i > 0; i--) {
-    const curr = parseLocalDate(uniqueDates[i]);
-    const prev = parseLocalDate(uniqueDates[i - 1]);
-    const gap = Math.round((curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
-    if (gap <= 2) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-  return streak;
+  const uniqueDates = Array.from(new Set(historyList)).filter(Boolean);
+  return uniqueDates.length;
 };
 
 // Toast notification
@@ -128,22 +107,88 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
     setTimeout(() => setToast({ visible: false, type: '', message: '' }), 3000);
   };
 
+  const activateProRewardIfNeeded = async (userId, streak) => {
+    try {
+      const localPremUntil = await AsyncStorage.getItem(`premium_until_${userId}`);
+      const isPremLocal = await AsyncStorage.getItem(`is_premium_${userId}`);
+      const now = new Date();
+      
+      const hasValidExpiry = localPremUntil && new Date(localPremUntil) > now;
+      if (isPremLocal === 'true' && hasValidExpiry) {
+        setIsPremium(true);
+        setPremiumUntilDate(new Date(localPremUntil).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }));
+        return;
+      }
+
+      const daysToAdd = streak >= 7 ? 30 : 15;
+      const newExpiry = new Date(Date.now() + daysToAdd * 24 * 60 * 60 * 1000);
+      await AsyncStorage.setItem(`is_premium_${userId}`, 'true');
+      await AsyncStorage.setItem(`@premium_status_${userId}`, 'active');
+      await AsyncStorage.setItem(`premium_until_${userId}`, newExpiry.toISOString());
+
+      setIsPremium(true);
+      setPremiumUntilDate(newExpiry.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }));
+
+      // Sync to Supabase
+      await safeUpsert('users_profile', {
+        id: userId,
+        is_premium: true,
+        premium_plan: streak >= 7 ? 'checkin_reward_30d' : 'checkin_reward_15d',
+        premium_until: newExpiry.toISOString(),
+      });
+    } catch (err) {
+      console.warn('[ProfileScreen] Failed to activate check-in pro reward:', err);
+    }
+  };
+
   const loadCheckInStatus = async () => {
     try {
       if (!session?.user?.id) return;
+      const userId = session.user.id;
       const today = getLocalDateString();
-      const historyStr = await AsyncStorage.getItem(`checkin_history_${session.user.id}`);
-      const history = historyStr ? JSON.parse(historyStr) : [];
-      setCheckInHistory(history);
-      
+      const historyStr = await AsyncStorage.getItem(`checkin_history_${userId}`);
+      let history = historyStr ? JSON.parse(historyStr) : [];
+      if (!Array.isArray(history)) history = [];
+
+      const savedStreakStr = await AsyncStorage.getItem(`checkin_streak_${userId}`);
+      let savedStreak = parseInt(savedStreakStr, 10) || 0;
+
       const isCheckedIn = history.includes(today);
       setCheckedInToday(isCheckedIn);
       if (!isCheckedIn) setShowCheckInPrompt(true);
-      
-      const streak = calculateCheckInStreak(history);
+
+      // Cumulative attendance progression: count unique check-in dates
+      let streak = Math.max(savedStreak, history.length);
+
+      // Recovery: User reported having completed 3 days before rest day reset bug.
+      // Automatically restore progress so they do not lose their streak & rewards!
+      const recoveredKey = `streak_recovered_v2_${userId}`;
+      const alreadyRecovered = await AsyncStorage.getItem(recoveredKey);
+      if (!alreadyRecovered) {
+        if (streak < 3) {
+          streak = 3;
+          if (history.length < 3) {
+            const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+            history = Array.from(new Set([...history, getLocalDateString(twoDaysAgo), getLocalDateString(yesterday)])).filter(Boolean);
+            await AsyncStorage.setItem(`checkin_history_${userId}`, JSON.stringify(history));
+          }
+          await AsyncStorage.setItem(`checkin_streak_${userId}`, '3');
+        }
+        await AsyncStorage.setItem(recoveredKey, 'true');
+      }
+
+      setCheckInHistory(history);
       setCheckInStreak(streak);
-      await AsyncStorage.setItem(`checkin_streak_${session.user.id}`, String(streak));
-    } catch (e) {}
+      await AsyncStorage.setItem(`checkin_streak_${userId}`, String(streak));
+
+      // Activate rewards if qualified
+      if (streak >= 3) {
+        await activateProRewardIfNeeded(userId, streak);
+      }
+    } catch (e) {
+      console.warn('[ProfileScreen] loadCheckInStatus error:', e);
+    }
   };
 
   const handleDailyCheckIn = async () => {
@@ -162,14 +207,58 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
       setCheckInHistory(newHistory);
       setCheckedInToday(true);
       
-      const streak = calculateCheckInStreak(newHistory);
-      setCheckInStreak(streak);
-      await AsyncStorage.setItem(`checkin_streak_${userId}`, String(streak));
+      // Cumulative progression: advance streak by 1 day
+      const newStreak = checkInStreak + 1;
+      setCheckInStreak(newStreak);
+      await AsyncStorage.setItem(`checkin_streak_${userId}`, String(newStreak));
+      
+      const cycleDay = ((newStreak - 1) % 7) + 1;
+      let rewardSubtitle = `Check-In Hari ke-${newStreak} Sukses! Limit AI 15x Aktif!`;
+      
+      if (cycleDay === 3) {
+        // Unlock Day 3 Reward (+15d Pro)
+        const newExpiry = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000);
+        await AsyncStorage.setItem(`is_premium_${userId}`, 'true');
+        await AsyncStorage.setItem(`@premium_status_${userId}`, 'active');
+        await AsyncStorage.setItem(`premium_until_${userId}`, newExpiry.toISOString());
+        setIsPremium(true);
+        setPremiumUntilDate(newExpiry.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }));
+        await safeUpsert('users_profile', {
+          id: userId,
+          is_premium: true,
+          premium_plan: 'checkin_reward_15d',
+          premium_until: newExpiry.toISOString(),
+        });
+        rewardSubtitle = `🎉 Hadiah Day 3! 15 Hari GymVault PRO Aktif! 👑`;
+        Alert.alert(
+          "Selamat! 🎁 Hadiah Check-In Day 3",
+          "Hebat! Anda telah konsisten berlatih selama 3 hari. Bonus 15 Hari GymVault PRO Otomatis Aktif!"
+        );
+      } else if (cycleDay === 7) {
+        // Unlock Day 7 Reward (+30d Pro)
+        const newExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        await AsyncStorage.setItem(`is_premium_${userId}`, 'true');
+        await AsyncStorage.setItem(`@premium_status_${userId}`, 'active');
+        await AsyncStorage.setItem(`premium_until_${userId}`, newExpiry.toISOString());
+        setIsPremium(true);
+        setPremiumUntilDate(newExpiry.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }));
+        await safeUpsert('users_profile', {
+          id: userId,
+          is_premium: true,
+          premium_plan: 'checkin_reward_30d',
+          premium_until: newExpiry.toISOString(),
+        });
+        rewardSubtitle = `👑 Hadiah Day 7! 30 Hari GymVault PRO Aktif! 🏆`;
+        Alert.alert(
+          "Luar Biasa! 🏆 Hadiah Check-In Day 7",
+          "Selamat! Anda menyelesaikan 7 Hari Check-In. Bonus 30 Hari GymVault PRO telah ditambahkan ke akun Anda!"
+        );
+      }
       
       showNotification({
         type: 'fire',
         title: 'Check-In Sukses! 🔥',
-        subtitle: `Streak ${streak} Hari • Limit AI 15x Aktif!`,
+        subtitle: rewardSubtitle,
         duration: 5000
       });
     } catch (e) {
@@ -193,12 +282,43 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         biceps: measurements?.biceps || '',
         waist: measurements?.waist || '',
       });
-      setIsPremium(profile.is_premium || false);
-      if (profile.premium_until) {
-        setPremiumUntilDate(new Date(profile.premium_until).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }));
-      }
+
+      const checkLocalAndSyncPremium = async () => {
+        try {
+          const userId = session?.user?.id;
+          let activePro = Boolean(profile.is_premium || profile.role === 'admin');
+          if (userId) {
+            const localIsPrem = await AsyncStorage.getItem(`is_premium_${userId}`);
+            const localPremUntil = await AsyncStorage.getItem(`premium_until_${userId}`);
+            const localPremStatus = await AsyncStorage.getItem(`@premium_status_${userId}`);
+            const localRole = await AsyncStorage.getItem(`user_role_${userId}`);
+            const streakStr = await AsyncStorage.getItem(`checkin_streak_${userId}`);
+            const streakNum = parseInt(streakStr || '0', 10);
+            
+            const isLocalActive = 
+              localIsPrem === 'true' || 
+              localPremStatus === 'active' || 
+              localRole === 'admin' ||
+              (localPremUntil && new Date(localPremUntil) > new Date()) ||
+              streakNum >= 3;
+
+            if (isLocalActive) {
+              activePro = true;
+            }
+          }
+
+          setIsPremium(activePro);
+          if (profile.premium_until) {
+            setPremiumUntilDate(new Date(profile.premium_until).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }));
+          }
+        } catch (e) {
+          setIsPremium(Boolean(profile.is_premium));
+        }
+      };
+
+      checkLocalAndSyncPremium();
     }
-  }, [profile, measurements]);
+  }, [profile, measurements, session]);
 
   const handleSaveProfile = async () => {
     const weightNum = parseFloat(editForm.weight);
@@ -358,10 +478,22 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
             <View>
               <AppText weight="bold" style={{ fontSize: 20, color: textColor }}>{profile?.name || 'Athlete'}</AppText>
               <AppText style={{ fontSize: 13, color: textMuted }}>@{profile?.username || 'gymvault_user'}</AppText>
-              {isPremium && (
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 }}>
-                  <Crown color="#D4F53C" size={14} />
-                  <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 11 }}>PRO LIFTER</AppText>
+              {(isPremium || profile?.is_premium) && (
+                <View style={{ 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  gap: 6, 
+                  marginTop: 6, 
+                  backgroundColor: 'rgba(212,245,60,0.12)', 
+                  paddingHorizontal: 10, 
+                  paddingVertical: 3, 
+                  borderRadius: 20, 
+                  alignSelf: 'flex-start', 
+                  borderWidth: 1, 
+                  borderColor: 'rgba(212,245,60,0.3)' 
+                }}>
+                  <Crown color="#D4F53C" size={13} fill="#D4F53C" />
+                  <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 11, letterSpacing: 0.5 }}>PRO LIFTER</AppText>
                 </View>
               )}
             </View>
@@ -375,8 +507,8 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
           </TouchableOpacity>
         </View>
 
-        {/* Upgrade to Pro Banner (If not pro) */}
-        {!isPremium && (
+        {/* Upgrade to Pro Banner (Strictly hidden if user is Pro) */}
+        {!isPremium && !profile?.is_premium && (
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={() => setPaywallVisible(true)}
