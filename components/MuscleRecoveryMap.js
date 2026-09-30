@@ -348,7 +348,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
         // 2. Check each set in workout_sets
         sets.forEach(set => {
           const rawMuscle = (set.muscle_group || set.exercises?.muscle_group || '').toLowerCase();
-          const exName = (set.exercises?.name || '').toLowerCase();
+          const exName = (set.exercise_name || set.exercises?.name || '').toLowerCase();
           const combined = `${rawMuscle} ${exName}`;
           if (combined.trim()) {
             applyFatigue(detectMuscleGroups(combined));

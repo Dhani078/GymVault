@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, Pressable, Image, ImageBackground, ActivityIndicator, Alert, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { Plus, Minus, Check, ChevronLeft, ChevronRight, Clock, Trophy, Trash2, Dumbbell, AlertCircle, Save, X, Volume2, VolumeX, Mic, MicOff } from 'lucide-react-native';
-import ViewShot from 'react-native-view-shot';
-import * as Sharing from 'expo-sharing';
 import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
@@ -18,9 +16,11 @@ import useInterstitialAd from '../components/DummyInterstitialAd';
 
 import * as Crypto from 'expo-crypto';
 import { makeId } from '../utils/makeId';
-import { getVolumeComparison } from '../utils/volumeComparison';
 import { calculateProgressiveOverload, calculateRecommendedRestTime, getBiomechanicalCue, parseVoiceWorkoutCommand } from '../utils/fitnessMath';
 import LoggerSetRow from '../components/LoggerSetRow';
+import PlateCalculatorModal from '../components/logger/PlateCalculatorModal';
+import SaveRoutineModal from '../components/logger/SaveRoutineModal';
+import WorkoutSummaryModal from '../components/logger/WorkoutSummaryModal';
 
 
 
@@ -35,9 +35,7 @@ export default function LoggerScreen({
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [showRoutineModal, setShowRoutineModal] = useState(false);
-  const [routineName, setRoutineName] = useState('');
   const [showPlateModal, setShowPlateModal] = useState(false);
-  const [plateTarget, setPlateTarget] = useState('100');
 
   // Rest Timer & PR
   const [restTime, setRestTime] = useState(0);
@@ -47,7 +45,6 @@ export default function LoggerScreen({
   // Share Modal & Ads
   const [showShareModal, setShowShareModal] = useState(false);
   const { isLoaded: isInterstitialLoaded, showAd: showInterstitialAd } = useInterstitialAd();
-  const viewShotRef = useRef();
 
   // Live Duration Stopwatch
   const [sessionDuration, setSessionDuration] = useState(0);
@@ -634,11 +631,15 @@ export default function LoggerScreen({
     setSaveError(null);
 
     try {
+      // Only include exercises that have at least one completed set in split_name (or all if none completed yet)
+      const exercisesWithDoneSets = workoutData.filter(e => e.sets && e.sets.some(s => s.completed));
+      const activeExercises = exercisesWithDoneSets.length > 0 ? exercisesWithDoneSets : workoutData;
+
       const sessionPayload = {
         user_id: session.user.id,
         started_at: workoutStartTime || new Date().toISOString(),
         is_completed: true,
-        split_name: workoutData.map(e => e.name + (e.muscle_group ? ` [${e.muscle_group}]` : '')).join(', '),
+        split_name: activeExercises.map(e => e.name + (e.muscle_group ? ` [${e.muscle_group}]` : '')).join(', '),
       };
 
       const { data: sessionData, error: sessionErr } = await safeInsert('workout_sessions', sessionPayload);
@@ -703,6 +704,7 @@ export default function LoggerScreen({
             setRows.push({
               session_id: sessionData.id,
               exercise_id: validExId,
+              exercise_name: ex.name || null,
               weight_kg: Number(s.kg) || 0,
               reps: Number(s.reps) || 0,
               set_index: setIdx + 1,
@@ -718,9 +720,17 @@ export default function LoggerScreen({
           console.warn('[Logger] Sets save partial failure, retrying with nullable exercise_id fallback:', setsErr.message);
           // 🛡️ Zero Data Loss Resilience: retry with exercise_id = null so sets are never lost due to foreign key constraints!
           const safeFallbackSets = setRows.map(r => ({ ...r, exercise_id: null }));
-          const { error: retryErr } = await safeBatchInsert('workout_sets', safeFallbackSets);
+          let { error: retryErr } = await safeBatchInsert('workout_sets', safeFallbackSets);
           if (retryErr) {
-            console.error('[Logger] Fallback sets save error:', retryErr.message);
+            // Secondary fallback: strip exercise_name if the remote DB column does not exist yet
+            console.warn('[Logger] Retrying without exercise_name column fallback:', retryErr.message);
+            const minimalSets = safeFallbackSets.map(({ exercise_name, ...rest }) => rest);
+            const { error: minimalErr } = await safeBatchInsert('workout_sets', minimalSets);
+            if (minimalErr) {
+              console.error('[Logger] Minimal fallback sets save error:', minimalErr.message);
+            } else {
+              setsErr = null;
+            }
           } else {
             setsErr = null;
           }
@@ -757,37 +767,6 @@ export default function LoggerScreen({
 
       setSaveError(`Error: ${e.message}`);
       setSaving(false);
-    }
-  };
-
-  const handleSaveRoutine = async () => {
-    if (!routineName.trim() || workoutData.length === 0) return;
-    try {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      const existingStr = await AsyncStorage.getItem('customRoutines');
-      const existing = existingStr ? JSON.parse(existingStr) : [];
-      const newRoutine = {
-        id: Date.now().toString(),
-        name: routineName.trim(),
-        exercises: workoutData.map(ex => ({ name: ex.name, image: ex.image, numSets: ex.sets.length }))
-      };
-      const updatedRoutines = [...existing, newRoutine];
-      await AsyncStorage.setItem('customRoutines', JSON.stringify(updatedRoutines));
-      
-      if (session?.user?.id && dbReady) {
-        const { error } = await supabase
-          .from('users_profile')
-          .update({ custom_routines: updatedRoutines })
-          .eq('id', session.user.id);
-        if (error) console.warn("[Logger] Failed to sync routine to Supabase:", error.message);
-      }
-
-      setShowRoutineModal(false);
-      setRoutineName('');
-      showNotification({ type: 'success', title: 'Routine Saved!', subtitle: `"${newRoutine.name}" ready on Dashboard`, duration: 3000 });
-    } catch (e) {
-
-      Alert.alert("Error", "Failed to save routine.");
     }
   };
 
@@ -1245,193 +1224,31 @@ export default function LoggerScreen({
       )}
 
       {/* ═══ Save Routine Modal ═══ */}
-      {showRoutineModal && (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', zIndex: 100, padding: 24 }}>
-          <View style={{ width: '100%', backgroundColor: theme.colors.card, borderRadius: 16, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
-            <AppText weight="bold" style={{ fontSize: 20, marginBottom: 8 }}>Save Routine</AppText>
-            <AppText style={{ color: theme.colors.textMuted, fontSize: 13, marginBottom: 20 }}>Quick-load this workout next time from Dashboard.</AppText>
-            <TextInput
-              placeholder="e.g. Push Day"
-              placeholderTextColor={theme.colors.textMuted}
-              style={{ backgroundColor: theme.colors.inputBg, color: theme.colors.text, padding: 16, borderRadius: 10, borderWidth: 1, borderColor: theme.colors.border, marginBottom: 20, fontSize: 16 }}
-              value={routineName}
-              onChangeText={setRoutineName}
-              autoFocus
-            />
-            <View style={{ flexDirection: 'row', gap: 12 }}>
-              <Pressable style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: theme.colors.inputBg, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.border }} onPress={() => setShowRoutineModal(false)}>
-                <AppText weight="bold" style={{ color: theme.colors.textMuted }}>Cancel</AppText>
-              </Pressable>
-              <Pressable style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: theme.colors.primary, justifyContent: 'center', alignItems: 'center' }} onPress={handleSaveRoutine}>
-                <AppText weight="bold" style={{ color: theme.colors.background }}>Save</AppText>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      )}
+      <SaveRoutineModal
+        visible={showRoutineModal}
+        onClose={() => setShowRoutineModal(false)}
+        workoutData={workoutData}
+        session={session}
+        dbReady={dbReady}
+        showNotification={showNotification}
+      />
 
       {/* ═══ Share / Summary Modal ═══ */}
-      {showShareModal && (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.95)', justifyContent: 'center', alignItems: 'center', zIndex: 150, padding: 24 }}>
-          
-          <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={{ width: '100%', backgroundColor: theme.colors.card, borderRadius: 24, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
-              <Dumbbell color={theme.colors.primary} size={28} style={{ transform: [{ rotate: '-45deg' }], marginRight: 12 }} />
-              <View>
-                <AppText weight="bold" style={{ fontSize: 22, color: theme.colors.text }}>GymVault</AppText>
-                <AppText style={{ fontSize: 11, color: theme.colors.primary, letterSpacing: 2 }}>WORKOUT COMPLETE</AppText>
-              </View>
-            </View>
-            
-            <AppText weight="bold" style={{ fontSize: 28, color: theme.colors.text, marginBottom: 8 }}>{workoutData.map(e => e.name).slice(0, 3).join(', ')}{workoutData.length > 3 ? '...' : ''}</AppText>
-            
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 16 }}>
-              <View style={{ backgroundColor: theme.colors.inputBg, padding: 16, borderRadius: 16, flex: 1, minWidth: '45%' }}>
-                <AppText style={{ color: theme.colors.textMuted, fontSize: 12, marginBottom: 4 }}>VOLUME</AppText>
-                <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 24 }}>{workoutData.reduce((acc, ex) => acc + ex.sets.reduce((sAcc, s) => sAcc + (s.completed ? Number(s.kg) * Number(s.reps) : 0), 0), 0)}<AppText style={{fontSize: 14}}>kg</AppText></AppText>
-              </View>
-              <View style={{ backgroundColor: theme.colors.inputBg, padding: 16, borderRadius: 16, flex: 1, minWidth: '45%' }}>
-                <AppText style={{ color: theme.colors.textMuted, fontSize: 12, marginBottom: 4 }}>SETS</AppText>
-                <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 24 }}>{totalCompleted}</AppText>
-              </View>
-            </View>
-
-            {/* Comparison Text Card */}
-            <View style={{ 
-              backgroundColor: 'rgba(212,245,60,0.06)', 
-              borderWidth: 1, 
-              borderColor: 'rgba(212,245,60,0.15)',
-              borderRadius: 16, 
-              padding: 16, 
-              marginTop: 16,
-              alignItems: 'center'
-            }}>
-              <AppText style={{ color: theme.colors.primary, fontSize: 10, fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 6 }}>INSTAGRAM STORY FLEX</AppText>
-              <AppText weight="bold" style={{ color: '#FFF', fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
-                🔥 Total angkatan saya hari ini: {workoutData.reduce((acc, ex) => acc + ex.sets.reduce((sAcc, s) => sAcc + (s.completed ? Number(s.kg) * Number(s.reps) : 0), 0), 0)} kg!
-              </AppText>
-              <AppText style={{ color: theme.colors.textMuted, fontSize: 12, textAlign: 'center', marginTop: 4 }}>
-                {getVolumeComparison(workoutData.reduce((acc, ex) => acc + ex.sets.reduce((sAcc, s) => sAcc + (s.completed ? Number(s.kg) * Number(s.reps) : 0), 0), 0))}
-              </AppText>
-            </View>
-            
-            <View style={{ marginTop: 24, paddingTop: 16, borderTopWidth: 1, borderTopColor: theme.colors.border }}>
-              <AppText style={{ color: theme.colors.textMuted, fontSize: 10, textAlign: 'center' }}>
-                {(() => {
-                  const d = new Date();
-                  const daysLong = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                  const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                  return `${daysLong[d.getDay()]}, ${monthsShort[d.getMonth()]} ${d.getDate()}`;
-                })()}
-              </AppText>
-            </View>
-          </ViewShot>
-
-          <View style={{ flexDirection: 'row', gap: 16, marginTop: 32, width: '100%' }}>
-            <Pressable style={{ flex: 1, height: 56, borderRadius: 16, backgroundColor: theme.colors.inputBg, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.border }} onPress={() => {
-              setShowShareModal(false);
-              const shown = showInterstitialAd(() => {
-                // Callback ini dipanggil setelah user menutup iklan interstitial
-                if (onFinish) onFinish();
-              });
-              if (!shown) {
-                // Iklan belum siap, langsung finish tanpa iklan
-                if (onFinish) onFinish();
-              }
-            }}>
-              <AppText weight="bold" style={{ color: theme.colors.text }}>Done</AppText>
-            </Pressable>
-            <Pressable style={{ flex: 1, height: 56, borderRadius: 16, backgroundColor: theme.colors.primary, flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center' }} onPress={async () => {
-              try {
-                const uri = await viewShotRef.current.capture();
-                if (await Sharing.isAvailableAsync()) {
-                  await Sharing.shareAsync(uri);
-                } else {
-                  Alert.alert("Sharing not available", "Your device does not support sharing.");
-                }
-              } catch (e) { Alert.alert("Error", e.message); }
-            }}>
-              <AppText weight="bold" style={{ color: theme.colors.background }}>Share Story</AppText>
-            </Pressable>
-          </View>
-        </View>
-      )}
+      <WorkoutSummaryModal
+        visible={showShareModal}
+        workoutData={workoutData}
+        totalCompleted={totalCompleted}
+        onClose={() => setShowShareModal(false)}
+        onFinish={onFinish}
+        showInterstitialAd={showInterstitialAd}
+      />
 
       {/* ═══ Plate Calculator Modal ═══ */}
-      {showPlateModal && (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', zIndex: 120, padding: 24 }}>
-          <View style={{ width: '100%', backgroundColor: theme.colors.card, borderRadius: 16, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <AppText weight="bold" style={{ fontSize: 20 }}>Plate Calculator</AppText>
-              <Pressable onPress={() => setShowPlateModal(false)}>
-                <X color={theme.colors.textMuted} size={24} />
-              </Pressable>
-            </View>
-            <AppText style={{ color: theme.colors.textMuted, fontSize: 13, marginBottom: 20 }}>Calculates plates needed per side (assumes 20kg barbell).</AppText>
-            
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.inputBg, borderRadius: 12, paddingHorizontal: 16, borderWidth: 1, borderColor: theme.colors.border, marginBottom: 24 }}>
-              <TextInput
-                style={{ flex: 1, color: theme.colors.text, fontSize: 24, fontFamily: 'Inter_700Bold', paddingVertical: 12 }}
-                keyboardType="numeric"
-                value={plateTarget}
-                onChangeText={setPlateTarget}
-                placeholder="Target KG"
-                placeholderTextColor={theme.colors.textMuted}
-                autoFocus
-              />
-              <AppText weight="bold" style={{ color: theme.colors.textMuted, fontSize: 16 }}>KG</AppText>
-            </View>
-
-            <View style={{ backgroundColor: theme.colors.card, padding: 20, borderRadius: 16, borderWidth: 1, borderColor: theme.colors.border, shadowColor: theme.colors.primary, shadowOpacity: 0.1, shadowRadius: 10, elevation: 4 }}>
-              <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 13, marginBottom: 16, letterSpacing: 1, textAlign: 'center' }}>PLATES PER SIDE</AppText>
-              {(() => {
-                const target = parseFloat(plateTarget) || 0;
-                if (target < 20) return <AppText weight="bold" style={{ color: '#EF4444', textAlign: 'center', marginTop: 10 }}>Target must be &ge; 20kg (empty bar)</AppText>;
-                
-                let remaining = (target - 20) / 2;
-                const standardPlates = [25, 20, 15, 10, 5, 2.5, 1.25];
-                const needed = {};
-                
-                for (const p of standardPlates) {
-                  const count = Math.floor(remaining / p);
-                  if (count > 0) {
-                    needed[p] = count;
-                    remaining -= count * p;
-                  }
-                }
-                
-                if (Object.keys(needed).length === 0) return <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 16, textAlign: 'center', marginTop: 10 }}>Empty Barbell Only</AppText>;
-
-                return (
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
-                    {Object.entries(needed).map(([weight, count]) => {
-                      const num = parseFloat(weight);
-                      let size = 64;
-                      let color = theme.colors.primary;
-                      if (num >= 20) { size = 76; color = '#EF4444'; }
-                      else if (num >= 15) { size = 70; color = '#F59E0B'; }
-                      else if (num >= 10) { size = 64; color = '#10B981'; }
-                      else if (num >= 5) { size = 56; color = theme.colors.text; }
-                      else { size = 48; color = theme.colors.textMuted; }
-
-                      return (
-                        <View key={weight} style={{ alignItems: 'center' }}>
-                          <View style={{ width: size, height: size, borderRadius: size/2, backgroundColor: theme.colors.inputBg, borderWidth: 3, borderColor: color, justifyContent: 'center', alignItems: 'center', shadowColor: color, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5 }}>
-                            <AppText weight="bold" style={{ color: theme.colors.text, fontSize: size > 60 ? 18 : 14 }}>{weight}</AppText>
-                          </View>
-                          <View style={{ marginTop: 6, backgroundColor: theme.colors.border, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10 }}>
-                            <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 10 }}>{count}x</AppText>
-                          </View>
-                        </View>
-                      );
-                    })}
-                  </View>
-                );
-              })()}
-            </View>
-          </View>
-        </View>
-      )}
+      <PlateCalculatorModal
+        visible={showPlateModal}
+        onClose={() => setShowPlateModal(false)}
+        initialWeight={workoutData[safeIdx]?.sets?.[0]?.kg || 100}
+      />
 
       {/* ═══ Hands-Free Voice Logger Modal ═══ */}
       {voiceModalVisible && (

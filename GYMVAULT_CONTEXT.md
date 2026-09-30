@@ -9,7 +9,7 @@
 GymVault is a certified 10/10 production-ready, high-performance fitness application designed for tracking workouts, routines, weight logs, and nutrition scanning.
 * **Theme & Styling:** AMOLED Pitch Black (`#000000`) backgrounds and Electric Green (`#CCFF00`) accents. Premium design with glassmorphism, clean layouts, and smooth animations.
 * **Principles:** 
-  1. *Clean Architecture:* Strict separation between UI (components/screens) and pure logic (`utils/fitnessMath.js`).
+  1. *Clean Architecture:* Strict separation between UI (components/screens) and pure logic (`utils/fitnessMath.js`), backed by modular component packages (`components/logger/`, `components/landing/`, `components/history/`, `components/profile/`, `components/admin/`).
   2. *Performance First:* High utilization of `useMemo`, `useCallback`, `React.lazy`, and memoized items for a zero-flicker experience.
   3. *Security:* Strict Row-Level Security (RLS) on all Supabase queries. Always filter queries by authenticated `auth.uid()`.
   4. *Test Verification:* 100% mathematical precision enforced via automated unit test runner (`npm test` - 61/61 assertions).

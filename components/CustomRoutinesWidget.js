@@ -145,19 +145,19 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
               </View>
             </View>
             <AppText style={{ color: theme.colors.textMuted, fontSize: 12, marginBottom: 14 }}>
-              {routine.exercises.length} exercises
+              {(routine.exercises || []).length} exercises
             </AppText>
             <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
-              {routine.exercises.slice(0, 2).map((ex, i) => (
+              {(routine.exercises || []).slice(0, 2).map((ex, i) => (
                 <View key={i} style={{ backgroundColor: theme.colors.surface, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 0.5, borderColor: theme.colors.border }}>
                   <AppText style={{ fontSize: 10, color: theme.colors.textMuted }} numberOfLines={1}>
-                    {ex.name.length > 12 ? ex.name.substring(0, 12) + '…' : ex.name}
+                    {(ex?.name || 'Exercise').length > 12 ? (ex?.name || 'Exercise').substring(0, 12) + '…' : (ex?.name || 'Exercise')}
                   </AppText>
                 </View>
               ))}
-              {routine.exercises.length > 2 && (
+              {(routine.exercises || []).length > 2 && (
                 <View style={{ backgroundColor: 'rgba(204,255,0,0.06)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 0.5, borderColor: 'rgba(204,255,0,0.15)' }}>
-                  <AppText style={{ fontSize: 10, color: theme.colors.primary }}>+{routine.exercises.length - 2}</AppText>
+                  <AppText style={{ fontSize: 10, color: theme.colors.primary }}>+{(routine.exercises || []).length - 2}</AppText>
                 </View>
               )}
             </View>

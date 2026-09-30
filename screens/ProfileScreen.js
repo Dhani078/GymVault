@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Image, Alert, Platform, Modal } from 'react-native';
+import { View, TouchableOpacity, Image, Alert, Platform, Modal, DeviceEventEmitter } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   User, Target, Activity, Zap, TrendingUp, AlertTriangle, CheckCircle,
   XCircle, Settings, Clock, Flame, Award, ChevronRight, Crown
@@ -130,7 +131,6 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
   const loadCheckInStatus = async () => {
     try {
       if (!session?.user?.id) return;
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       const today = getLocalDateString();
       const historyStr = await AsyncStorage.getItem(`checkin_history_${session.user.id}`);
       const history = historyStr ? JSON.parse(historyStr) : [];
@@ -149,7 +149,6 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
   const handleDailyCheckIn = async () => {
     try {
       if (!session?.user?.id) return;
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       const today = getLocalDateString();
       const userId = session.user.id;
       
@@ -261,7 +260,6 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
     const nextVal = !healthKitConnected;
     setHealthKitConnected(nextVal);
     try {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       await AsyncStorage.setItem(`health_kit_connected_${session?.user?.id}`, String(nextVal));
       showToast('success', nextVal ? 'Health Kit Connected' : 'Health Kit Disconnected');
     } catch (e) {}
@@ -280,11 +278,9 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
     const doLogout = async () => {
       setSettingsVisible(false);
       try {
-        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
         await AsyncStorage.removeItem('@supabase.auth.token');
       } catch (e) {}
       await supabase.auth.signOut();
-      const { DeviceEventEmitter } = require('react-native');
       DeviceEventEmitter.emit('offline_login', null);
     };
 
@@ -301,7 +297,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
   const handleExportData = async () => {
     try {
       const { data } = await safeSelect('workout_sessions', {
-        columns: '*, workout_sets(weight_kg, reps, is_checked)',
+        columns: '*, workout_sets(*)',
         filters: { user_id: session.user.id, is_completed: true },
       });
       if (!data || data.length === 0) { showToast('error', t('export_empty')); return; }
@@ -326,7 +322,6 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
     const next = !notifications;
     setNotifications(next);
     try {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       await AsyncStorage.setItem('notifications_enabled', String(next));
       showToast('success', next ? t('toast_notifications_on') : t('toast_notifications_off'));
     } catch (err) {}

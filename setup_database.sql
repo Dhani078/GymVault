@@ -49,11 +49,14 @@ CREATE TABLE IF NOT EXISTS workout_sets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     session_id UUID REFERENCES workout_sessions(id) ON DELETE CASCADE,
     exercise_id UUID REFERENCES exercises(id),
+    exercise_name TEXT,
     set_index INT,
     weight_kg REAL,
     reps INT,
     is_checked BOOLEAN DEFAULT FALSE
 );
+
+ALTER TABLE workout_sets ADD COLUMN IF NOT EXISTS exercise_name TEXT;
 
 -- Auth Trigger: auto-create profile when user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user() 

@@ -12,47 +12,109 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
   const [loading, setLoading] = useState(false);
   const [exercisesList, setExercisesList] = useState([]);
   const [selectedExerciseId, setSelectedExerciseId] = useState(null);
+  const [exerciseHistoryMap, setExerciseHistoryMap] = useState({});
   const [historyData, setHistoryData] = useState([]);
   const [pickerVisible, setPickerVisible] = useState(false);
 
-  // 1. Fetch all exercises the user has recorded sets for
+  // 1. Fetch completed sessions & parse real logged exercises
   useEffect(() => {
     if (!visible || !userId || !dbReady) return;
 
     const fetchLoggedExercises = async () => {
       setLoading(true);
       try {
-        // Query distinct exercises from logged sets
-        const { data, error } = await supabase
-          .from('workout_sets')
-          .select('exercise_id, exercises(id, name), workout_sessions!inner(user_id, is_completed)')
-          .eq('workout_sessions.user_id', userId)
-          .eq('workout_sessions.is_completed', true);
+        const { data: sessions, error } = await supabase
+          .from('workout_sessions')
+          .select('id, started_at, split_name, workout_sets(id, set_index, weight_kg, reps, is_checked, exercise_id, exercises(id, name))')
+          .eq('user_id', userId)
+          .eq('is_completed', true)
+          .order('started_at', { ascending: true });
 
-        if (!error && data) {
-          const uniqueMap = {};
-          data.forEach(item => {
-            if (item.exercises?.id && item.exercises?.name) {
-              uniqueMap[item.exercises.id] = item.exercises.name;
+        if (!error && sessions) {
+          const map = {};
+
+          sessions.forEach(sess => {
+            let rawSplit = sess.split_name || '';
+            const parenMatch = rawSplit.match(/\((.*?)\)/);
+            if (parenMatch && parenMatch[1].includes(',')) {
+              rawSplit = parenMatch[1];
             }
+            const splitNames = rawSplit.includes(',') 
+              ? rawSplit.split(',').map(s => s.replace(/\[.*?\]/g, '').trim()).filter(Boolean)
+              : (rawSplit ? [rawSplit.replace(/\[.*?\]/g, '').trim()] : []);
+
+            let currentSplitIdx = 0;
+            let lastSetIndex = -1;
+
+            (sess.workout_sets || []).forEach(set => {
+              let exName = set.exercise_name || set.exercises?.name;
+              if (!exName) {
+                const sIdx = Number(set.set_index) || 1;
+                if (lastSetIndex !== -1 && sIdx <= lastSetIndex) {
+                  if (currentSplitIdx + 1 < splitNames.length) {
+                    currentSplitIdx++;
+                  }
+                }
+                lastSetIndex = sIdx;
+                exName = splitNames[currentSplitIdx] || splitNames[0] || 'Exercise';
+              }
+
+              const key = exName.toLowerCase().trim();
+              if (!map[key]) {
+                map[key] = { id: key, name: exName, sessionsGrouped: {} };
+              }
+
+              const safeStr = (sess.started_at || '').replace(' ', 'T');
+              const sessDate = new Date(safeStr);
+              const dateStr = !isNaN(sessDate.getTime()) 
+                ? sessDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                : 'Session';
+              const timestamp = !isNaN(sessDate.getTime()) ? sessDate.getTime() : 0;
+
+              const weight = Number(set.weight_kg) || 0;
+              const reps = Number(set.reps) || 0;
+              const oneRepMax = reps > 0 ? Number((weight * (1 + reps / 30)).toFixed(1)) : 0;
+              const volume = weight * reps;
+
+              if (!map[key].sessionsGrouped[dateStr]) {
+                map[key].sessionsGrouped[dateStr] = {
+                  date: dateStr,
+                  max1RM: oneRepMax,
+                  totalVolume: volume,
+                  timestamp
+                };
+              } else {
+                map[key].sessionsGrouped[dateStr].totalVolume += volume;
+                if (oneRepMax > map[key].sessionsGrouped[dateStr].max1RM) {
+                  map[key].sessionsGrouped[dateStr].max1RM = oneRepMax;
+                }
+              }
+            });
           });
-          let list = Object.entries(uniqueMap).map(([id, name]) => ({ id, name }));
-          
-          // Fallback: If sets had unlinked exercise_id, fetch catalog exercises to populate chart options
+
+          let list = Object.values(map).map(e => ({ id: e.id, name: e.name }));
+
+          // Fallback: If no sets logged, fetch catalog exercises to show preview
           if (list.length === 0) {
             const { data: catData } = await supabase.from('exercises').select('id, name').limit(15);
             if (catData && catData.length > 0) {
-              list = catData;
+              list = catData.map(c => ({ id: c.name.toLowerCase().trim(), name: c.name }));
             }
           }
-          
+
+          setExerciseHistoryMap(map);
           setExercisesList(list);
           if (list.length > 0) {
             setSelectedExerciseId(list[0].id);
+            const firstPoints = Object.values(map[list[0].id]?.sessionsGrouped || {})
+              .sort((a, b) => a.timestamp - b.timestamp);
+            setHistoryData(firstPoints);
+          } else {
+            setHistoryData([]);
           }
         }
       } catch (e) {
-
+        // Fallback gracefully on exception
       } finally {
         setLoading(false);
       }
@@ -61,68 +123,20 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
     fetchLoggedExercises();
   }, [visible, userId, dbReady]);
 
-  // 2. Fetch set records for selected exercise
+  // 2. Reactively update charts when user switches selected exercise
   useEffect(() => {
-    if (!visible || !userId || !selectedExerciseId || !dbReady) {
+    if (!selectedExerciseId) {
       setHistoryData([]);
       return;
     }
-
-    const fetchExerciseHistory = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('workout_sets')
-          .select('weight_kg, reps, workout_sessions!inner(started_at, is_completed)')
-          .eq('exercise_id', selectedExerciseId)
-          .eq('workout_sessions.user_id', userId)
-          .eq('workout_sessions.is_completed', true);
-
-        if (error) {
-
-        }
-
-        if (!error && data) {
-          // Sort in JS because Supabase PostgREST can't sort outer rows by inner join column
-          data.sort((a, b) => new Date(a.workout_sessions.started_at) - new Date(b.workout_sessions.started_at));
-
-          // Group by session date to sum volume & calculate max 1RM of the session
-          const sessionsGrouped = {};
-
-          data.forEach(item => {
-            const dateStr = new Date(item.workout_sessions.started_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            const weight = Number(item.weight_kg) || 0;
-            const reps = Number(item.reps) || 0;
-
-            // Epley 1RM formula: Weight * (1 + reps/30)
-            const oneRepMax = reps > 0 ? Number((weight * (1 + reps / 30)).toFixed(1)) : 0;
-            const volume = weight * reps;
-
-            if (!sessionsGrouped[dateStr]) {
-              sessionsGrouped[dateStr] = {
-                date: dateStr,
-                max1RM: oneRepMax,
-                totalVolume: volume,
-              };
-            } else {
-              sessionsGrouped[dateStr].totalVolume += volume;
-              if (oneRepMax > sessionsGrouped[dateStr].max1RM) {
-                sessionsGrouped[dateStr].max1RM = oneRepMax;
-              }
-            }
-          });
-
-          setHistoryData(Object.values(sessionsGrouped));
-        }
-      } catch (e) {
-
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchExerciseHistory();
-  }, [visible, selectedExerciseId, userId, dbReady]);
+    const target = exerciseHistoryMap[selectedExerciseId];
+    if (target && target.sessionsGrouped) {
+      const points = Object.values(target.sessionsGrouped).sort((a, b) => a.timestamp - b.timestamp);
+      setHistoryData(points);
+    } else {
+      setHistoryData([]);
+    }
+  }, [selectedExerciseId, exerciseHistoryMap]);
 
   const activeExerciseName = useMemo(() => {
     const found = exercisesList.find(e => e.id === selectedExerciseId);

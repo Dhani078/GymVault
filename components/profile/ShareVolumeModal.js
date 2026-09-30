@@ -74,7 +74,8 @@ export default function ShareVolumeModal({
                 if (!isLifetime && selectedSession) {
                   let sVol = 0;
                   (selectedSession.workout_sets || []).forEach(set => {
-                    if (set.is_checked) sVol += (set.weight_kg || 0) * (set.reps || 0);
+                    const isCompleted = set.is_checked === true || (set.is_checked !== false && ((Number(set.weight_kg) || 0) > 0 || (Number(set.reps) || 0) > 0));
+                    if (isCompleted) sVol += ((Number(set.weight_kg) || 0) * (Number(set.reps) || 0));
                   });
                   displayVolume = sVol;
                   const safeStr = (selectedSession.started_at || '').replace(' ', 'T');

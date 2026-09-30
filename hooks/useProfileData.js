@@ -52,7 +52,7 @@ export function useProfileData(session, dbReady) {
 
       // 2. Fetch ALL sessions for Lifetime Stats & AI Engine
       const { data: sessionData, error: sessErr } = await safeSelect('workout_sessions', {
-        columns: 'id, started_at, workout_sets(weight_kg, reps, is_checked)',
+        columns: 'id, started_at, workout_sets(*)',
         filters: { user_id: session.user.id, is_completed: true },
       });
 
@@ -159,7 +159,8 @@ export function useProfileData(session, dbReady) {
       const d = new Date(dateStr);
       let sessionVol = 0;
       (s.workout_sets || []).forEach(set => {
-        if (set.is_checked) sessionVol += (set.weight_kg || 0) * (set.reps || 0);
+        const isCompleted = set.is_checked === true || (set.is_checked !== false && ((Number(set.weight_kg) || 0) > 0 || (Number(set.reps) || 0) > 0));
+        if (isCompleted) sessionVol += ((Number(set.weight_kg) || 0) * (Number(set.reps) || 0));
       });
 
       if (d >= oneWeekAgo && d <= now) {
@@ -213,7 +214,8 @@ export function useProfileData(session, dbReady) {
     let totalVolume = 0;
     sessions.forEach(s => {
       (s.workout_sets || []).forEach(set => {
-        if (set.is_checked) totalVolume += (set.weight_kg || 0) * (set.reps || 0);
+        const isCompleted = set.is_checked === true || (set.is_checked !== false && ((Number(set.weight_kg) || 0) > 0 || (Number(set.reps) || 0) > 0));
+        if (isCompleted) totalVolume += ((Number(set.weight_kg) || 0) * (Number(set.reps) || 0));
       });
     });
     return { totalWorkouts, totalVolume };

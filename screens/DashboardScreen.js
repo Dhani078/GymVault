@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, TouchableOpacity, Modal, ActivityIndicator, RefreshControl, Animated, Easing, TextInput, Alert, Platform, Image } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Modal, ActivityIndicator, RefreshControl, Animated, Easing, TextInput, Alert, Platform, Image, DeviceEventEmitter } from 'react-native';
 import { Dumbbell, Activity, Flame, Trophy, Calendar, TrendingUp, Target, Zap, Coffee, ShieldAlert, Home, CheckCircle2, Check, Droplet, Gamepad2, Timer, RefreshCw, X, Users } from 'lucide-react-native';
 import { AppText, styles, theme } from '../theme';
 import { supabase, safeSelect, safeUpsert } from '../supabaseClient';
@@ -55,7 +55,6 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
   useEffect(() => {
     if (session?.user?.id) fetchDashboardData();
 
-    const { DeviceEventEmitter } = require('react-native');
     const sub = DeviceEventEmitter.addListener('activity_logged', () => {
       if (session?.user?.id) fetchDashboardData();
     });
@@ -82,7 +81,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
       }
 
       const { data: sessions, error: sessErr } = await safeSelect('workout_sessions', {
-        columns: 'id, started_at, split_name, workout_sets(weight_kg, reps, is_checked, exercises(name, muscle_group))',
+        columns: 'id, started_at, split_name, workout_sets(*, exercises(name, muscle_group))',
         filters: { user_id: session.user.id, is_completed: true },
         order: { column: 'started_at', ascending: false },
       });
@@ -106,7 +105,8 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           const d = new Date(safeStr);
           if (d >= startOfWeek) thisWeek++;
           (s.workout_sets || []).forEach(set => {
-            if (set.is_checked) totalVolume += (set.weight_kg || 0) * (set.reps || 0);
+            const isCompleted = set.is_checked === true || (set.is_checked !== false && ((Number(set.weight_kg) || 0) > 0 || (Number(set.reps) || 0) > 0));
+            if (isCompleted) totalVolume += ((Number(set.weight_kg) || 0) * (Number(set.reps) || 0));
           });
         });
 

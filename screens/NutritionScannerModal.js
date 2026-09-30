@@ -518,22 +518,38 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                   const scaledC = parseFloat((nutritionResult.c * portionScale).toFixed(1));
                   const scaledF = parseFloat((nutritionResult.f * portionScale).toFixed(1));
 
-                  const { error } = await supabase.from('nutrition_logs').insert({
+                  const mealPayload = {
                     user_id: session.user.id,
                     food_name: `${nutritionResult.food} (${portionScale.toFixed(1)}x)`,
                     calories: scaledCal,
                     protein: scaledP,
                     carbs: scaledC,
-                    fats: scaledF
-                  });
+                    fats: scaledF,
+                    created_at: new Date().toISOString()
+                  };
 
-                  if (error) {
-                    Alert.alert("Gagal", "Gagal menyimpan data: " + error.message);
-                  } else {
-                    Alert.alert("Sukses! 🥗", "Makanan berhasil dicatat di log nutrisi!");
-                    DeviceEventEmitter.emit('activity_logged');
-                    handleClose();
+                  let saveSucceeded = false;
+                  try {
+                    const { error } = await supabase.from('nutrition_logs').insert(mealPayload);
+                    if (!error) saveSucceeded = true;
+                  } catch (e) {}
+
+                  if (!saveSucceeded) {
+                    try {
+                      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+                      const queueKey = `offline_nutrition_${session.user.id}`;
+                      const existingQueue = JSON.parse((await AsyncStorage.getItem(queueKey)) || '[]');
+                      existingQueue.push(mealPayload);
+                      await AsyncStorage.setItem(queueKey, JSON.stringify(existingQueue));
+                    } catch (e) {}
                   }
+
+                  Alert.alert(
+                    saveSucceeded ? "Sukses! 🥗" : "Tersimpan Offline 📡", 
+                    saveSucceeded ? "Makanan berhasil dicatat di log nutrisi!" : "Koneksi terputus. Makanan disimpan di perangkat dan akan otomatis disinkronkan saat online."
+                  );
+                  DeviceEventEmitter.emit('activity_logged');
+                  handleClose();
                 }}
               >
                 <AppText weight="bold" style={{ color: '#000', fontSize: 15 }}>Log Meal</AppText>
