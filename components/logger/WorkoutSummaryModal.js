@@ -138,6 +138,7 @@ export default function WorkoutSummaryModal({
   totalCompleted = 0,
   workoutStartTime = null,
   session = null,
+  newPRs = [],
   onClose,
   onFinish,
   showInterstitialAd
@@ -152,11 +153,16 @@ export default function WorkoutSummaryModal({
   const viewShotRef = useRef(null);
 
   useEffect(() => {
-    if (visible && session?.user) {
-      const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Athlete';
-      setUserName(name);
+    if (visible) {
+      if (session?.user) {
+        const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Athlete';
+        setUserName(name);
+      }
+      if (newPRs && newPRs.length > 0) {
+        setSelectedSticker('🔥 PR Smashed');
+      }
     }
-  }, [visible, session]);
+  }, [visible, session, newPRs]);
 
   if (!visible) return null;
 
@@ -258,13 +264,17 @@ export default function WorkoutSummaryModal({
   };
 
   const handleCopyCaption = () => {
+    const prLines = newPRs && newPRs.length > 0
+      ? `\n🏆 REKOR PR RESMI:\n${newPRs.map(p => `• ${p.exercise_name}: ${p.new1RM}kg Est. 1RM (${p.weight_kg}kg × ${p.reps} reps${p.diff1RM > 0 ? ` · +${p.diff1RM}kg` : ''})`).join('\n')}\n`
+      : '';
+
     const captionText = 
 `🔥 WORKOUT COMPLETED WITH @GymVault
 🏋️ Sesi: ${mainSplitName || 'Strength Training'}
 📊 Total Volume: ${totalVolume.toLocaleString('id-ID')} kg
 ⚡ Sets Diselesaikan: ${totalCompleted} Sets
 ⏱️ Durasi: ${workoutDurationMinutes} Menit
-🦍 Rekor: ${funComparison}
+🦍 Rekor: ${funComparison}${prLines}
 Mood: ${selectedSticker}
 
 #GymVault #WorkoutMotivation #GymLife #FitnessIndonesia #GymStory #NoExcuses`;
@@ -534,6 +544,39 @@ Mood: ${selectedSticker}
                   </View>
                 </View>
 
+                {/* ── VERIFIED NEW PR HIGHLIGHT BANNER ── */}
+                {newPRs && newPRs.length > 0 && (
+                  <View style={{ 
+                    backgroundColor: currentTemplate.badgeBg, 
+                    borderRadius: 14, 
+                    paddingHorizontal: 12, 
+                    paddingVertical: 8, 
+                    borderWidth: 1.5, 
+                    borderColor: currentTemplate.primaryColor,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 8
+                  }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
+                      <Trophy color={currentTemplate.primaryColor} size={15} />
+                      <View style={{ flex: 1 }}>
+                        <AppText weight="bold" numberOfLines={1} style={{ color: currentTemplate.textColor, fontSize: 11 }}>
+                          PR: {newPRs[0].exercise_name}
+                        </AppText>
+                        <AppText style={{ color: currentTemplate.textMuted, fontSize: 9 }}>
+                          {newPRs.length > 1 ? `+${newPRs.length - 1} latihan lain juga rekor baru!` : 'Rekor latihan resmi terverifikasi'}
+                        </AppText>
+                      </View>
+                    </View>
+                    <View style={{ backgroundColor: currentTemplate.primaryColor, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 }}>
+                      <AppText weight="bold" style={{ color: '#000', fontSize: 11 }}>
+                        {newPRs[0].new1RM} kg 1RM
+                      </AppText>
+                    </View>
+                  </View>
+                )}
+
                 {/* ── EXERCISES PREVIEW LIST (3-4 EXERCISES) ── */}
                 <View style={{ 
                   backgroundColor: 'rgba(0,0,0,0.4)', 
@@ -554,15 +597,16 @@ Mood: ${selectedSticker}
                   {workoutData.slice(0, 3).map((ex, i) => {
                     const doneSets = (ex.sets || []).filter(s => s.completed);
                     const bestKg = Math.max(0, ...doneSets.map(s => Number(s.kg) || 0));
+                    const isPrEx = (newPRs || []).some(p => p.normName === ex.name?.toLowerCase()?.trim() || p.exercise_name?.toLowerCase()?.trim() === ex.name?.toLowerCase()?.trim());
                     return (
                       <View key={i} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4, borderBottomWidth: i < 2 ? 1 : 0, borderBottomColor: 'rgba(255,255,255,0.06)' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
-                          <CheckCircle2 color={currentTemplate.primaryColor} size={12} />
+                          {isPrEx ? <Trophy color={currentTemplate.primaryColor} size={12} /> : <CheckCircle2 color={currentTemplate.primaryColor} size={12} />}
                           <AppText numberOfLines={1} weight="bold" style={{ color: currentTemplate.textColor, fontSize: 11, flex: 1 }}>
-                            {ex.name}
+                            {ex.name} {isPrEx ? '🔥' : ''}
                           </AppText>
                         </View>
-                        <AppText style={{ color: currentTemplate.accentColor, fontSize: 11 }}>
+                        <AppText style={{ color: isPrEx ? currentTemplate.primaryColor : currentTemplate.accentColor, fontSize: 11, fontWeight: isPrEx ? 'bold' : 'normal' }}>
                           {doneSets.length} sets {bestKg > 0 ? `• max ${bestKg}kg` : ''}
                         </AppText>
                       </View>
