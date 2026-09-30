@@ -40,7 +40,8 @@ export default function LoggerScreen({
   // Rest Timer & PR
   const [restTime, setRestTime] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
-  const [sessionMax1RM, setSessionMax1RM] = useState({});
+  const [historicalPRs, setHistoricalPRs] = useState({});
+  const [finalizedPRs, setFinalizedPRs] = useState([]);
 
   // Share Modal & Ads
   const [showShareModal, setShowShareModal] = useState(false);
@@ -250,6 +251,66 @@ export default function LoggerScreen({
     };
     loadVoiceSetting();
   }, []);
+
+  // ─── LOAD HISTORICAL PERSONAL RECORDS (PR) ───
+  useEffect(() => {
+    let isMounted = true;
+    const loadHistoricalPRs = async () => {
+      try {
+        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+        const storageKey = `@gymvault_prs_${session?.user?.id || 'guest'}`;
+        const stored = await AsyncStorage.getItem(storageKey);
+        let prMap = stored ? JSON.parse(stored) : {};
+
+        // In background: backfill from Supabase past workout_sets if user is logged in
+        if (session?.user?.id && dbReady) {
+          try {
+            const { data: pastSets } = await supabase
+              .from('workout_sets')
+              .select('exercise_name, weight_kg, reps, workout_sessions!inner(user_id, is_completed)')
+              .eq('workout_sessions.user_id', session.user.id)
+              .eq('workout_sessions.is_completed', true);
+
+            if (pastSets && Array.isArray(pastSets) && pastSets.length > 0) {
+              let updated = false;
+              pastSets.forEach(set => {
+                const name = set.exercise_name?.toLowerCase()?.trim();
+                const w = Number(set.weight_kg) || 0;
+                const r = Number(set.reps) || 0;
+                if (name && w > 0 && r > 0) {
+                  const e1rm = Math.round(w * (1 + r / 30));
+                  if (!prMap[name] || e1rm > (prMap[name].max1RM || 0)) {
+                    prMap[name] = {
+                      exercise_name: set.exercise_name,
+                      max1RM: e1rm,
+                      weight_kg: w,
+                      reps: r,
+                      achieved_at: new Date().toISOString()
+                    };
+                    updated = true;
+                  }
+                }
+              });
+              if (updated) {
+                await AsyncStorage.setItem(storageKey, JSON.stringify(prMap));
+              }
+            }
+          } catch (dbErr) {
+            // Non-critical background sync
+          }
+        }
+
+        if (isMounted) {
+          setHistoricalPRs(prMap);
+        }
+      } catch (e) {
+        console.warn('[Logger] Error loading historical PRs:', e);
+      }
+    };
+
+    loadHistoricalPRs();
+    return () => { isMounted = false; };
+  }, [session?.user?.id, dbReady]);
 
   const audioRef = useRef(null);
 
@@ -524,6 +585,7 @@ export default function LoggerScreen({
         if (s.id !== setId) return s;
         if (!s.completed) {
           const exName = workoutData[currentIndex]?.name || '';
+          const normName = exName.toLowerCase().trim();
           const optimalRest = calculateRecommendedRestTime(exName, s.kg, s.reps, s.rpe);
           setRestTime(optimalRest); 
           setTimerActive(true);
@@ -534,14 +596,33 @@ export default function LoggerScreen({
             });
           });
           
-          const estimated1RM = Math.round(Number(s.kg) * (1 + Number(s.reps) / 30));
+          const w = Number(s.kg) || 0;
+          const r = Number(s.reps) || 0;
+          const estimated1RM = r > 0 ? Math.round(w * (1 + r / 30)) : 0;
+
+          // Compute highest 1RM from other already completed sets in this session for this exercise
+          const otherCompletedSets = (ex.sets || []).filter(item => item.id !== s.id && item.completed);
+          const otherSessionMax1RM = otherCompletedSets.reduce((max, item) => {
+            const sw = Number(item.kg) || 0;
+            const sr = Number(item.reps) || 0;
+            return Math.max(max, sr > 0 ? Math.round(sw * (1 + sr / 30)) : 0);
+          }, 0);
+
+          const allTimePR = historicalPRs[normName];
+          const allTime1RM = allTimePR?.max1RM || 0;
+          const baselineThreshold = Math.max(allTime1RM, otherSessionMax1RM);
+
           let title = 'Set Complete! ✅';
           let subtitle = `${s.kg}kg × ${s.reps} reps · Istirahat ${optimalRest}s`;
-          
-          if (estimated1RM > (sessionMax1RM[exName] || 0) && estimated1RM > 0) {
-            setSessionMax1RM(prev => ({ ...prev, [exName]: estimated1RM }));
+
+          // Candidate PR notification for immediate feedback (only finalized and committed upon session completion)
+          const isNewPR = estimated1RM > baselineThreshold && estimated1RM > 0 && w > 0 && r > 0;
+
+          if (isNewPR) {
             title = 'NEW PR! 🏆';
-            subtitle = `Est. 1RM: ${estimated1RM}kg`;
+            subtitle = allTime1RM > 0
+              ? `Est. 1RM: ${estimated1RM}kg (+${estimated1RM - allTime1RM}kg!)`
+              : `Est. 1RM: ${estimated1RM}kg`;
             try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch(e){}
             showNotification({ type: 'fire', title, subtitle, duration: 3000 });
             speakText(
@@ -630,6 +711,69 @@ export default function LoggerScreen({
     setSaving(true);
     setSaveError(null);
 
+    // ─── FINALIZE AND SAVE TRUE PERSONAL RECORDS (PR) ───
+    // Evaluates ONLY finalized completed sets at this moment, completely immunizing against typos!
+    const finalizeAndSavePRs = async () => {
+      try {
+        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+        const storageKey = `@gymvault_prs_${session?.user?.id || 'guest'}`;
+        const updatedPRMap = { ...historicalPRs };
+        const newlyAchievedPRs = [];
+
+        workoutData.forEach(ex => {
+          const normName = ex.name?.toLowerCase()?.trim();
+          if (!normName) return;
+
+          // Strictly filter only completed sets with valid weight and reps
+          const completedSets = (ex.sets || []).filter(s => s.completed && Number(s.kg) > 0 && Number(s.reps) > 0);
+          if (completedSets.length === 0) return;
+
+          let bestSet = null;
+          let sessionBest1RM = 0;
+
+          completedSets.forEach(s => {
+            const w = Number(s.kg) || 0;
+            const r = Number(s.reps) || 0;
+            const e1rm = Math.round(w * (1 + r / 30));
+            if (e1rm > sessionBest1RM) {
+              sessionBest1RM = e1rm;
+              bestSet = s;
+            }
+          });
+
+          const prevRecord = historicalPRs[normName];
+          const prev1RM = prevRecord?.max1RM || 0;
+
+          if (sessionBest1RM > prev1RM && sessionBest1RM > 0 && bestSet) {
+            const prItem = {
+              exercise_name: ex.name,
+              normName,
+              prev1RM,
+              new1RM: sessionBest1RM,
+              weight_kg: Number(bestSet.kg),
+              reps: Number(bestSet.reps),
+              diff1RM: prev1RM > 0 ? sessionBest1RM - prev1RM : 0,
+              isFirstTime: prev1RM === 0,
+              achieved_at: new Date().toISOString()
+            };
+
+            newlyAchievedPRs.push(prItem);
+            updatedPRMap[normName] = prItem;
+          }
+        });
+
+        if (newlyAchievedPRs.length > 0) {
+          await AsyncStorage.setItem(storageKey, JSON.stringify(updatedPRMap));
+          setHistoricalPRs(updatedPRMap);
+          setFinalizedPRs(newlyAchievedPRs);
+        } else {
+          setFinalizedPRs([]);
+        }
+      } catch (prErr) {
+        console.warn('[Logger] Error finalizing PRs:', prErr);
+      }
+    };
+
     try {
       // Only include exercises that have at least one completed set in split_name (or all if none completed yet)
       const exercisesWithDoneSets = workoutData.filter(e => e.sets && e.sets.some(s => s.completed));
@@ -667,6 +811,7 @@ export default function LoggerScreen({
              `Workout saved offline! Your total training volume is ${totalVolume} kilograms. Amazing work!`
            );
            
+           await finalizeAndSavePRs();
            setShowShareModal(true);
            return;
         }
@@ -761,7 +906,7 @@ export default function LoggerScreen({
         `Latihan selesai! Total volume latihan Anda adalah ${totalVolume} kilogram. Kerja luar biasa!`,
         `Workout complete! Your total training volume is ${totalVolume} kilograms. Amazing work!`
       );
-      
+      await finalizeAndSavePRs();
       setShowShareModal(true);
     } catch (e) {
 
@@ -1240,6 +1385,7 @@ export default function LoggerScreen({
         totalCompleted={totalCompleted}
         workoutStartTime={workoutStartTime}
         session={session}
+        newPRs={finalizedPRs}
         onClose={() => setShowShareModal(false)}
         onFinish={onFinish}
         showInterstitialAd={showInterstitialAd}
