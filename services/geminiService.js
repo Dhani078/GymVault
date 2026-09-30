@@ -3,13 +3,13 @@
 // ═══════════════════════════════════════════════════════════════
 
 export const GEMINI_MODELS_CASCADE = [
-  'gemini-3.7-flash',     // 🥇 Paling Pintar, Hybrid Reasoning & Vision Detail
-  'gemini-3.6-flash',     // 🥈 Generasi 3.6 Cepat & Multimodal
-  'gemini-3.5-flash',     // 🥉 Generasi 3.5 Handal
-  'gemini-3.1-flash-lite',// ⚡ Super Ringan & Hemat Token
-  'gemini-2.5-flash',     // 🛡️ Sangat Stabil & High-Availability
-  'gemini-2.5-flash-lite',// 🚀 Cadangan Cepat
-  'gemini-1.5-flash'      // 🔁 Emergency Fallback
+  'gemini-2.5-flash',      // 🥇 Ultra Cepat & Sangat Stabil (Workhorse Utama)
+  'gemini-2.5-flash-lite', // ⚡ Respon Kilat (Cadangan Cepat)
+  'gemini-3.6-flash',      // 🥈 Generasi 3.6 Multimodal Pintar
+  'gemini-3.5-flash',      // 🥉 Generasi 3.5 Handal
+  'gemini-3.7-flash',      // 🧠 Hybrid Reasoning
+  'gemini-3.1-flash-lite', // 🚀 Super Ringan
+  'gemini-1.5-flash'       // 🔁 Emergency Fallback
 ];
 
 /**
@@ -29,9 +29,9 @@ export async function generateWithGeminiCascade({
   responseMimeType = null,
   temperature = 0.2
 }) {
-  const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
+  const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
   if (!apiKey) {
-    throw new Error('Gemini API Key is not configured in .env');
+    throw new Error('Gemini API Key is not configured');
   }
 
   const parts = [{ text: prompt }];
