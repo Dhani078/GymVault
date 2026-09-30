@@ -111,7 +111,9 @@ export default function PaymentRequestsTable({
             const isPending = item.status === 'pending';
             const isApproved = item.status === 'approved';
             const isBusy = actionLoadingId === item.id;
-            const dateStr = item.created_at ? new Date(item.created_at).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) : '-';
+            const safeCreated = (item.created_at || '').replace(' ', 'T');
+            const dateObj = safeCreated ? new Date(safeCreated) : null;
+            const dateStr = dateObj && !isNaN(dateObj.getTime()) ? dateObj.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) : '-';
             const proofUrl = item.proof_url || item.proof_image_url;
 
             return (

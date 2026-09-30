@@ -94,7 +94,12 @@ c:\xampp\htdocs\GYM\
 │   ├── AIRoutineModal.js    # AI routine builder dialog powered by Gemini 3.7 Cascade
 │   ├── MuscleRecoveryMap.js # SVG body map rendering 12 muscle groups with recovery decay engine
 │   ├── NutritionWidget.js   # Daily macro tracker ring + natural language meal parser
-│   └── SkiaProgressRing.js  # Hardware-accelerated circular progress ring
+│   ├── SkiaProgressRing.js  # Hardware-accelerated circular progress ring
+│   ├── admin/               # Modular super-admin management tables & analytics widgets
+│   ├── profile/             # Modular athlete profile modal suite (Settings, EditProfile, TDEE, ShareVolume)
+│   ├── logger/              # Modular active workout modal suite (PlateCalculatorModal, SaveRoutineModal, WorkoutSummaryModal)
+│   ├── landing/             # Modular desktop landing suite (LandingNavbar, LandingHero, LandingPricingFaq, LandingFooter, landingData, landingStyles)
+│   └── history/             # Modular history modal & chart suite (WorkoutDetailModal, NutritionDetailModal, WaterDetailModal, DeleteConfirmModal, HistoryVolumeChart)
 ├── contexts/
 │   ├── AppModeContext.js    # Adaptive Engine: Gym Mode vs Home Mode + equipment inventory filter
 │   ├── DynamicIslandContext.js # Floating pill alert overlay & live workout status
@@ -104,13 +109,13 @@ c:\xampp\htdocs\GYM\
 │   ├── AuthScreen.js        # Login & Signup with username/email regex validation
 │   ├── DashboardScreen.js   # Main hub: volume stats, routine launcher, leaderboard, offline sync HUD
 │   ├── LibraryScreen.js     # Exercise catalogue with biomechanical cues & plateau breaker suggestions
-│   ├── LoggerScreen.js      # Active workout tracker with Real Mic Voice recognition & TTS coach
+│   ├── LoggerScreen.js      # Active workout tracker (modularized: rest timer, speech recognition & set rows)
 │   ├── AIMealPlanModal.js   # Daily AI Meal Planner & 🍳 Fridge-to-Macro Smart Chef
-│   ├── HistoryScreen.js     # Calendar multi-tab history (Workouts, Nutrition, Hydration)
+│   ├── HistoryScreen.js     # Calendar multi-tab history (modularized: multi-tab feeds & modal controllers)
 │   ├── ProfileScreen.js     # Body metrics, recovery overview, trophies, settings, gold pro banner
 │   ├── AIChatBubble.js      # Floating AI Coach for advice & conversational logging
 │   ├── AdminDashboard.js    # Desktop Super-Admin Control Panel & CRM Suite
-│   ├── LandingPage.js       # Desktop Cinematic Landing Page with 7 live interactive simulators
+│   ├── LandingPage.js       # Desktop Cinematic Landing Page (modularized: 7 interactive simulators & showcase)
 │   └── PaywallScreen.js     # Subscription plans, QRIS DANA instant notifier, & promo code redemption
 └── api/
     ├── analyze-nutrition.js # Vercel serverless proxy for Gemini food image classification
@@ -150,4 +155,9 @@ To prevent data collision between different logged-in users or guest sessions, a
 
 - **`workout_sets` Foreign Key Safety**: `exercise_id` in `workout_sets` references `exercises(id)`. Client-generated UUIDs (`makeId()`) must NEVER be inserted directly into `exercise_id` without resolving against `exercises(id)`. In `LoggerScreen.js`, fallback to `exercise_id = null` on batch insert error guarantees zero data loss.
 - **`HistoryScreen.js` Interactivity**: Workout, Nutrition, and Water history cards must always be clickable (`TouchableOpacity`) and render comprehensive AMOLED inspection modals (`selectedSession`, `selectedNutrition`, `selectedWater`) with quick action triggers ("Ulangi Sesi", "Hapus Sesi", "Bagikan").
+- **Modular Component Architecture (< 300 - 800 lines)**: To prevent monolith bloat and isolated re-renders, large screens are modularized into dedicated subdirectories: `components/logger/` (workout modals), `components/landing/` (landing page sections, styles & datasets), `components/history/` (history inspection modals & SVG volume chart), `components/profile/` (profile modal suite), and `components/admin/` (admin tables & management widgets). All extracted components must maintain strict prop contracts, pass universal Babel compilation, and verify 0 broken handlers.
+- **Telegram Bot & Webhook Schema Alignment**: `scripts/start-telegram-bot.js` aligned with `users_profile` schema (`is_premium` & `premium_until` synchronized alongside `is_pro` & `pro_expires_at`). Commands `/stats`, `/check`, `/grant`, and `/revoke` ensure full bidirectional synchronization between Telegram admin and the mobile client.
+- **Pure Top-Level Module Resolution**: Cleaned all repeated inline `require()` calls across `HistoryScreen.js`, `DashboardScreen.js`, `ProfileScreen.js`, and `AIChatBubble.js` into explicit top-level imports (`AsyncStorage`, `DeviceEventEmitter`, `supabase`), eliminating runtime bundler overhead.
+- **Multi-Platform Vector Graph Engine**: `components/SkiaLineChart.js` implements `WebSvgLineChart` using `react-native-svg` to ensure 100% vector parity on web desktop where Canvas WASM Skia is unavailable.
+
 

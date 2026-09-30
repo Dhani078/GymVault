@@ -54,15 +54,24 @@ export default function useAdminData() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      // 1. Ambil data semua user — pilih field spesifik, jangan select('*')
-      const { data: users, error: userError } = await supabase
+      // 1. Ambil data semua user — pilih field spesifik, dengan fallback jika kolom status belum ada
+      let { data: users, error: userError } = await supabase
         .from('users_profile')
-        .select('id, name, username, email, role, is_premium, premium_plan, premium_until, body_weight, height, cns_fatigue, created_at')
+        .select('id, name, username, email, role, status, is_premium, premium_plan, premium_until, body_weight, height, cns_fatigue, created_at')
         .order('created_at', { ascending: false });
+
+      if (userError && userError.message?.includes('status')) {
+        const fallbackRes = await supabase
+          .from('users_profile')
+          .select('id, name, username, email, role, is_premium, premium_plan, premium_until, body_weight, height, cns_fatigue, created_at')
+          .order('created_at', { ascending: false });
+        users = fallbackRes.data;
+        userError = fallbackRes.error;
+      }
 
       if (userError) throw userError;
       
-      // 2. Ambil statistik workout (dummy stats for now, can be replaced with actual COUNT query)
+      // 2. Ambil statistik workout
       const { count: workoutCount } = await supabase
         .from('workout_sessions')
         .select('*', { count: 'exact', head: true });
@@ -71,7 +80,7 @@ export default function useAdminData() {
       
       const suspendedCount = users?.filter(u => u.status === 'suspended').length || 0;
       const activeCount = (users?.length || 0) - suspendedCount;
-      const premiumCount = users?.filter(u => u.status === 'premium').length || 0;
+      const premiumCount = users?.filter(u => u.is_premium || u.status === 'premium').length || 0;
       
       // Calculate growth (Bar chart data) for last 6 months based on REAL data
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];

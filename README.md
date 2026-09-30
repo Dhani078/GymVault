@@ -40,6 +40,7 @@
 - **Icons**: `lucide-react-native`
 - **AI Integration**: Google Gemini 3.7 / 3.6 / 3.5 / 2.5 Flash Multi-Model Cascade
 - **Audio & Speech**: `expo-speech` & Web Speech Recognition API
+- **Modular Clean Architecture**: Highly cohesive sub-component suites (`components/logger/`, `components/landing/`, `components/history/`, `components/profile/`, `components/admin/`) enforcing < 300 - 800 line files.
 - **Hosting & Deployment**: Vercel (Web / API Serverless) & EAS Build (Android/iOS)
 
 ---

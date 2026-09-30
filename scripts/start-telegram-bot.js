@@ -57,11 +57,16 @@ async function handleMessage(msg) {
 
   // 1. /stats
   if (text.startsWith('/stats')) {
-    const { data: users, count: totalUsers } = await supabase.from('users_profile').select('id, is_pro, created_at', { count: 'exact' });
+    let { data: users, count: totalUsers } = await supabase.from('users_profile').select('id, is_premium, created_at', { count: 'exact' });
+    if (!users) {
+      const fallback = await supabase.from('users_profile').select('id, created_at', { count: 'exact' });
+      users = fallback.data;
+      totalUsers = fallback.count;
+    }
     const { data: payments } = await supabase.from('payment_requests').select('amount, status').eq('status', 'approved');
     const { count: totalSessions } = await supabase.from('workout_sessions').select('id', { count: 'exact' });
 
-    const proCount = (users || []).filter(u => u.is_pro).length;
+    const proCount = (users || []).filter(u => u.is_premium || u.is_pro).length;
     let totalRevenue = 0;
     (payments || []).forEach(p => {
       totalRevenue += (parseInt(p.amount, 10) || 0);
@@ -137,7 +142,7 @@ ${sessionsText}`;
 
     const { data: user } = await supabase
       .from('users_profile')
-      .select('id, full_name, email, is_pro, pro_expires_at, fitness_level, body_weight, height, created_at')
+      .select('*')
       .ilike('email', `%${query}%`)
       .limit(1)
       .single();
@@ -152,14 +157,17 @@ ${sessionsText}`;
       .select('id', { count: 'exact' })
       .eq('user_id', user.id);
 
+    const isPro = user.is_premium || user.is_pro;
+    const expiry = user.premium_until || user.pro_expires_at;
+
     const checkMsg = 
 `👤 <b>PROFIL MEMBER GYMVAULT</b> 🏋️‍♂️
 ━━━━━━━━━━━━━━━━━
-📛 <b>Nama:</b> ${user.full_name || 'Lifter GymVault'}
+📛 <b>Nama:</b> ${user.name || user.full_name || 'Lifter GymVault'}
 📧 <b>Email:</b> <code>${user.email || query}</code>
-👑 <b>Status Pro:</b> ${user.is_pro ? '👑 <b>PRO ACTIVE</b>' : '⚪ Free User'}
-⏳ <b>Masa Aktif:</b> ${user.pro_expires_at ? new Date(user.pro_expires_at).toLocaleDateString('id-ID') : 'N/A'}
-⚖️ <b>Fisik:</b> ${user.body_weight || '-'} kg · ${user.height || '-'} cm (${user.fitness_level || 'Beginner'})
+👑 <b>Status Pro:</b> ${isPro ? '👑 <b>PRO ACTIVE</b>' : '⚪ Free User'}
+⏳ <b>Masa Aktif:</b> ${expiry ? new Date(expiry).toLocaleDateString('id-ID') : 'N/A'}
+⚖️ <b>Fisik:</b> ${user.body_weight || '-'} kg · ${user.height || '-'} cm (${user.fitness_level || 'Lifter'})
 🔥 <b>Sesi Latihan:</b> ${userWorkouts || 0} sesi tercatat`;
 
     await sendTelegramMessage(chatId, checkMsg);
@@ -177,17 +185,22 @@ ${sessionsText}`;
       return;
     }
 
-    const { data: user } = await supabase.from('users_profile').select('id, email, full_name').ilike('email', `%${emailQuery}%`).limit(1).single();
+    const { data: user } = await supabase.from('users_profile').select('id, email, name').ilike('email', `%${emailQuery}%`).limit(1).single();
     if (!user) {
       await sendTelegramMessage(chatId, `❌ User <code>${emailQuery}</code> tidak ditemukan.`);
       return;
     }
 
     const expiryDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
-    await supabase.from('users_profile').update({ is_pro: true, pro_expires_at: expiryDate }).eq('id', user.id);
-    await supabase.from('profiles').update({ is_pro: true, pro_expires_at: expiryDate }).eq('id', user.id);
+    await supabase.from('users_profile').update({
+      is_premium: true,
+      is_pro: true,
+      premium_plan: 'telegram_grant',
+      premium_until: expiryDate,
+      pro_expires_at: expiryDate
+    }).eq('id', user.id);
 
-    await sendTelegramMessage(chatId, `👑 <b>STATUS PRO BERHASIL DIAKTIFKAN!</b>\n\nUser: <b>${user.full_name || user.email}</b> (<code>${user.email}</code>)\nMasa Aktif: +${days} hari (hingga ${new Date(expiryDate).toLocaleDateString('id-ID')}).`);
+    await sendTelegramMessage(chatId, `👑 <b>STATUS PRO BERHASIL DIAKTIFKAN!</b>\n\nUser: <b>${user.name || user.email}</b> (<code>${user.email}</code>)\nMasa Aktif: +${days} hari (hingga ${new Date(expiryDate).toLocaleDateString('id-ID')}).`);
     return;
   }
 
@@ -199,16 +212,21 @@ ${sessionsText}`;
       return;
     }
 
-    const { data: user } = await supabase.from('users_profile').select('id, email, full_name').ilike('email', `%${emailQuery}%`).limit(1).single();
+    const { data: user } = await supabase.from('users_profile').select('id, email, name').ilike('email', `%${emailQuery}%`).limit(1).single();
     if (!user) {
       await sendTelegramMessage(chatId, `❌ User <code>${emailQuery}</code> tidak ditemukan.`);
       return;
     }
 
-    await supabase.from('users_profile').update({ is_pro: false, pro_expires_at: null }).eq('id', user.id);
-    await supabase.from('profiles').update({ is_pro: false, pro_expires_at: null }).eq('id', user.id);
+    await supabase.from('users_profile').update({
+      is_premium: false,
+      is_pro: false,
+      premium_plan: null,
+      premium_until: null,
+      pro_expires_at: null
+    }).eq('id', user.id);
 
-    await sendTelegramMessage(chatId, `⛔ <b>STATUS PRO DICABUT!</b>\n\nUser: <b>${user.full_name || user.email}</b> (<code>${user.email}</code>) sekarang kembali ke Free tier.`);
+    await sendTelegramMessage(chatId, `⛔ <b>STATUS PRO DICABUT!</b>\n\nUser: <b>${user.name || user.email}</b> (<code>${user.email}</code>) sekarang kembali ke Free tier.`);
     return;
   }
 

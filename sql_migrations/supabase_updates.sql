@@ -256,4 +256,5 @@ BEGIN
 END;
 $$;
 
-
+-- 8. Add exercise_name column to workout_sets for standalone exercise title tracking
+ALTER TABLE public.workout_sets ADD COLUMN IF NOT EXISTS exercise_name TEXT;

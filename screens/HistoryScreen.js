@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, SectionList, ActivityIndicator, RefreshControl, Dimensions, TouchableOpacity, Alert, Modal, ScrollView, Share, Platform } from 'react-native';
+import { View, SectionList, ActivityIndicator, RefreshControl, Dimensions, TouchableOpacity, Alert, Modal, ScrollView, Share, Platform, DeviceEventEmitter } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Clock, Dumbbell, Trash2, Calendar, Flame, AlertCircle, TrendingUp, ChevronRight, ChevronLeft, X, CheckCircle2, RotateCcw, Share2, Layers, AlertTriangle, Droplets, Info } from 'lucide-react-native';
-import Svg, { Path, Circle, Defs, LinearGradient, Stop, Text as SvgText } from 'react-native-svg';
+import WorkoutDetailModal from '../components/history/WorkoutDetailModal';
+import NutritionDetailModal from '../components/history/NutritionDetailModal';
+import WaterDetailModal from '../components/history/WaterDetailModal';
+import DeleteConfirmModal from '../components/history/DeleteConfirmModal';
+import HistoryVolumeChart from '../components/history/HistoryVolumeChart';
 import { AppText, theme, styles } from '../theme';
 import { useTheme } from '../contexts/ThemeContext';
 import { safeSelect } from '../supabaseClient';
@@ -47,7 +52,6 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
 
   useEffect(() => {
     fetchHistory();
-    const { DeviceEventEmitter } = require('react-native');
     const sub = DeviceEventEmitter.addListener('activity_logged', () => {
       fetchHistory();
     });
@@ -69,7 +73,7 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
     try {
       // 1. Fetch Workout Sessions with resilient fallback
       let { data: sessions, error: fetchErr } = await safeSelect('workout_sessions', {
-        columns: '*, workout_sets(id, set_index, weight_kg, reps, is_checked, exercise_id, exercises(name, muscle_group))',
+        columns: '*, workout_sets(*, exercises(name, muscle_group))',
         filters: { user_id: session.user.id, is_completed: true },
         order: { column: 'started_at', ascending: false },
       });
@@ -77,7 +81,7 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
       // Defensive fallback if relation join failed
       if (fetchErr && fetchErr.message?.includes('relationship')) {
         const fallbackRes = await safeSelect('workout_sessions', {
-          columns: '*, workout_sets(id, set_index, weight_kg, reps, is_checked, exercise_id)',
+          columns: '*, workout_sets(*)',
           filters: { user_id: session.user.id, is_completed: true },
           order: { column: 'started_at', ascending: false },
         });
@@ -161,7 +165,8 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
       if (!nutErr && nutritionLogs) {
         const groups = {};
         nutritionLogs.forEach(n => {
-          const dateObj = new Date(n.created_at);
+          const safeStr = (n.created_at || '').replace(' ', 'T');
+          const dateObj = new Date(safeStr);
           if (isNaN(dateObj.getTime())) return;
           const monthKey = formatMonthKey(dateObj);
           const dateStr = formatDateStr(dateObj);
@@ -185,7 +190,6 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
       }
 
       // 3. Fetch Water History from AsyncStorage
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       const waterHistoryStr = await AsyncStorage.getItem('water_history');
       if (waterHistoryStr) {
         let parsed = {};
@@ -249,19 +253,49 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     } catch(e){}
 
-    const splitStr = sessionItem.split_name || 'Workout';
+    let raw = sessionItem.split_name || 'Workout';
+    const parenMatch = raw.match(/\((.*?)\)/);
+    if (parenMatch && parenMatch[1].includes(',')) {
+      raw = parenMatch[1];
+    }
     // Clean exercise names from brackets like "Bench Press [Chest]" -> "Bench Press"
-    const exNames = splitStr
+    const exNames = raw
       .split(',')
       .map(s => s.replace(/\[.*?\]/g, '').trim())
       .filter(Boolean);
 
     if (typeof onStartRoutine === 'function' && exNames.length > 0) {
+      // Calculate actual number of sets per exercise if workout_sets available
+      const sets = sessionItem.workout_sets || [];
+      const setsCountPerEx = {};
+      let currentExIdx = 0;
+      let prevSetIndex = 0;
+      let prevExId = null;
+
+      sets.forEach((st, idx) => {
+        let exName = st.exercise_name || st.exercises?.name;
+        if (!exName) {
+          const curSetNum = Number(st.set_index) || 1;
+          const curExId = st.exercise_id || null;
+          if (idx > 0) {
+            const exIdChanged = curExId && prevExId && curExId !== prevExId;
+            const setIndexReset = curSetNum <= prevSetIndex || curSetNum === 1;
+            if (exIdChanged || setIndexReset) {
+              if (currentExIdx < exNames.length - 1) currentExIdx++;
+            }
+          }
+          exName = exNames[currentExIdx] || exNames[0];
+          prevSetIndex = curSetNum;
+          prevExId = curExId;
+        }
+        setsCountPerEx[exName] = (setsCountPerEx[exName] || 0) + 1;
+      });
+
       onStartRoutine({
         name: splitStr,
         exercises: exNames.map(name => ({
           name,
-          numSets: 3
+          numSets: setsCountPerEx[name] || 3
         }))
       });
     } else if (typeof onStartWorkout === 'function') {
@@ -410,107 +444,8 @@ Tracked with GymVault`;
 
   // ─── Chart Renderer ───
   const renderChart = () => {
-    if (activeTab !== 'workouts' || !chartData || chartData.length < 2) return null;
-    
-    const volumes = chartData.map(d => d.vol);
-    const max = Math.max(...volumes);
-    const min = Math.min(...volumes);
-    const range = max - min || 1;
-    const totalVol = volumes.reduce((a, b) => a + b, 0);
-    const avgVol = Math.round(totalVol / volumes.length);
-    
-    const screenW = Dimensions.get('window').width;
-    const padH = 24;
-    const cardPad = 20;
-    const w = screenW - (padH * 2) - (cardPad * 2);
-    const chartH = 90;
-    const dateAreaH = 24;
-    const svgH = chartH + dateAreaH + 10;
-    
-    const getY = (vol) => {
-      if (max === min) return chartH / 2;
-      return chartH - ((vol - min) / range) * (chartH * 0.75) - 12;
-    };
-    
-    const points = chartData.map((d, i) => {
-      const x = (i / (chartData.length - 1)) * w;
-      return `${x},${getY(d.vol)}`;
-    }).join(' L ');
-    
-    const fmtVol = (v) => v >= 1000 ? `${(v/1000).toFixed(1)}k` : `${v}`;
-    
-    return (
-      <View style={{ marginHorizontal: padH, marginBottom: 20, backgroundColor: theme.colors.card, borderRadius: 20, padding: cardPad, borderWidth: 1, borderColor: theme.colors.border }}>
-        {/* Header */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: 'rgba(204,255,0,0.1)', justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
-              <TrendingUp color={theme.colors.primary} size={18} />
-            </View>
-            <View>
-              <AppText weight="bold" style={{ fontSize: 15 }}>Volume Progression</AppText>
-              <AppText style={{ fontSize: 11, color: theme.colors.textMuted }}>{chartData.length} sesi terakhir</AppText>
-            </View>
-          </View>
-        </View>
-        
-        {/* Summary Stats Row */}
-        <View style={{ flexDirection: 'row', marginBottom: 16, gap: 8 }}>
-          {[
-            { label: 'Total', value: `${fmtVol(totalVol)} kg` },
-            { label: 'Rata-rata', value: `${fmtVol(avgVol)} kg` },
-            { label: 'Tertinggi', value: `${fmtVol(max)} kg` },
-          ].map((s, i) => (
-            <View key={i} style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}>
-              <AppText style={{ fontSize: 10, color: theme.colors.textMuted, marginBottom: 2 }}>{s.label}</AppText>
-              <AppText weight="bold" tabular style={{ fontSize: 13, color: theme.colors.primary }}>{s.value}</AppText>
-            </View>
-          ))}
-        </View>
-
-        {/* SVG Chart */}
-        <Svg width="100%" height={svgH} viewBox={`-8 -20 ${w+16} ${svgH+20}`}>
-          <Defs>
-            <LinearGradient id="volGrad" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor={theme.colors.primary} stopOpacity="0.25" />
-              <Stop offset="1" stopColor={theme.colors.primary} stopOpacity="0.0" />
-            </LinearGradient>
-          </Defs>
-          
-          {/* Gradient fill area */}
-          <Path 
-            d={`M 0,${chartH} L ${points} L ${w},${chartH} Z`} 
-            fill="url(#volGrad)" 
-          />
-          {/* Line */}
-          <Path 
-            d={`M ${points}`} 
-            fill="none" 
-            stroke={theme.colors.primary} 
-            strokeWidth="2.5" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-          />
-          {/* Points + Date labels */}
-          {chartData.map((d, i) => {
-            const cx = (i / (chartData.length - 1)) * w;
-            const cy = getY(d.vol);
-            const anchor = i === 0 ? "start" : i === chartData.length - 1 ? "end" : "middle";
-            return (
-              <React.Fragment key={i}>
-                <Circle cx={cx} cy={cy} r="5" fill={theme.colors.background} stroke={theme.colors.primary} strokeWidth="2.5" />
-                <SvgText x={cx} y={cy - 10} fontSize="9" fill={theme.colors.text} textAnchor={anchor} fontWeight="bold">
-                  {fmtVol(d.vol)}
-                </SvgText>
-                <SvgText x={cx} y={chartH + dateAreaH} fontSize="9" fill={theme.colors.textMuted} textAnchor={anchor}>
-                  {d.date}
-                </SvgText>
-              </React.Fragment>
-            );
-          })}
-        </Svg>
-      </View>
-    );
+    if (activeTab !== 'workouts') return null;
+    return <HistoryVolumeChart chartData={chartData} />;
   };
 
   const getActiveSections = () => {
@@ -519,70 +454,7 @@ Tracked with GymVault`;
     return waterHistory;
   };
 
-  // ─── Render Workout Sets in Detail Modal ───
-  const renderWorkoutSetsBreakdown = (sess) => {
-    const sets = sess.workout_sets || [];
-    if (!sets || sets.length === 0) return null;
-
-    const splitExNames = (sess.split_name || '')
-      .split(',')
-      .map(s => s.replace(/\[.*?\]/g, '').trim())
-      .filter(Boolean);
-
-    // Group sets by exercise name
-    const groups = {};
-    sets.forEach((st, idx) => {
-      let exName = st.exercises?.name;
-      if (!exName) {
-        // Fallback: estimate from split_name order or generic label
-        exName = splitExNames[0] || 'Latihan';
-      }
-      if (!groups[exName]) groups[exName] = [];
-      groups[exName].push({ ...st, originalIndex: idx + 1 });
-    });
-
-    return Object.entries(groups).map(([name, exSets], gIdx) => {
-      const exVol = exSets.reduce((acc, curr) => acc + ((Number(curr.weight_kg) || 0) * (Number(curr.reps) || 0)), 0);
-
-      return (
-        <View key={gIdx} style={{ backgroundColor: theme.colors.background, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: theme.colors.border, marginBottom: 12 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, borderBottomWidth: 0.5, borderBottomColor: theme.colors.border, paddingBottom: 8 }}>
-            <AppText weight="bold" style={{ fontSize: 14, color: theme.colors.text }}>{name}</AppText>
-            <AppText style={{ fontSize: 11, color: theme.colors.textMuted }}>Vol: <AppText weight="bold" style={{ color: theme.colors.primary }}>{exVol} kg</AppText></AppText>
-          </View>
-
-          {exSets.map((s, sIdx) => {
-            const setNum = s.set_index || (sIdx + 1);
-            const w = Number(s.weight_kg) || 0;
-            const r = Number(s.reps) || 0;
-            const vol = w * r;
-
-            return (
-              <View key={s.id || sIdx} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 6, borderBottomWidth: sIdx < exSets.length - 1 ? 0.5 : 0, borderBottomColor: 'rgba(255,255,255,0.05)' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <View style={{ width: 22, height: 22, borderRadius: 6, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center' }}>
-                    <AppText style={{ fontSize: 10, color: theme.colors.textMuted, fontWeight: 'bold' }}>{setNum}</AppText>
-                  </View>
-                  <AppText tabular weight="bold" style={{ fontSize: 13, color: theme.colors.text }}>
-                    {w} kg <AppText style={{ color: theme.colors.textMuted, fontWeight: 'normal' }}>×</AppText> {r} reps
-                  </AppText>
-                </View>
-
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <AppText tabular style={{ fontSize: 12, color: theme.colors.textMuted }}>{vol} kg</AppText>
-                  <View style={{ backgroundColor: 'rgba(204, 255, 0, 0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
-                    <AppText style={{ fontSize: 10, color: theme.colors.primary, fontWeight: 'bold' }}>✓ Selesai</AppText>
-                  </View>
-                </View>
-              </View>
-            );
-          })}
-        </View>
-      );
-    });
-  };
-
-  const renderItem = ({ item }) => {
+    const renderItem = ({ item }) => {
     if (activeTab === 'workouts') {
       const isZeroData = item.completedSets === 0 && item.totalVolume === 0;
 
@@ -867,294 +739,37 @@ Tracked with GymVault`;
       />
 
       {/* ─── WORKOUT DETAIL MODAL ─── */}
-      <Modal
+      <WorkoutDetailModal
         visible={!!selectedSession}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setSelectedSession(null)}
-      >
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'flex-end' }}>
-          <View style={{
-            backgroundColor: theme.colors.card,
-            borderTopLeftRadius: 24,
-            borderTopRightRadius: 24,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            maxHeight: '88%',
-            paddingBottom: 24,
-          }}>
-            {/* Header */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}>
-              <View style={{ flex: 1, paddingRight: 12 }}>
-                <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.text }}>{selectedSession?.split_name}</AppText>
-                <AppText style={{ fontSize: 13, color: theme.colors.textMuted, marginTop: 2 }}>
-                  {selectedSession?.date} · {selectedSession?.time}
-                </AppText>
-              </View>
-              <TouchableOpacity
-                onPress={() => setSelectedSession(null)}
-                style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: theme.colors.surface, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.border }}
-              >
-                <X color={theme.colors.text} size={18} />
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView contentContainerStyle={{ padding: 20 }}>
-              {/* Stat Summary Cards */}
-              <View style={{ flexDirection: 'row', gap: 8, marginBottom: 20 }}>
-                <View style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}>
-                  <AppText style={{ fontSize: 11, color: theme.colors.textMuted, marginBottom: 4 }}>Total Volume</AppText>
-                  <AppText weight="bold" tabular style={{ fontSize: 16, color: theme.colors.primary }}>
-                    {selectedSession?.totalVolume > 1000 ? `${(selectedSession.totalVolume / 1000).toFixed(1)}k` : (selectedSession?.totalVolume || 0)} kg
-                  </AppText>
-                </View>
-                <View style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}>
-                  <AppText style={{ fontSize: 11, color: theme.colors.textMuted, marginBottom: 4 }}>Total Set</AppText>
-                  <AppText weight="bold" tabular style={{ fontSize: 16, color: theme.colors.text }}>
-                    {selectedSession?.completedSets || 0} Sets
-                  </AppText>
-                </View>
-                <View style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}>
-                  <AppText style={{ fontSize: 11, color: theme.colors.textMuted, marginBottom: 4 }}>Rata-rata/Set</AppText>
-                  <AppText weight="bold" tabular style={{ fontSize: 16, color: '#38BDF8' }}>
-                    {selectedSession?.completedSets > 0 ? `${Math.round(selectedSession.totalVolume / selectedSession.completedSets)} kg` : '0 kg'}
-                  </AppText>
-                </View>
-              </View>
-
-              {/* If 0 Sets: Alert & Quick Actions */}
-              {(!selectedSession?.workout_sets || selectedSession.workout_sets.length === 0 || selectedSession.completedSets === 0) ? (
-                <View style={{ backgroundColor: 'rgba(245, 158, 11, 0.08)', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: 'rgba(245, 158, 11, 0.3)', marginBottom: 20 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                    <AlertCircle color="#F59E0B" size={20} />
-                    <AppText weight="bold" style={{ color: '#F59E0B', fontSize: 15 }}>Detail Set Belum Tersimpan</AppText>
-                  </View>
-                  <AppText style={{ color: theme.colors.textMuted, fontSize: 13, lineHeight: 20, marginBottom: 16 }}>
-                    Sesi ini tercatat di database dengan 0 set tersimpan (kemungkinan terjadi karena penolakan foreign key pada versi sebelumnya). Anda dapat mengulangi latihan ini ke Logger atau menghapusnya dari riwayat.
-                  </AppText>
-                  <View style={{ flexDirection: 'row', gap: 10 }}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        const sId = selectedSession.id;
-                        setSelectedSession(null);
-                        handleDeleteWorkout(sId);
-                      }}
-                      style={{ flex: 1, backgroundColor: 'rgba(239, 68, 68, 0.1)', paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)', alignItems: 'center' }}
-                    >
-                      <AppText weight="bold" style={{ color: '#EF4444', fontSize: 12 }}>🗑️ Hapus Sesi</AppText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        const sess = selectedSession;
-                        setSelectedSession(null);
-                        handleRepeatWorkout(sess);
-                      }}
-                      style={{ flex: 1, backgroundColor: theme.colors.primary, paddingVertical: 10, borderRadius: 10, alignItems: 'center' }}
-                    >
-                      <AppText weight="bold" style={{ color: '#000', fontSize: 12 }}>🔄 Ulangi Latihan</AppText>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ) : (
-                /* Grouped Sets Breakdown */
-                <View style={{ marginBottom: 20 }}>
-                  <AppText weight="bold" style={{ fontSize: 14, color: theme.colors.primary, marginBottom: 12, letterSpacing: 0.5 }}>
-                    RINCIAN SET & ANGKATAN
-                  </AppText>
-                  {renderWorkoutSetsBreakdown(selectedSession)}
-                </View>
-              )}
-
-              {/* Bottom Actions */}
-              <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    const sess = selectedSession;
-                    setSelectedSession(null);
-                    handleRepeatWorkout(sess);
-                  }}
-                  style={{ flex: 1, backgroundColor: theme.colors.surface, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 6 }}
-                >
-                  <RotateCcw color={theme.colors.text} size={15} />
-                  <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 13 }}>Ulangi Sesi</AppText>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => handleShareSession(selectedSession)}
-                  style={{ flex: 1, backgroundColor: theme.colors.primary, paddingVertical: 12, borderRadius: 12, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 6 }}
-                >
-                  <Share2 color="#000" size={15} />
-                  <AppText weight="bold" style={{ color: '#000', fontSize: 13 }}>Bagikan</AppText>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    const sId = selectedSession.id;
-                    setSelectedSession(null);
-                    handleDeleteWorkout(sId);
-                  }}
-                  style={{ paddingHorizontal: 16, backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 12, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)', justifyContent: 'center', alignItems: 'center' }}
-                >
-                  <Trash2 color="#EF4444" size={16} />
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
+        session={selectedSession}
+        onClose={() => setSelectedSession(null)}
+        onRepeat={handleRepeatWorkout}
+        onShare={handleShareSession}
+        onDelete={handleDeleteWorkout}
+      />
 
       {/* ─── NUTRITION DETAIL MODAL ─── */}
-      <Modal
+      <NutritionDetailModal
         visible={!!selectedNutrition}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setSelectedNutrition(null)}
-      >
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-          <View style={{ backgroundColor: theme.colors.card, width: '100%', maxWidth: 380, borderRadius: 20, padding: 20, borderWidth: 1, borderColor: theme.colors.border }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <View style={{ flex: 1, paddingRight: 10 }}>
-                <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.text }}>{selectedNutrition?.food_name}</AppText>
-                <AppText style={{ fontSize: 12, color: theme.colors.textMuted }}>{selectedNutrition?.date} · {selectedNutrition?.time}</AppText>
-              </View>
-              <TouchableOpacity onPress={() => setSelectedNutrition(null)}>
-                <X color={theme.colors.text} size={20} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Total Calories Badge */}
-            <View style={{ backgroundColor: theme.colors.background, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center', marginBottom: 16 }}>
-              <AppText style={{ fontSize: 12, color: theme.colors.textMuted, marginBottom: 4 }}>Total Energi</AppText>
-              <AppText weight="bold" tabular style={{ fontSize: 26, color: theme.colors.primary }}>
-                {selectedNutrition?.calories || 0} <AppText style={{ fontSize: 16, color: theme.colors.textMuted }}>kcal</AppText>
-              </AppText>
-            </View>
-
-            {/* Macros Breakdown */}
-            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 20 }}>
-              <View style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}>
-                <AppText style={{ fontSize: 10, color: theme.colors.textMuted }}>Protein</AppText>
-                <AppText weight="bold" tabular style={{ fontSize: 15, color: '#38BDF8', marginTop: 2 }}>{selectedNutrition?.protein || 0}g</AppText>
-              </View>
-              <View style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}>
-                <AppText style={{ fontSize: 10, color: theme.colors.textMuted }}>Carbs</AppText>
-                <AppText weight="bold" tabular style={{ fontSize: 15, color: '#34D399', marginTop: 2 }}>{selectedNutrition?.carbs || 0}g</AppText>
-              </View>
-              <View style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: 10, padding: 10, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}>
-                <AppText style={{ fontSize: 10, color: theme.colors.textMuted }}>Fats</AppText>
-                <AppText weight="bold" tabular style={{ fontSize: 15, color: '#FBBF24', marginTop: 2 }}>{selectedNutrition?.fats || 0}g</AppText>
-              </View>
-            </View>
-
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              <TouchableOpacity
-                onPress={() => {
-                  const nId = selectedNutrition.id;
-                  setSelectedNutrition(null);
-                  handleDeleteNutrition(nId);
-                }}
-                style={{ flex: 1, backgroundColor: 'rgba(239, 68, 68, 0.1)', paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)', alignItems: 'center' }}
-              >
-                <AppText weight="bold" style={{ color: '#EF4444', fontSize: 13 }}>Hapus Catatan</AppText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setSelectedNutrition(null)}
-                style={{ flex: 1, backgroundColor: theme.colors.surface, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}
-              >
-                <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 13 }}>Tutup</AppText>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        nutrition={selectedNutrition}
+        onClose={() => setSelectedNutrition(null)}
+        onDelete={handleDeleteNutrition}
+      />
 
       {/* ─── WATER DETAIL MODAL ─── */}
-      <Modal
+      <WaterDetailModal
         visible={!!selectedWater}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setSelectedWater(null)}
-      >
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-          <View style={{ backgroundColor: theme.colors.card, width: '100%', maxWidth: 380, borderRadius: 20, padding: 20, borderWidth: 1, borderColor: theme.colors.border }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <View style={{ flex: 1, paddingRight: 10 }}>
-                <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.text }}>Konsumsi Air Harian</AppText>
-                <AppText style={{ fontSize: 12, color: theme.colors.textMuted }}>{selectedWater?.date}</AppText>
-              </View>
-              <TouchableOpacity onPress={() => setSelectedWater(null)}>
-                <X color={theme.colors.text} size={20} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={{ backgroundColor: theme.colors.background, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center', marginBottom: 16 }}>
-              <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(56, 189, 248, 0.1)', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
-                <AppText style={{ fontSize: 22 }}>💧</AppText>
-              </View>
-              <AppText weight="bold" tabular style={{ fontSize: 26, color: '#38BDF8' }}>
-                {selectedWater?.ml || 0} <AppText style={{ fontSize: 16, color: theme.colors.textMuted }}>ml</AppText>
-              </AppText>
-              <AppText style={{ fontSize: 12, color: theme.colors.textMuted, marginTop: 4 }}>
-                Target Harian: 2500 ml ({Math.min(100, Math.round(((selectedWater?.ml || 0) / 2500) * 100))}% tercapai)
-              </AppText>
-            </View>
-
-            <View style={{ flexDirection: 'row', gap: 10 }}>
-              <TouchableOpacity
-                onPress={() => {
-                  const wId = selectedWater.id;
-                  setSelectedWater(null);
-                  handleDeleteWater(wId);
-                }}
-                style={{ flex: 1, backgroundColor: 'rgba(239, 68, 68, 0.1)', paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)', alignItems: 'center' }}
-              >
-                <AppText weight="bold" style={{ color: '#EF4444', fontSize: 13 }}>Hapus Catatan</AppText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setSelectedWater(null)}
-                style={{ flex: 1, backgroundColor: theme.colors.surface, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}
-              >
-                <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 13 }}>Tutup</AppText>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        water={selectedWater}
+        onClose={() => setSelectedWater(null)}
+        onDelete={handleDeleteWater}
+      />
 
       {/* ─── CUSTOM DELETE CONFIRMATION MODAL ─── */}
-      <Modal
+      <DeleteConfirmModal
         visible={deleteConfirm.visible}
-        transparent={true}
-        animationType="fade"
-      >
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-          <View style={{ backgroundColor: theme.colors.card, width: '100%', borderRadius: 16, padding: 24, borderWidth: 1, borderColor: theme.colors.border }}>
-            <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(239, 68, 68, 0.1)', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-              <Trash2 color="#EF4444" size={24} />
-            </View>
-            <AppText weight="bold" style={{ fontSize: 20, marginBottom: 8 }}>Hapus Data?</AppText>
-            <AppText style={{ fontSize: 14, color: theme.colors.textMuted, marginBottom: 24 }}>
-              Apakah Anda yakin ingin menghapus data ini secara permanen? Aksi ini tidak dapat dibatalkan.
-            </AppText>
-            
-            <View style={{ flexDirection: 'row', gap: 12 }}>
-              <TouchableOpacity 
-                style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: theme.colors.background, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}
-                onPress={() => setDeleteConfirm({ visible: false, type: null, id: null })}
-              >
-                <AppText weight="bold" style={{ color: theme.colors.text }}>Batal</AppText>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: '#EF4444', alignItems: 'center' }}
-                onPress={executeDelete}
-              >
-                <AppText weight="bold" style={{ color: '#fff' }}>Hapus</AppText>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onCancel={() => setDeleteConfirm({ visible: false, type: null, id: null })}
+        onConfirm={executeDelete}
+      />
     </View>
   );
 }

@@ -10,7 +10,130 @@ import Animated, {
 import { AppText, theme } from '../theme';
 import { useTheme } from '../contexts/ThemeContext';
 
+import Svg, { Path as SvgPath, Defs, LinearGradient as SvgGradient, Stop, Circle as SvgCircle, Line as SvgLine } from 'react-native-svg';
+
 const IS_WEB = Platform.OS === 'web';
+
+function WebSvgLineChart({ data = [], dataKey = 'max1RM', color = theme.colors.primary, height = 160, showLabels = true, colors, darkMode }) {
+  const { width: screenWidth } = useWindowDimensions();
+  const width = Math.max(260, Math.min(screenWidth - 88, 600));
+
+  if (!data || data.length < 1) {
+    return (
+      <View style={[styles.emptyChart, { height }]}>
+        <AppText style={{ color: colors?.textMuted || '#888', fontSize: 13 }}>Not enough workout logs to render chart.</AppText>
+      </View>
+    );
+  }
+
+  const values = data.map(d => Number(d[dataKey]) || 0);
+  const maxVal = Math.max(...values) * 1.1 || 10;
+  const minVal = Math.max(0, Math.min(...values) * 0.9);
+  const range = (maxVal - minVal) || 1;
+
+  const chartHeight = height - 40;
+  const spacing = data.length > 1 ? width / (data.length - 1) : width;
+
+  const getPoint = (val, i) => {
+    const x = i * spacing;
+    const y = chartHeight - ((val - minVal) / range) * (chartHeight - 30) - 15;
+    return { x, y };
+  };
+
+  const pts = data.map((d, i) => getPoint(Number(d[dataKey]) || 0, i));
+
+  let pathD = '';
+  let fillD = '';
+  if (pts.length > 0) {
+    pathD = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 1; i < pts.length; i++) {
+      pathD += ` L ${pts[i].x} ${pts[i].y}`;
+    }
+    fillD = pathD + ` L ${pts[pts.length - 1].x} ${chartHeight} L ${pts[0].x} ${chartHeight} Z`;
+  }
+
+  return (
+    <View style={{ height, width: '100%', marginVertical: 10, alignItems: 'center' }}>
+      <Svg width={width} height={height}>
+        <Defs>
+          <SvgGradient id={`webGrad-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0%" stopColor={color} stopOpacity="0.35" />
+            <Stop offset="100%" stopColor={color} stopOpacity="0.0" />
+          </SvgGradient>
+        </Defs>
+
+        {/* Baseline grid */}
+        <SvgLine
+          x1="0"
+          y1={chartHeight - 15}
+          x2={width}
+          y2={chartHeight - 15}
+          stroke={darkMode ? '#222' : '#E5E7EB'}
+          strokeWidth="1"
+        />
+        <SvgLine
+          x1="0"
+          y1="15"
+          x2={width}
+          y2="15"
+          stroke={darkMode ? '#222' : '#E5E7EB'}
+          strokeWidth="1"
+          strokeDasharray="4 4"
+        />
+
+        {/* Gradient fill */}
+        {data.length > 1 && (
+          <SvgPath d={fillD} fill={`url(#webGrad-${dataKey})`} />
+        )}
+
+        {/* Stroke line */}
+        <SvgPath
+          d={pathD}
+          fill="none"
+          stroke={color}
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        {/* Circular markers */}
+        {pts.map((p, i) => (
+          <SvgCircle
+            key={`web-pt-${i}`}
+            cx={p.x}
+            cy={p.y}
+            r="4.5"
+            fill={colors?.card || '#111'}
+            stroke={color}
+            strokeWidth="2.5"
+          />
+        ))}
+      </Svg>
+
+      {/* Floating Labels & Dates */}
+      <View style={StyleSheet.absoluteFill} pointerEvents="none">
+        {data.map((d, i) => {
+          if (!showLabels || (i !== 0 && i !== data.length - 1 && data.length > 5)) return null;
+          const p = pts[i];
+          const valLabel = dataKey === 'totalVolume'
+            ? (d[dataKey] >= 1000 ? `${(d[dataKey] / 1000).toFixed(1)}k` : `${Math.round(d[dataKey])}`)
+            : `${d[dataKey]}kg`;
+
+          return (
+            <View key={`web-label-${i}`} style={{ position: 'absolute', left: p.x - 30, top: p.y - 25, width: 60, alignItems: 'center' }}>
+              <AppText style={{ color: colors?.text || '#FFF', fontSize: 10, fontWeight: 'bold', textAlign: 'center' }}>
+                {valLabel}
+              </AppText>
+              <AppText style={{ color: colors?.textMuted || '#888', fontSize: 9, textAlign: 'center', marginTop: chartHeight - p.y + 10 }}>
+                {d.date}
+              </AppText>
+            </View>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
 
 export const SkiaLineChart = ({
   data = [],
@@ -43,11 +166,15 @@ export const SkiaLineChart = ({
 
   if (IS_WEB) {
     return (
-      <View style={[styles.emptyChart, { height, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 12 }]}>
-        <AppText style={{ color: colors.textMuted, fontSize: 12, textAlign: 'center' }}>
-          Interactive Charts require Native App (iOS/Android)
-        </AppText>
-      </View>
+      <WebSvgLineChart
+        data={data}
+        dataKey={dataKey}
+        color={color}
+        height={height}
+        showLabels={showLabels}
+        colors={colors}
+        darkMode={darkMode}
+      />
     );
   }
 

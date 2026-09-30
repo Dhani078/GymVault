@@ -104,8 +104,9 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
                     setRows.push({
                       session_id: sessionData.id,
                       exercise_id: null,
-                      weight_kg: s.kg,
-                      reps: s.reps,
+                      exercise_name: ex.name || null,
+                      weight_kg: Number(s.kg) || 0,
+                      reps: Number(s.reps) || 0,
                       set_index: setIdx + 1,
                       is_checked: true
                     });
@@ -116,9 +117,11 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
           }
 
           if (setRows.length > 0) {
-            const { error: setsErr } = await safeBatchInsert('workout_sets', setRows);
+            let { error: setsErr } = await safeBatchInsert('workout_sets', setRows);
             if (setsErr) {
-
+              // Retry without exercise_name in case remote table lacks the column
+              const minimalSets = setRows.map(({ exercise_name, ...rest }) => rest);
+              await safeBatchInsert('workout_sets', minimalSets);
             }
           }
 

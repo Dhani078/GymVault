@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, TouchableOpacity, Modal, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, Animated, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Modal, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, Animated, ScrollView, DeviceEventEmitter } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { supabase } from '../supabaseClient';
 import { FlashList } from '@shopify/flash-list';
 import { MessageCircle, X, Send, User } from 'lucide-react-native';
 import { AppText, styles, theme } from '../theme';
@@ -59,7 +61,6 @@ export default function AIChatBubble() {
   }, [isLoading]);
 
   useEffect(() => {
-    const { DeviceEventEmitter } = require('react-native');
     const sub = DeviceEventEmitter.addListener('open_ai_coach_chat', (data) => {
       setModalVisible(true);
       if (data && data.message) {
@@ -75,10 +76,6 @@ export default function AIChatBubble() {
     if (!log || !log.type) return null;
 
     try {
-      const { supabase } = require('../supabaseClient');
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      const { DeviceEventEmitter } = require('react-native');
-
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
 
@@ -171,48 +168,62 @@ export default function AIChatBubble() {
 
         if (!userId) return null;
 
+        // Ensure split_name contains the exercise names so WorkoutDetailModal and History display all exercises properly
+        const exNamesList = exercises.map(e => e.name).filter(Boolean);
+        const exNamesStr = exNamesList.join(', ');
+        const finalSplitName = exNamesStr ? (splitName && splitName !== 'Latihan AI Coach' ? `${splitName} (${exNamesStr})` : exNamesStr) : splitName;
+
         const { data: sessionData, error: sessionErr } = await supabase.from('workout_sessions').insert({
           user_id: userId,
           started_at: new Date().toISOString(),
           is_completed: true,
-          split_name: splitName
+          split_name: finalSplitName
         }).select('id').single();
 
         if (sessionErr || !sessionData) return null;
         const sessionId = sessionData.id;
 
         for (const ex of exercises) {
-          let { data: exData } = await supabase
-            .from('exercises')
-            .select('id')
-            .eq('name', ex.name)
-            .maybeSingle();
+          let exerciseId = null;
+          try {
+            let { data: exData } = await supabase
+              .from('exercises')
+              .select('id')
+              .eq('name', ex.name)
+              .maybeSingle();
 
-          let exerciseId = exData?.id;
+            exerciseId = exData?.id;
 
-          if (!exerciseId) {
-            const { data: newEx, error: newExErr } = await supabase.from('exercises').insert({
-              name: ex.name,
-              muscle_group: ex.muscle_group || 'Custom',
-              equipment_type: 'Other'
-            }).select('id').single();
+            if (!exerciseId) {
+              const { data: newEx, error: newExErr } = await supabase.from('exercises').insert({
+                name: ex.name,
+                muscle_group: ex.muscle_group || 'Custom',
+                equipment_type: 'Other'
+              }).select('id').single();
 
-            if (!newExErr && newEx) {
-              exerciseId = newEx.id;
+              if (!newExErr && newEx) {
+                exerciseId = newEx.id;
+              }
             }
-          }
+          } catch (exErr) {}
 
-          if (exerciseId && ex.sets && ex.sets.length > 0) {
+          if (ex.sets && ex.sets.length > 0) {
             const setRows = ex.sets.map((s, idx) => ({
               session_id: sessionId,
-              exercise_id: exerciseId,
+              exercise_id: exerciseId || null,
+              exercise_name: ex.name || null,
               set_index: idx + 1,
               weight_kg: Number(s.weight) || 0,
               reps: Number(s.reps) || 0,
               is_checked: true
             }));
 
-            await supabase.from('workout_sets').insert(setRows);
+            let { error: insertErr } = await supabase.from('workout_sets').insert(setRows);
+            if (insertErr) {
+              // Resilient retry without exercise_name in case table schema lacks exercise_name column
+              const fallbackRows = setRows.map(({ exercise_name, ...rest }) => rest);
+              await supabase.from('workout_sets').insert(fallbackRows);
+            }
           }
         }
 
@@ -229,10 +240,6 @@ export default function AIChatBubble() {
     if (!log) return;
 
     try {
-      const { supabase } = require('../supabaseClient');
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      const { DeviceEventEmitter } = require('react-native');
-
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
 
@@ -315,9 +322,6 @@ export default function AIChatBubble() {
   const processOfflineMessage = async (text) => {
     const cleanText = text.toLowerCase();
     const todayStr = getLocalDateString();
-    const { DeviceEventEmitter } = require('react-native');
-    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-    const { supabase } = require('../supabaseClient');
     
     let userId = null;
     try {
@@ -710,11 +714,9 @@ export default function AIChatBubble() {
             <TouchableOpacity
               onPress={async () => {
                 if (item.log.id) {
-                  const { supabase } = require('../supabaseClient');
                   await supabase.from('workout_sessions').delete().eq('id', item.log.id);
                 }
                 
-                const { DeviceEventEmitter } = require('react-native');
                 DeviceEventEmitter.emit('start_live_workout', {
                   split_name: item.log.split,
                   exercises: item.log.exercises
