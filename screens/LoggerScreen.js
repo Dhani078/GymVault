@@ -1238,6 +1238,8 @@ export default function LoggerScreen({
         visible={showShareModal}
         workoutData={workoutData}
         totalCompleted={totalCompleted}
+        workoutStartTime={workoutStartTime}
+        session={session}
         onClose={() => setShowShareModal(false)}
         onFinish={onFinish}
         showInterstitialAd={showInterstitialAd}
