@@ -38,9 +38,12 @@ export default function DailyCheckInCard({
         {/* 7-Day Journey Dots */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, paddingHorizontal: 4 }}>
           {[1, 2, 3, 4, 5, 6, 7].map((day) => {
-            const activeDays = checkInStreak % 7 === 0 && checkInStreak > 0 ? 7 : checkInStreak % 7;
-            const isCompleted = day <= activeDays;
-            const isTodayUnclaimed = day === activeDays + 1 && !checkedInToday;
+            const cycleProgress = checkInStreak % 7;
+            const completedInCycle = checkedInToday 
+              ? (cycleProgress === 0 && checkInStreak > 0 ? 7 : cycleProgress)
+              : cycleProgress;
+            const isCompleted = day <= completedInCycle;
+            const isTodayUnclaimed = !checkedInToday && day === completedInCycle + 1;
             const isGiftDay = day === 3 || day === 7;
             const giftLabel = day === 3 ? '+15d' : '+30d';
 
@@ -144,17 +147,30 @@ export default function DailyCheckInCard({
               Daily Check-In
             </AppText>
             
-            <AppText style={{ color: '#A1A1AA', fontSize: 13, textAlign: 'center', lineHeight: 20, marginBottom: 24, paddingHorizontal: 10 }}>
-              Klaim <AppText weight="bold" style={{ color: '#D4F53C' }}>Hari ke-{checkInStreak + 1}</AppText> untuk membuka <AppText weight="bold" style={{ color: '#FFF' }}>15x Scan AI</AppText>
-            </AppText>
+            {(() => {
+              const cycleProgress = checkInStreak % 7;
+              const completedInCycle = checkedInToday 
+                ? (cycleProgress === 0 && checkInStreak > 0 ? 7 : cycleProgress)
+                : cycleProgress;
+              const nextDayInCycle = ((completedInCycle) % 7) + 1;
+              return (
+                <AppText style={{ color: '#A1A1AA', fontSize: 13, textAlign: 'center', lineHeight: 20, marginBottom: 24, paddingHorizontal: 10 }}>
+                  Klaim <AppText weight="bold" style={{ color: '#D4F53C' }}>Hari ke-{nextDayInCycle} (Total {checkInStreak + (checkedInToday ? 0 : 1)} Hari)</AppText> untuk membuka <AppText weight="bold" style={{ color: '#FFF' }}>15x Scan AI</AppText>
+                </AppText>
+              );
+            })()}
 
             {/* Visual 7-Day Journey Preview */}
             <View style={{ width: '100%', backgroundColor: '#111115', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: '#222', marginBottom: 24 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 {[1, 2, 3, 4, 5, 6, 7].map((day) => {
-                  const targetDay = checkInStreak + 1;
-                  const isPast = day < targetDay;
-                  const isCurrent = day === targetDay;
+                  const cycleProgress = checkInStreak % 7;
+                  const completedInCycle = checkedInToday 
+                    ? (cycleProgress === 0 && checkInStreak > 0 ? 7 : cycleProgress)
+                    : cycleProgress;
+                  const targetDay = completedInCycle + 1;
+                  const isPast = day <= completedInCycle;
+                  const isCurrent = !checkedInToday && day === targetDay;
                   const isGift = day === 3 || day === 7;
 
                   return (
