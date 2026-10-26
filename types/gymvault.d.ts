@@ -143,3 +143,33 @@ export interface PlateauRotationResult {
   strategyRationale: string;
 }
 
+export interface DokuCheckoutRequest {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  plan: 'monthly' | 'yearly';
+  amount: number;
+}
+
+export interface DokuCheckoutResponse {
+  success: boolean;
+  invoiceNumber: string;
+  paymentUrl: string;
+  expiredDate?: string;
+  error?: string;
+}
+
+export interface DokuWebhookNotification {
+  service: { id: string };
+  transaction: {
+    status: 'SUCCESS' | 'FAILED';
+    date: string;
+    original_request_id?: string;
+  };
+  order: {
+    invoice_number: string;
+    amount: number;
+  };
+}
+
+
