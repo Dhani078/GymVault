@@ -179,7 +179,7 @@ export default function SettingsModal({
                 onPress={() => {
                   if (profile?.is_premium) {
                     Alert.alert(
-                      "GymVault PRO Aktif 👑",
+                      "GymVault PRO Aktif",
                       `Status akun Anda adalah PRO LIFTER. Anda menikmati akses tanpa batas ke seluruh fitur cerdas AI, scanner makanan, dan analitik GymVault.${profile?.premium_until ? `\n\nBerlaku hingga: ${new Date(profile.premium_until).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}`
                     );
                   } else {
@@ -200,7 +200,7 @@ export default function SettingsModal({
                 icon={Activity}
                 title="Support Developer (DANA)"
                 onPress={() => {
-                  Alert.alert('Support GymVault ☕', 'Terima kasih telah menggunakan GymVault! Fitur ini bisa Anda gunakan gratis. Jika Anda ingin mendukung biaya server, silakan scan QRIS pada menu AI Routine.');
+                  Alert.alert('Support GymVault', 'Terima kasih telah menggunakan GymVault! Fitur ini bisa Anda gunakan gratis. Jika Anda ingin mendukung biaya server, silakan scan QRIS pada menu AI Routine.');
                 }}
               />
             </View>

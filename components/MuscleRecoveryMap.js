@@ -638,9 +638,9 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
             </AppText>
             <View style={{ flexDirection: 'row', gap: 8 }}>
               {[
-                { label: 'Sore 🔴', value: 20 },
-                { label: 'Pemulihan 🟡', value: 60 },
-                { label: 'Segar 🟢', value: 100 }
+                { label: 'Sore', value: 20 },
+                { label: 'Pemulihan', value: 60 },
+                { label: 'Segar', value: 100 }
               ].map((preset) => {
                 const isSelected = selectedMuscle.percentage === preset.value || 
                   (preset.value === 20 && selectedMuscle.percentage < 40) ||

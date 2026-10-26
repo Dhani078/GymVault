@@ -16,6 +16,8 @@ import {
 } from "lucide-react-native";
 import * as ImagePicker from 'expo-image-picker';
 import * as Notifications from 'expo-notifications';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { AppText, theme } from "../theme";
 import { useProfileData } from '../hooks/useProfileData';
 import { supabase, safeSelect, safeUpsert } from '../supabaseClient';
@@ -221,9 +223,9 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
           premium_plan: 'checkin_reward_15d',
           premium_until: newExpiry.toISOString(),
         });
-        rewardSubtitle = `🎉 Hadiah Day 3! 15 Hari GymVault PRO Aktif! 👑`;
+        rewardSubtitle = `Hadiah Day 3! 15 Hari GymVault PRO Aktif!`;
         Alert.alert(
-          "Selamat! 🎁 Hadiah Check-In Day 3",
+          "Selamat! Hadiah Check-In Day 3",
           "Hebat! Anda telah konsisten berlatih selama 3 hari. Bonus 15 Hari GymVault PRO Otomatis Aktif!"
         );
       } else if (cycleDay === 7) {
@@ -240,16 +242,16 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
           premium_plan: 'checkin_reward_30d',
           premium_until: newExpiry.toISOString(),
         });
-        rewardSubtitle = `👑 Hadiah Day 7! 30 Hari GymVault PRO Aktif! 🏆`;
+        rewardSubtitle = `Hadiah Day 7! 30 Hari GymVault PRO Aktif!`;
         Alert.alert(
-          "Luar Biasa! 🏆 Hadiah Check-In Day 7",
+          "Luar Biasa! Hadiah Check-In Day 7",
           "Selamat! Anda menyelesaikan 7 Hari Check-In. Bonus 30 Hari GymVault PRO telah ditambahkan ke akun Anda!"
         );
       }
       
       showNotification({
         type: 'fire',
-        title: 'Check-In Sukses! 🔥',
+        title: 'Check-In Sukses!',
         subtitle: rewardSubtitle,
         duration: 5000
       });
@@ -420,8 +422,6 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         const a = document.createElement('a'); a.href = url; a.download = 'gymvault_export.json'; a.click();
         URL.revokeObjectURL(url);
       } else {
-        const FileSystem = require('expo-file-system');
-        const Sharing = require('expo-sharing');
         const fileUri = FileSystem.documentDirectory + 'gymvault_export.json';
         await FileSystem.writeAsStringAsync(fileUri, json);
         await Sharing.shareAsync(fileUri);
@@ -445,11 +445,11 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
     return (profile.body_weight / (hM * hM)).toFixed(1);
   };
 
-  const cardColor = darkMode ? '#111111' : '#FFFFFF';
-  const borderColor = darkMode ? '#222222' : '#E5E7EB';
-  const textColor = darkMode ? '#FFFFFF' : '#000000';
-  const textMuted = darkMode ? '#888888' : '#6B7280';
-  const bgColor = darkMode ? '#000000' : '#F9FAFB';
+  const cardColor = darkMode ? colors.card : '#FFFFFF';
+  const borderColor = darkMode ? colors.border : '#E5E7EB';
+  const textColor = darkMode ? colors.text : '#000000';
+  const textMuted = darkMode ? colors.textMuted : '#6B7280';
+  const bgColor = darkMode ? colors.background : '#F9FAFB';
 
   return (
     <View style={{ flex: 1, backgroundColor: bgColor }}>

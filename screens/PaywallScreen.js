@@ -205,7 +205,7 @@ export default function PaywallScreen({ onSkip, session }) {
         setShowProofModal(false);
         setShowPayment(false);
         Alert.alert(
-          'Bukti Terkirim! 🚀',
+          'Bukti Terkirim',
           'Bukti transfer Anda telah dikirim langsung ke Admin. Akun Pro Anda akan segera aktif otomatis begitu Admin memverifikasi (1–3 menit).'
         );
       } else {
@@ -229,7 +229,7 @@ export default function PaywallScreen({ onSkip, session }) {
           <Crown color="#D4F53C" size={36} />
         </View>
         <AppText weight="bold" style={{ fontSize: 24, color: '#D4F53C', textAlign: 'center', marginBottom: 8 }}>
-          Status Premium Aktif! 👑
+          Status Premium Aktif
         </AppText>
         <AppText style={{ color: theme.colors.textMuted, textAlign: 'center', fontSize: 14, lineHeight: 20, marginBottom: 32 }}>
           Anda memiliki akses tanpa batas ke seluruh fitur cerdas GymVault.

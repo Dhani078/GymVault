@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, TextInput, TouchableOpacity, Image, ActivityIndicator, ScrollView, Modal } from "react-native";
-import { Search, X, Dumbbell, Filter, ChevronRight, Database, Sparkles, CheckCircle2 } from "lucide-react-native";
+import { Search, X, Dumbbell, Filter, ChevronRight, Sparkles, CheckCircle2, Home } from "lucide-react-native";
 import { AppText, theme, styles } from '../theme';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useAppMode, EXERCISE_SWAP_MAP } from '../contexts/AppModeContext';
@@ -77,6 +77,9 @@ const ExerciseCard = React.memo(({ item, index, scrollY, onPress }) => (
       marginBottom: 10,
   }}>
   <TouchableOpacity
+    activeOpacity={0.8}
+    accessibilityRole="button"
+    accessibilityLabel={`Detail gerakan ${item.name}`}
     style={{
       flexDirection: 'row',
       alignItems: 'center',
@@ -138,12 +141,16 @@ const ExerciseCard = React.memo(({ item, index, scrollY, onPress }) => (
         </View>
         {item.isSwapped && (
           <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
             backgroundColor: 'rgba(0, 240, 255, 0.08)',
             paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6,
             borderWidth: 0.5, borderColor: 'rgba(0, 240, 255, 0.25)'
           }}>
+            <Home color="#00F0FF" size={10} />
             <AppText style={{ fontSize: 10, color: '#00F0FF', fontWeight: 'bold' }}>
-              🏡 Home Eq
+              Home Eq
             </AppText>
           </View>
         )}
@@ -520,7 +527,7 @@ export default function LibraryScreen({ onStartExercise }) {
                 Mengambil 800+ Katalog Gerakan HD
               </AppText>
               <AppText style={{ fontSize: 10, color: theme.colors.primary, marginTop: 1 }}>
-                ⚡ {exercises.length} gerakan siap di perpustakaan...
+                {exercises.length} gerakan siap di perpustakaan...
               </AppText>
             </View>
           </View>
@@ -669,6 +676,9 @@ export default function LibraryScreen({ onStartExercise }) {
 
             <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
               <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Reset semua filter pencarian"
+                activeOpacity={0.8}
                 style={{
                   flex: 1, height: 48, borderRadius: 14, backgroundColor: theme.colors.surface,
                   justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.border
@@ -682,6 +692,9 @@ export default function LibraryScreen({ onStartExercise }) {
                 <AppText weight="bold" style={{ color: theme.colors.textMuted, fontSize: 14 }}>Reset</AppText>
               </TouchableOpacity>
               <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Terapkan filter latihan"
+                activeOpacity={0.8}
                 style={{
                   flex: 1.5, height: 48, borderRadius: 14, backgroundColor: theme.colors.primary,
                   justifyContent: 'center', alignItems: 'center'
@@ -736,6 +749,9 @@ export default function LibraryScreen({ onStartExercise }) {
                 </AppText>
 
                 <TouchableOpacity
+                  accessibilityRole="button"
+                  accessibilityLabel={`Tambah gerakan ${selectedEx.name} ke logger latihan`}
+                  activeOpacity={0.8}
                   style={{
                     backgroundColor: theme.colors.primary,
                     height: 52,

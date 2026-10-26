@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, TouchableOpacity, TextInput, DeviceEventEmitter } from "react-native";
-import { Droplet, Check } from 'lucide-react-native';
+import { Droplet, Check, Edit3 } from 'lucide-react-native';
 import { AppText, theme } from '../theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getLocalDateString } from '../utils/dateHelpers';
@@ -117,7 +117,7 @@ export default function WaterTrackerWidget({ userProfile, refreshTrigger }) {
                 <AppText weight="bold" style={{ color: '#FFF', fontSize: 16 }}>+250</AppText>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setShowWaterInput(true)} style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: theme.colors.inputBg, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.border }}>
-                <AppText style={{ color: theme.colors.text, fontSize: 11 }}>✎</AppText>
+                <Edit3 color={theme.colors.textMuted} size={14} />
               </TouchableOpacity>
             </>
           )}

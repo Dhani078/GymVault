@@ -83,11 +83,11 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
         setReactionGameState('result');
         const avg = Math.round(newTrials.reduce((a, b) => a + b, 0) / 3);
         let classification = '';
-        if (avg < 250) classification = 'Sangat Prima 🔥 (Level 5)';
-        else if (avg < 300) classification = 'Baik 👍 (Level 4)';
-        else if (avg < 350) classification = 'Normal ☕ (Level 3)';
-        else if (avg < 400) classification = 'Lelah Ringan ⚠️ (Level 2)';
-        else classification = 'Lelah Parah 🚨 (Level 1)';
+        if (avg < 250) classification = 'Sangat Prima (Level 5)';
+        else if (avg < 300) classification = 'Baik (Level 4)';
+        else if (avg < 350) classification = 'Normal (Level 3)';
+        else if (avg < 400) classification = 'Lelah Ringan (Level 2)';
+        else classification = 'Lelah Berat (Level 1)';
         
         setReactionMsg(`Rata-rata: ${avg}ms · ${classification}`);
       }
@@ -113,7 +113,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
     <View style={{ marginBottom: 24 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 16 }}>
-          Uji Saraf Neuro-Tap 🎮
+          Uji Saraf Neuro-Tap
         </AppText>
         <TouchableOpacity 
           onPress={() => typeof onCancel === 'function' && onCancel()}

@@ -54,9 +54,9 @@ export default function RedeemCodeModal({
         setRedeemCode('');
         onClose();
         if (onSuccess) onSuccess();
-        showToast('success', data.message || 'Selamat! Akun Premium Anda aktif 👑');
+        showToast('success', data.message || 'Selamat! Akun Premium Anda aktif');
       } else {
-        showToast('error', data?.message || 'Kode promo tidak valid atau sudah dipakai ❌');
+        showToast('error', data?.message || 'Kode promo tidak valid atau sudah dipakai');
       }
     } catch (_e) {
       showToast('error', 'Terjadi kesalahan jaringan.');

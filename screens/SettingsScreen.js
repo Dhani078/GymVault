@@ -50,7 +50,7 @@ export default function SettingsScreen({ onBack: _onBack }) {
     try {
       setCacheCleared(true);
       setTimeout(() => setCacheCleared(false), 3000);
-      Alert.alert("Cache Cleared! ⚡", "Local temporary app cache and image caches have been cleared.");
+      Alert.alert("Cache Cleared", "Local temporary app cache and image caches have been cleared.");
     } catch(_e){}
   };
 

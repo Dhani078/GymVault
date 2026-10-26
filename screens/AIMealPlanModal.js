@@ -201,7 +201,7 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Apple color={theme.colors.primary} size={24} />
               <AppText weight="bold" style={{ fontSize: 20 }}>
-                {activeTab === 'fridge_chef' ? 'Smart Fridge Chef 🍳' : 'Rencana Menu AI'}
+                {activeTab === 'fridge_chef' ? 'Smart Fridge Chef' : 'Rencana Menu AI'}
               </AppText>
             </View>
             <TouchableOpacity onPress={onClose} style={localStyles.closeBtn}>
@@ -225,7 +225,7 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
               }}
             >
               <AppText weight="bold" style={{ color: activeTab === 'meal_plan' ? theme.colors.background : theme.colors.text, fontSize: 12 }}>
-                📋 Rencana Menu AI
+                Rencana Menu AI
               </AppText>
             </TouchableOpacity>
 
@@ -243,7 +243,7 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
               }}
             >
               <AppText weight="bold" style={{ color: activeTab === 'fridge_chef' ? '#000' : theme.colors.text, fontSize: 12 }}>
-                🍳 Smart Fridge Chef
+                Smart Fridge Chef
               </AppText>
             </TouchableOpacity>
           </View>
@@ -385,9 +385,9 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
                   <AppText weight="bold" style={localStyles.inputLabel}>Target Fitness</AppText>
                   <View style={localStyles.gridOptions}>
                     {[
-                      { key: 'fat_loss', label: 'Bakar Lemak 🔥' },
-                      { key: 'muscle_gain', label: 'Besarkan Otot 💪' },
-                      { key: 'healthy', label: 'Hidup Sehat 🥗' },
+                      { key: 'fat_loss', label: 'Bakar Lemak' },
+                      { key: 'muscle_gain', label: 'Besarkan Otot' },
+                      { key: 'healthy', label: 'Hidup Sehat' },
                     ].map(opt => (
                       <TouchableOpacity
                         key={opt.key}
@@ -522,7 +522,7 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
 
                     {item.brief_tip && (
                       <View style={localStyles.tipBox}>
-                        <AppText style={localStyles.tipText}>💡 {item.brief_tip}</AppText>
+                        <AppText style={localStyles.tipText}>{item.brief_tip}</AppText>
                       </View>
                     )}
                   </View>

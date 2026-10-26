@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Modal, ActivityIndicator, Animated, Image, Linking, TextInput, Alert, DeviceEventEmitter } from "react-native";
-import { X, CheckCircle, Award, MessageCircle } from 'lucide-react-native';
+import { X, CheckCircle, Award, MessageCircle, Edit3 } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, styles, theme } from '../theme';
@@ -376,9 +376,10 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                   <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 18 }}>{nutritionResult.food}</AppText>
                   <TouchableOpacity 
                     onPress={() => setShowOverrideSearch(!showOverrideSearch)}
-                    style={{ backgroundColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}
+                    style={{ backgroundColor: 'rgba(255,255,255,0.08)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, flexDirection: 'row', alignItems: 'center', gap: 4 }}
                   >
-                    <AppText style={{ color: '#D4F53C', fontSize: 11 }}>✏️ Edit</AppText>
+                    <Edit3 color="#D4F53C" size={11} />
+                    <AppText style={{ color: '#D4F53C', fontSize: 11 }}>Edit</AppText>
                   </TouchableOpacity>
                 </View>
               </View>

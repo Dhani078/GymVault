@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { View, SectionList, ActivityIndicator, RefreshControl, TouchableOpacity, Alert, Modal, Share, Platform, DeviceEventEmitter } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Dumbbell, Trash2, Calendar, AlertCircle, ChevronRight, ChevronLeft } from "lucide-react-native";
+import { Dumbbell, Trash2, Calendar, AlertCircle, ChevronRight, ChevronLeft, Utensils, Droplet } from "lucide-react-native";
 import WorkoutDetailModal from '../components/history/WorkoutDetailModal';
 import NutritionDetailModal from '../components/history/NutritionDetailModal';
 import WaterDetailModal from '../components/history/WaterDetailModal';
@@ -573,7 +573,7 @@ Tracked with GymVault`;
                 <Trash2 color="#EF4444" size={14} />
               </TouchableOpacity>
               <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(251, 191, 36, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
-                <AppText style={{ fontSize: 18 }}>🥗</AppText>
+                <Utensils color="#FBBF24" size={18} />
               </View>
             </View>
           </View>
@@ -607,7 +607,7 @@ Tracked with GymVault`;
               <Trash2 color="#EF4444" size={14} />
             </TouchableOpacity>
             <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(56, 189, 248, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
-              <AppText style={{ fontSize: 18 }}>💧</AppText>
+              <Droplet color="#38BDF8" size={18} />
             </View>
           </View>
         </View>
@@ -639,27 +639,35 @@ Tracked with GymVault`;
       {/* Tabs Switcher */}
       <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 24, marginBottom: 16 }}>
         {[
-          { key: 'workouts', label: '🏋️ Latihan' },
-          { key: 'nutrition', label: '🥗 Makanan' },
-          { key: 'water', label: '💧 Air Minum' }
-        ].map((tab) => (
-          <TouchableOpacity
-            key={tab.key}
-            onPress={() => setActiveTab(tab.key)}
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 20,
-              backgroundColor: activeTab === tab.key ? theme.colors.primary : theme.colors.card,
-              borderWidth: 1,
-              borderColor: activeTab === tab.key ? theme.colors.primary : theme.colors.border,
-            }}
-          >
-            <AppText weight="bold" style={{ color: activeTab === tab.key ? theme.colors.background : theme.colors.text, fontSize: 12 }}>
-              {tab.label}
-            </AppText>
-          </TouchableOpacity>
-        ))}
+          { key: 'workouts', label: 'Latihan', icon: Dumbbell },
+          { key: 'nutrition', label: 'Makanan', icon: Utensils },
+          { key: 'water', label: 'Air Minum', icon: Droplet }
+        ].map((tab) => {
+          const IconComp = tab.icon;
+          const isActive = activeTab === tab.key;
+          return (
+            <TouchableOpacity
+              key={tab.key}
+              onPress={() => setActiveTab(tab.key)}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                paddingHorizontal: 14,
+                paddingVertical: 8,
+                borderRadius: 20,
+                backgroundColor: isActive ? theme.colors.primary : theme.colors.card,
+                borderWidth: 1,
+                borderColor: isActive ? theme.colors.primary : theme.colors.border,
+              }}
+            >
+              <IconComp color={isActive ? theme.colors.background : theme.colors.textMuted} size={14} />
+              <AppText weight="bold" style={{ color: isActive ? theme.colors.background : theme.colors.text, fontSize: 12 }}>
+                {tab.label}
+              </AppText>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       {renderChart()}

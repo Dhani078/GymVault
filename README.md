@@ -1,6 +1,6 @@
 # ⚡ GymVault — Elite Workout & Fitness Tracking Platform
 
-> **GymVault** is a certified 10/10 production-grade, AMOLED-styled cross-platform fitness application built with React Native (Expo SDK 54), Supabase, and Google Gemini 3.7 AI. Featuring an **Adaptive Engine** that dynamically alternates between **Gym Mode** (machines & barbells) and **Home Mode** (calisthenics, bands, & dumbbells), hands-free voice-activated workout logging, bilingual audio coaching, computer-vision nutrition scanning, automated verification test suites (`npm test` - 61/61 passing), and unified single-URL desktop/mobile routing with live interactive simulators.
+> **GymVault** is a certified 10/10 production-grade, AMOLED-styled cross-platform fitness application built with React Native (Expo SDK 54), Supabase, and Google Gemini 3.7 AI. Featuring an **Adaptive Engine** that dynamically alternates between **Gym Mode** (machines & barbells) and **Home Mode** (calisthenics, bands, & dumbbells), hands-free voice-activated workout logging, bilingual audio coaching, computer-vision nutrition scanning, automated verification test suites (`npm test` - 65/65 passing), and unified single-URL desktop/mobile routing with live interactive simulators.
 
 ---
 
@@ -19,7 +19,8 @@
 - 📸 **Smart Nutrition Scanner**: Camera-based nutritional label scanner for instant meal macro breakdown and calorie logging.
 - 🗺️ **12-Group SVG Muscle Recovery Map**: Anatomical body heat-map with mathematical recovery decay, multilingual scientific taxonomy, and tailored rehabilitation exercises.
 - 🧮 **Pure Mathematical Engine (`utils/fitnessMath.js`)**: Isolated, zero-side-effect modules for 1RM (Brzycki), Olympic Barbell Plate Loading (IPF/IWF bumper plates), TDEE (Mifflin-St Jeor), Cardio HR Zones (Karvonen), Kinetic Chain Stabilizer Protection, and 4-Week Plateau Breakers.
-- 🧪 **Automated Test Runner (`npm test`)**: 61 automated assertion test scenarios across 14 test suites verifying calculation accuracy and data taxonomy with a 100% pass rate.
+- 💳 **Official DOKU QRIS Payment Gateway**: Direct instant QRIS payment generation (`services/dokuService.js`, `api/doku-checkout.js`), fail-closed HMAC-SHA256 timing-safe webhook listener (`api/doku-webhook.js`), atomic database RPC settlement, and automated 3-second status polling.
+- 🧪 **Automated Test Runner (`npm test`)**: 65 automated assertion test scenarios across 15 test suites verifying calculation accuracy, data taxonomy, and payment cryptography with a 100% pass rate.
 - 📴 **Offline Sync Engine**: Full offline workout tracking with auto-queueing and automatic Supabase database synchronization upon network reconnect.
 - 🤖 **Super-Admin Telegram Bot Command Suite (`api/telegram-webhook.js`)**: Real-time SaaS control center from Telegram chat supporting `/stats`, `/growth`, `/recent`, `/check <email>`, `/grant <email> <days>`, `/revoke <email>`, `/broadcast <msg>`, and `/clearnotif` + instant inline `[ ✅ ACC ]` / `[ ❌ TOLAK ]` QRIS approval.
 - 🖥️ **Adaptive Web & Desktop Engine (with Desktop View Mode Switcher)**:
@@ -73,7 +74,7 @@ npm install
 # Run Web Preview in Browser
 npm run web
 
-# Run Automated Test Suite (61 assertions)
+# Run Automated Test Suite (65 assertions)
 npm test
 
 # Run Server for Mobile / Expo Go

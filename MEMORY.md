@@ -7,7 +7,7 @@
 ## 1. Project Overview & Identity
 - **Product Name**: GymVault
 - **Description**: Certified 10/10 production-grade cross-platform fitness & workout tracking application featuring an adaptive gym-versus-home engine, real-time logging, AI coaching, computer vision nutrition analysis, and unified desktop/mobile routing.
-- **Visual Design Standard**: Strict AMOLED Pitch Black (`#000000`), Dark Surfaces (`#0E0E12`, `#16161A`), and Electric Green (`#CCFF00`) accents. Glassmorphism, micro-animations, and high-contrast typography.
+- **Visual Design Standard**: Strict AMOLED Pitch Black (`#000000`), Dark Surfaces (`#0E0E12`, `#16161A`), and Electric Lime (`#D4F53C`) accents. Glassmorphism, micro-animations, and high-contrast typography.
 - **Repository Path**: `E:\Hermesproject\GYM`
 - **Live Production URL**: `https://gymvault-app.vercel.app`
 
@@ -18,11 +18,12 @@
 | Layer | Technology | Key Details & Rules |
 | :--- | :--- | :--- |
 | **Mobile Runtime** | React Native (Expo SDK ~54.0.36) | Read versioned docs at `https://docs.expo.dev/versions/v54.0.0/`. Do NOT use deprecated APIs. |
-| **Styling & Theme** | StyleSheet + Custom Tokens | AMOLED theme in `theme.js` & `contexts/ThemeContext.js`. Primary `#CCFF00`, Background `#000000`. |
+| **Styling & Theme** | StyleSheet + Custom Tokens | AMOLED theme in `theme.js` & `contexts/ThemeContext.js`. Primary `#D4F53C`, Background `#000000`. |
 | **Backend & Auth** | Supabase (PostgreSQL 15+) | Project ID `sjrzhiigrcrcpgvnfixo`. Strict RLS on all tables. Safe queries in `supabaseClient.js`. |
 | **AI Integration** | Google Gemini 3.7 Cascade | 7-tier Waterfall (`gemini-3.7-flash` ➔ `3.6-flash` ➔ `3.5-flash` ➔ `3.1-flash-lite` ➔ `2.5-flash` ➔ `2.5-flash-lite` ➔ `1.5-flash`) in `services/geminiService.js`. |
 | **Mathematical Engine** | Pure Functional Module | `utils/fitnessMath.js` (1RM Brzycki, Olympic Plate Loading, TDEE, HR Zones, CNS Decay, Double Progression, Kinetic Chain Fatigue Warning, Plateau Breaker, Voice Command Parser). |
-| **Test Automation** | Zero-Dep Test Runner | `scripts/test-fitness-engine.js` executed via `npm test` validating **61 assertion scenarios across 14 test suites** (100% pass rate). |
+| **Test Automation** | Zero-Dep Test Runner | `scripts/test-fitness-engine.js` + `scripts/test-doku.js` executed via `npm test` validating **65 assertion scenarios across 15 test suites** (100% pass rate). |
+| **Payment Gateway** | DOKU Official QRIS + Qiospay | Instant QRIS invoice generation, HMAC-SHA256 timing-safe webhook verification, atomic subscription provisioning (`approve_payment_request`), and real-time polling in `services/dokuService.js`. |
 | **Hands-Free Voice** | Web Speech API / TTS | Real mic voice logging in `screens/LoggerScreen.js` + bilingual TTS voice coach (`expo-speech`). |
 | **Smart Fridge Chef** | Gemini Multimodal Meal AI | `screens/AIMealPlanModal.js` Fridge-to-Macro engine generating gram-precise recipes from available ingredients. |
 | **Telegram SaaS Bot** | 2-Way Webhook + Polling | `api/telegram-webhook.js` & `scripts/start-telegram-bot.js` supporting 8 admin commands (`/stats`, `/growth`, `/recent`, `/check`, `/grant`, `/revoke`, `/broadcast`, `/clearnotif`) + instant QRIS approval. |
@@ -147,11 +148,11 @@ To prevent data collision between different logged-in users or guest sessions, a
 1. **Ponytail Minimalist Rule**: Always follow the ladder (YAGNI > Re-use > Stdlib > Native Platform > Existing Dep > Minimal 1-liner). Never write 50 lines of wrapper when standard components suffice.
 2. **Strix Zero-Trust Security**: Never trust client inputs. Always enforce Supabase RLS. Never bypass auth checks or expose secret keys (`service_role`).
 3. **No Hardcoded Credentials**: API keys (Gemini, Supabase, Telegram) must NEVER be hardcoded into client code. Use environment variables.
-4. **AMOLED Design Integrity**: Pitch black `#000000`, surface `#0E0E12`, electric green `#CCFF00`. No generic white backgrounds or unstyled buttons.
+4. **AMOLED Design Integrity**: Pitch black `#000000`, surface `#0E0E12`, electric lime `#D4F53C`. No generic white backgrounds, raw unicode emoji in buttons, or AI kicker pill badges.
 5. **Separation of Concerns**: Keep mathematical calculations in `utils/fitnessMath.js`, business logic inside hooks/services, and UI in components.
 6. **Cross-Platform Safety**: Always verify `Platform.OS === 'web'` when using browser APIs (`window`, `navigator`) or native modules (`AsyncStorage`, `ImagePicker`, `Notifications`).
 7. **Complete Output Enforcement**: Never truncate code with placeholders like `// ... rest of code unchanged`. Always provide exact, complete code blocks.
-8. **Automated Test Integrity**: Run `npm test` before major releases to guarantee zero mathematical regressions across 1RM, TDEE, Plate Loading, Progressive Overload, Kinetic Chain Fatigue, and Voice Parsing (61/61 Assertions).
+8. **Automated Test Integrity**: Run `npm test` before major releases to guarantee zero mathematical regressions across 1RM, TDEE, Plate Loading, Progressive Overload, Kinetic Chain Fatigue, Voice Parsing, and DOKU QRIS HMAC Signature Verification (65/65 Assertions).
 
 ---
 

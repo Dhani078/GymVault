@@ -136,7 +136,7 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
         setOfflineQueueCount(0);
         showNotification({
           type: 'success',
-          title: 'Sinkronisasi Selesai! ⚡',
+          title: 'Sinkronisasi Selesai',
           subtitle: `Berhasil mengunggah ${successfulIds.length} latihan offline.`,
           duration: 5000
         });
@@ -147,7 +147,7 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
         if (successfulIds.length > 0) {
           showNotification({
             type: 'warning',
-            title: 'Sinkronisasi Parsial ⚠️',
+            title: 'Sinkronisasi Parsial',
             subtitle: `${successfulIds.length} terunggah, ${remainingQueue.length} tertunda.`,
             duration: 5000
           });

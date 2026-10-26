@@ -188,9 +188,10 @@ export default function WorkoutDetailModal({
                       if (onClose) onClose();
                       if (onDelete) onDelete(sId);
                     }}
-                    style={{ flex: 1, backgroundColor: 'rgba(239, 68, 68, 0.1)', paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)', alignItems: 'center' }}
+                    style={{ flex: 1, backgroundColor: 'rgba(239, 68, 68, 0.1)', paddingVertical: 10, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6 }}
                   >
-                    <AppText weight="bold" style={{ color: '#EF4444', fontSize: 12 }}>🗑️ Hapus Sesi</AppText>
+                    <Trash2 color="#EF4444" size={13} />
+                    <AppText weight="bold" style={{ color: '#EF4444', fontSize: 12 }}>Hapus Sesi</AppText>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
@@ -198,9 +199,10 @@ export default function WorkoutDetailModal({
                       if (onClose) onClose();
                       if (onRepeat) onRepeat(sess);
                     }}
-                    style={{ flex: 1, backgroundColor: theme.colors.primary, paddingVertical: 10, borderRadius: 10, alignItems: 'center' }}
+                    style={{ flex: 1, backgroundColor: theme.colors.primary, paddingVertical: 10, borderRadius: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6 }}
                   >
-                    <AppText weight="bold" style={{ color: '#000', fontSize: 12 }}>🔄 Ulangi Latihan</AppText>
+                    <RotateCcw color="#000" size={13} />
+                    <AppText weight="bold" style={{ color: '#000', fontSize: 12 }}>Ulangi Latihan</AppText>
                   </TouchableOpacity>
                 </View>
               </View>

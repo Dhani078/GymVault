@@ -1,5 +1,5 @@
 import { View, TouchableOpacity, Modal } from 'react-native';
-import { X } from 'lucide-react-native';
+import { X, Droplet } from 'lucide-react-native';
 import { AppText, theme } from '../../theme';
 
 export default function WaterDetailModal({
@@ -30,8 +30,8 @@ export default function WaterDetailModal({
           </View>
 
           <View style={{ backgroundColor: theme.colors.background, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center', marginBottom: 16 }}>
-            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(56, 189, 248, 0.1)', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
-              <AppText style={{ fontSize: 22 }}>💧</AppText>
+            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(56, 189, 248, 0.12)', justifyContent: 'center', alignItems: 'center', marginBottom: 8, borderWidth: 1, borderColor: 'rgba(56, 189, 248, 0.25)' }}>
+              <Droplet color="#38BDF8" size={22} fill="rgba(56, 189, 248, 0.2)" />
             </View>
             <AppText weight="bold" tabular style={{ fontSize: 26, color: '#38BDF8' }}>
               {water.ml || 0} <AppText style={{ fontSize: 16, color: theme.colors.textMuted }}>ml</AppText>

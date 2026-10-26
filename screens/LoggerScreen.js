@@ -5,6 +5,8 @@ import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
 import * as FileSystem from 'expo-file-system';
+import { Audio } from 'expo-av';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme, styles } from '../theme';
 import { supabase, safeInsert, safeBatchInsert } from '../supabaseClient';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -13,6 +15,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import SmoothScrollView from '../components/SmoothScrollView';
 import DummyAdBanner from '../components/DummyAdBanner';
 import useInterstitialAd from '../components/DummyInterstitialAd';
+import LiveActivityManager from '../services/LiveActivityManager';
 
 import { makeId } from '../utils/makeId';
 import { calculateProgressiveOverload, calculateRecommendedRestTime, getBiomechanicalCue, parseVoiceWorkoutCommand } from '../utils/fitnessMath';
@@ -91,7 +94,7 @@ export default function LoggerScreen({
 
         recognition.onstart = () => {
           setIsListening(true);
-          setMicStatusMsg('🔴 Mendengarkan suara Anda...');
+          setMicStatusMsg('Mendengarkan suara Anda...');
         };
 
         recognition.onresult = (event) => {
@@ -149,7 +152,7 @@ export default function LoggerScreen({
       }
     } else {
       setIsListening(true);
-      setMicStatusMsg('🔴 Mendengarkan...');
+      setMicStatusMsg('Mendengarkan...');
       setTimeout(() => {
         setIsListening(false);
         setMicStatusMsg('');
@@ -169,7 +172,7 @@ export default function LoggerScreen({
     const textToParse = rawText || voiceInputText;
     const parsed = parseVoiceWorkoutCommand(textToParse);
     if (!parsed.success) {
-      Alert.alert("Perintah Suara Belum Jelas ⚠️", parsed.message || 'Contoh: "Coach, catat 80 kilo 8 repetisi"');
+      Alert.alert("Perintah Suara Belum Jelas", parsed.message || 'Contoh: "Coach, catat 80 kilo 8 repetisi"');
       return;
     }
 
@@ -209,7 +212,7 @@ export default function LoggerScreen({
 
     showNotification({
       type: 'fire',
-      title: '🎙️ Set Dicatat via Suara!',
+      title: 'Set Dicatat via Suara',
       subtitle: `${curEx.name} Set ${targetSetIdx + 1}: ${parsed.weightKg}kg × ${parsed.reps} reps`,
       duration: 3000
     });
@@ -226,7 +229,6 @@ export default function LoggerScreen({
   useEffect(() => {
     const loadVoiceSetting = async () => {
       try {
-        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
         const val = await AsyncStorage.getItem('voice_guide_enabled');
         if (val !== null) {
           setVoiceGuideEnabled(val === 'true');
@@ -255,7 +257,6 @@ export default function LoggerScreen({
     let isMounted = true;
     const loadHistoricalPRs = async () => {
       try {
-        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
         const storageKey = `@gymvault_prs_${session?.user?.id || 'guest'}`;
         const stored = await AsyncStorage.getItem(storageKey);
         let prMap = stored ? JSON.parse(stored) : {};
@@ -331,7 +332,6 @@ export default function LoggerScreen({
         await FileSystem.writeAsStringAsync(fileUri, base64Data, {
           encoding: FileSystem.EncodingType.Base64,
         });
-        const { Audio } = require('expo-av');
         const { sound: newSound } = await Audio.Sound.createAsync({ uri: fileUri });
         audioRef.current = newSound;
         await newSound.playAsync();
@@ -427,7 +427,6 @@ export default function LoggerScreen({
     try {
       const nextVal = !voiceGuideEnabled;
       setVoiceGuideEnabled(nextVal);
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       await AsyncStorage.setItem('voice_guide_enabled', String(nextVal));
       
       if (nextVal) {
@@ -534,7 +533,6 @@ export default function LoggerScreen({
 
   useEffect(() => {
     try {
-      const LiveActivityManager = require('../services/LiveActivityManager').default;
       if (timerActive && restTime > 0) {
         const currentExName = workoutData[currentIndex]?.name || '';
         LiveActivityManager.startRestTimer({
@@ -556,7 +554,6 @@ export default function LoggerScreen({
   // Subscribe to action buttons clicked in the notification (Ongoing Activity)
   useEffect(() => {
     try {
-      const LiveActivityManager = require('../services/LiveActivityManager').default;
       const unsubscribe = LiveActivityManager.subscribe((actionId) => {
         if (actionId === 'add_30s') {
           setRestTime(p => p + 30);
@@ -587,7 +584,7 @@ export default function LoggerScreen({
           setTimerActive(true);
           Notifications.cancelAllScheduledNotificationsAsync().then(() => {
             Notifications.scheduleNotificationAsync({
-              content: { title: "Rest is Over! 🏋️‍♂️", body: "Time for your next set. Let's get it!", sound: true },
+              content: { title: "Rest is Over!", body: "Time for your next set. Let's get it!", sound: true },
               trigger: { seconds: optimalRest },
             });
           });
@@ -608,14 +605,14 @@ export default function LoggerScreen({
           const allTime1RM = allTimePR?.max1RM || 0;
           const baselineThreshold = Math.max(allTime1RM, otherSessionMax1RM);
 
-          let title = 'Set Complete! ✅';
+          let title = 'Set Complete!';
           let subtitle = `${s.kg}kg × ${s.reps} reps · Istirahat ${optimalRest}s`;
 
           // Candidate PR notification for immediate feedback (only finalized and committed upon session completion)
           const isNewPR = estimated1RM > baselineThreshold && estimated1RM > 0 && w > 0 && r > 0;
 
           if (isNewPR) {
-            title = 'NEW PR! 🏆';
+            title = 'NEW PR!';
             subtitle = allTime1RM > 0
               ? `Est. 1RM: ${estimated1RM}kg (+${estimated1RM - allTime1RM}kg!)`
               : `Est. 1RM: ${estimated1RM}kg`;
@@ -708,7 +705,6 @@ export default function LoggerScreen({
 
     const finalizeAndSavePRs = async () => {
       try {
-        const AsyncStorage = require('@react-native-async-storage/async-storage').default;
         const storageKey = `@gymvault_prs_${session?.user?.id || 'guest'}`;
         const updatedPRMap = { ...historicalPRs };
         const newlyAchievedPRs = [];
@@ -786,14 +782,13 @@ export default function LoggerScreen({
         
         // 📡 OFFLINE MODE SYNC
         if (msg.toLowerCase().includes('fetch') || msg.toLowerCase().includes('network') || msg.toLowerCase().includes('timeout') || msg.toLowerCase().includes('Failed to fetch')) {
-           const AsyncStorage = require('@react-native-async-storage/async-storage').default;
            const queueStr = await AsyncStorage.getItem(`offline_workouts_${session.user.id}`);
            const queue = queueStr ? JSON.parse(queueStr) : [];
            queue.push({ sessionPayload, workoutData });
            await AsyncStorage.setItem(`offline_workouts_${session.user.id}`, JSON.stringify(queue));
            
            setSaving(false);
-           showNotification({ type: 'success', title: 'Saved Offline 📡', subtitle: 'Will sync when connection returns.', duration: 4000 });
+           showNotification({ type: 'success', title: 'Saved Offline', subtitle: 'Will sync when connection returns.', duration: 4000 });
            
            let totalVolume = 0;
            workoutData.forEach(ex => ex.sets.forEach(s => {
@@ -876,7 +871,6 @@ export default function LoggerScreen({
 
         // Auto-save last weight & reps per exercise for zero-friction autofill
         try {
-          const AsyncStorage = require('@react-native-async-storage/async-storage').default;
           workoutData.forEach(ex => {
             const completedSets = ex.sets.filter(s => s.completed);
             const lastSet = completedSets[completedSets.length - 1] || ex.sets[ex.sets.length - 1];
@@ -889,7 +883,7 @@ export default function LoggerScreen({
       }
 
       setSaving(false);
-      showNotification({ type: 'fire', title: 'Workout Complete! 🔥', subtitle: `${workoutData.length} exercises · ${setRows.length} sets saved`, duration: 4000 });
+      showNotification({ type: 'fire', title: 'Workout Complete!', subtitle: `${workoutData.length} exercises · ${setRows.length} sets saved`, duration: 4000 });
       
       let totalVolume = 0;
       workoutData.forEach(ex => ex.sets.forEach(s => {
@@ -1145,7 +1139,7 @@ export default function LoggerScreen({
                   }));
                   showNotification({
                     type: 'fire',
-                    title: 'Target AI Terpasang! 🎯',
+                    title: 'Target AI Terpasang!',
                     subtitle: `${overloadRec.recommendedWeightKg}kg × ${overloadRec.recommendedReps} reps siap dieksekusi`,
                     duration: 3000
                   });
@@ -1332,7 +1326,7 @@ export default function LoggerScreen({
         {/* DB Warning */}
         {!dbReady && (
           <View style={{ marginTop: 12, padding: 10, borderRadius: 8, backgroundColor: 'rgba(245,158,11,0.1)', borderWidth: 1, borderColor: '#F59E0B' }}>
-            <AppText style={{ fontSize: 11, color: '#F59E0B', textAlign: 'center' }}>⚠️ Database not detected. Run setup_database.sql first.</AppText>
+            <AppText style={{ fontSize: 11, color: '#F59E0B', textAlign: 'center' }}>Database not detected. Run setup_database.sql first.</AppText>
           </View>
         )}
       </SmoothScrollView>
@@ -1449,7 +1443,7 @@ export default function LoggerScreen({
               </View>
 
               <AppText weight="bold" style={{ color: isListening ? '#EF4444' : '#38BDF8', fontSize: 14, textAlign: 'center' }}>
-                {isListening ? '🔴 Sedang Mendengarkan Suara...' : '🎙️ Tekan Di Sini & Mulai Bicara'}
+                {isListening ? 'Sedang Mendengarkan Suara...' : 'Tekan Di Sini & Mulai Bicara'}
               </AppText>
               
               <AppText style={{ color: '#94A3B8', fontSize: 11, marginTop: 4, textAlign: 'center' }}>
@@ -1518,7 +1512,7 @@ export default function LoggerScreen({
               }}
             >
               <AppText weight="bold" style={{ color: '#000', fontSize: 13 }}>
-                ✔ Konfirmasi & Catat Set
+                Konfirmasi & Catat Set
               </AppText>
             </Pressable>
           </View>
