@@ -81,26 +81,8 @@ export const styles = StyleSheet.create({
   },
   heroSection: {
     alignItems: 'center',
-    marginTop: 60,
+    paddingVertical: 40,
     marginBottom: 80,
-  },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.3)',
-    marginBottom: 24,
-  },
-  badgeText: {
-    color: '#D4F53C',
-    fontFamily: 'Inter_700Bold',
-    fontSize: 11,
-    letterSpacing: 1.5,
   },
   heroTitle: {
     fontFamily: 'Inter_700Bold',
@@ -174,24 +156,6 @@ export const styles = StyleSheet.create({
   sectionHeader: {
     alignItems: 'center',
     marginBottom: 40,
-  },
-  miniTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(212,245,60,0.08)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(212,245,60,0.2)',
-    marginBottom: 12,
-  },
-  miniTagText: {
-    color: '#D4F53C',
-    fontSize: 10,
-    fontFamily: 'Inter_700Bold',
-    letterSpacing: 1,
   },
   sectionHeading: {
     fontFamily: 'Inter_700Bold',

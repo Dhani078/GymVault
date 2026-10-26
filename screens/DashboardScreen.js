@@ -22,7 +22,7 @@ import OfflineSyncBanner from '../components/OfflineSyncBanner';
 import CustomRoutinesWidget from '../components/CustomRoutinesWidget';
 import CommunitySocialFeedWidget from '../components/CommunitySocialFeedWidget';
 import LeaderboardPreviewWidget from '../components/LeaderboardPreviewWidget';
-import { formatShortDate } from "../utils/dateHelpers";
+import { formatShortDate, getStartOfWeek } from "../utils/dateHelpers";
 import { MotiView } from 'moti';
 
 
@@ -92,10 +92,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
         setCompletedSessions([]);
       } else if (sessions && sessions.length > 0) {
         setCompletedSessions(sessions);
-        const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay());
-        startOfWeek.setHours(0, 0, 0, 0);
+        const startOfWeek = getStartOfWeek();
 
         let thisWeek = 0;
         let totalVolume = 0;

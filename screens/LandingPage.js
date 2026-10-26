@@ -9,18 +9,13 @@ import {
   Award,
   TrendingUp,
   Sparkles,
-  Smartphone,
   Check,
   Heart,
   Timer,
-  Layers,
   CheckCircle2,
-  Scale,
   Calculator,
   Droplets,
   Target,
-  Sliders,
-  Compass,
   PlayCircle,
   CheckCircle,
   Utensils,
@@ -115,10 +110,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE APP SCREEN SHOWCASE PREVIEW ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Smartphone color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>LIVE INTERACTIVE INTERFACE</Text>
-          </View>
           <Text style={styles.sectionHeading}>Eksplorasi Antarmuka Aplikasi</Text>
           <Text style={styles.sectionSub}>
             Pilih modul di bawah untuk melihat simulasi antarmuka live dari fitur-fitur unggulan GymVault.
@@ -128,8 +119,8 @@ export default function LandingPage({ onLoginPress }) {
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
             {[
               { id: 'logger', label: 'Live Logger', icon: PlayCircle },
-              { id: 'voice', label: '🎙️ Voice Hands-Free Logger', icon: Mic },
-              { id: 'fridge', label: '🍳 Fridge-to-Macro Chef', icon: Utensils },
+              { id: 'voice', label: 'Voice Hands-Free Logger', icon: Mic },
+              { id: 'fridge', label: 'Fridge-to-Macro Chef', icon: Utensils },
               { id: 'heatmap', label: '12-Group CNS Heatmap', icon: Activity },
               { id: 'ai', label: 'Gemini 3.7 AI Coach', icon: Cpu }
             ].map(tab => {
@@ -193,8 +184,9 @@ export default function LandingPage({ onLoginPress }) {
                   <Text style={{ color: '#38BDF8', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>VOICE HANDS-FREE WORKOUT LOGGER</Text>
                   <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Catat Beban Sambil Mengangkat Barbell</Text>
                 </View>
-                <View style={{ backgroundColor: 'rgba(56,189,248,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(56,189,248,0.3)' }}>
-                  <Text style={{ color: '#38BDF8', fontWeight: 'bold', fontSize: 12 }}>🎙️ LIVE MIC ACTIVE</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(56,189,248,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(56,189,248,0.3)' }}>
+                  <Mic color="#38BDF8" size={13} />
+                  <Text style={{ color: '#38BDF8', fontWeight: 'bold', fontSize: 12 }}>LIVE MIC ACTIVE</Text>
                 </View>
               </View>
 
@@ -256,8 +248,9 @@ export default function LandingPage({ onLoginPress }) {
                   <Text style={{ color: '#F59E0B', fontSize: 12, fontWeight: 'bold', letterSpacing: 1 }}>FRIDGE-TO-MACRO SMART CHEF</Text>
                   <Text style={{ color: '#FFF', fontSize: 20, fontWeight: 'bold', marginTop: 2 }}>Racik Menu Presisi dari Bahan Kulkas</Text>
                 </View>
-                <View style={{ backgroundColor: 'rgba(245,158,11,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(245,158,11,0.3)' }}>
-                  <Text style={{ color: '#F59E0B', fontWeight: 'bold', fontSize: 12 }}>🍳 AI CHEF ACTIVE</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(245,158,11,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(245,158,11,0.3)' }}>
+                  <Utensils color="#F59E0B" size={13} />
+                  <Text style={{ color: '#F59E0B', fontWeight: 'bold', fontSize: 12 }}>AI CHEF ACTIVE</Text>
                 </View>
               </View>
 
@@ -295,7 +288,7 @@ export default function LandingPage({ onLoginPress }) {
               {/* Output Live Recipe Simulation */}
               <View style={{ backgroundColor: '#1A1305', padding: 16, borderRadius: 14, borderWidth: 1, borderColor: '#F59E0B', marginTop: 6 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <Text style={{ color: '#F59E0B', fontSize: 14, fontWeight: 'bold' }}>🍳 Tumis Tempe Telur Gurih & Nasi Hangat</Text>
+                  <Text style={{ color: '#F59E0B', fontSize: 14, fontWeight: 'bold' }}>Tumis Tempe Telur Gurih & Nasi Hangat</Text>
                   <Text style={{ color: '#FFF', fontSize: 16, fontWeight: 'bold' }}>{fridgeTargetCal} kcal</Text>
                 </View>
                 <View style={{ flexDirection: 'row', gap: 12, marginVertical: 8 }}>
@@ -304,7 +297,7 @@ export default function LandingPage({ onLoginPress }) {
                   <Text style={{ color: '#F59E0B', fontSize: 12, fontWeight: 'bold' }}>F: 16g Lemak</Text>
                 </View>
                 <Text style={{ color: '#94A3B8', fontSize: 12, lineHeight: 17 }}>
-                  👨‍🍳 <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Takaran Presisi:</Text> 3 butir telur (150g), 100g tempe dipotong dadu, 1 centong nasi putih (100g). Pas memenuhi 650 kcal target makan siang!
+                  <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Takaran Presisi: </Text>3 butir telur (150g), 100g tempe dipotong dadu, 1 centong nasi putih (100g). Pas memenuhi 650 kcal target makan siang!
                 </Text>
               </View>
             </View>
@@ -363,10 +356,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SECTION 1: LIVE 1-REP MAX (1RM) CALCULATOR ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Calculator color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>SCIENTIFIC 1RM ENGINE</Text>
-          </View>
           <Text style={styles.sectionHeading}>Kalkulator 1-Rep Max & Strength Tier</Text>
           <Text style={styles.sectionSub}>
             Masukkan beban dan repetisi angkatan terberat Anda untuk menghitung batas maksimal 1RM dan estimasi beban kerja persentase.
@@ -438,10 +427,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SECTION 2: OLYMPIC BARBELL PLATE LOADER ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Sliders color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>PLATE LOADING SIMULATOR</Text>
-          </View>
           <Text style={styles.sectionHeading}>Kalkulator Plate Barbell Olympic</Text>
           <Text style={styles.sectionSub}>
             Pilih target beban total pada Barbell Olympic 20kg untuk melihat susunan piringan beban per sisi secara visual.
@@ -493,10 +478,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SECTION 3: TDEE & MACRO ARCHITECT ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Scale color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>PRECISION METABOLIC ENGINE</Text>
-          </View>
           <Text style={styles.sectionHeading}>Kalkulator TDEE & Target Makronutrisi</Text>
           <Text style={styles.sectionSub}>
             Hitung kebutuhan kalori harian, target gramatur protein, dan asupan hidrasi air berdasarkan data tubuh Anda.
@@ -567,10 +548,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SECTION 4: WORKOUT SPLIT ARCHITECT ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Compass color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>WEEKLY SPLIT ARCHITECT</Text>
-          </View>
           <Text style={styles.sectionHeading}>Generator Program Latihan Mingguan</Text>
           <Text style={styles.sectionSub}>
             Pilih frekuensi hari latihan Anda dalam seminggu untuk melihat pembagian split otot dan alokasi volume yang optimal.
@@ -620,10 +597,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SECTION 5: CARDIO HEART RATE ZONES ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Heart color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>CARDIOVASCULAR TELEMETRY</Text>
-          </View>
           <Text style={styles.sectionHeading}>Zona Detak Jantung Latihan (HR Zones)</Text>
           <Text style={styles.sectionSub}>
             Ketahui batas BPM detak jantung untuk pembakaran lemak maksimal (Zone 2) dan peningkatan kapasitas VO2 Max (Zone 5).
@@ -665,10 +638,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SIMULATOR: LIVE MUSCLE RECOVERY ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Activity color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>INTERACTIVE TELEMETRY</Text>
-          </View>
           <Text style={styles.sectionHeading}>Simulasi Peta Kelelahan Otot & CNS</Text>
           <Text style={styles.sectionSub}>
             Pilih kelompok otot di bawah ini untuk melihat bagaimana algoritma GymVault menghitung kelelahan dan waktu pemulihan optimal Anda secara real-time.
@@ -751,10 +720,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SECTION: ADAPTIVE ENGINE (GYM VS HOME) ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Layers color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>THE ADAPTIVE ENGINE</Text>
-          </View>
           <Text style={styles.sectionHeading}>Satu Aplikasi, Dua Mode Adaptif</Text>
           <Text style={styles.sectionSub}>
             GymVault secara otomatis menyesuaikan tampilan, database latihan, dan algoritma timer berdasarkan lokasi latihan Anda.
@@ -833,10 +798,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SECTION: GEMINI AI MULTIMODAL VISION ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Cpu color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>GOOGLE GEMINI 3.7 MULTIMODAL</Text>
-          </View>
           <Text style={styles.sectionHeading}>Instant AI Nutrition & Meal Scanner</Text>
           <Text style={styles.sectionSub}>
             Pilih simulasi makanan di bawah untuk menguji kecepatan Gemini AI dalam membedah makronutrisi dan kalori secara akurat.
@@ -894,10 +855,6 @@ export default function LandingPage({ onLoginPress }) {
       {/* ─── INTERACTIVE SECTION: VOLUME CALCULATOR ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <TrendingUp color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>GAMIFICATION & VIRAL SHARING</Text>
-          </View>
           <Text style={styles.sectionHeading}>Strava-Style Volume Comparison</Text>
           <Text style={styles.sectionSub}>
             Berapa total volume angkatan Anda bulan ini? GymVault secara otomatis mengubah angka kg kering menjadi objek nyata yang bisa langsung dibagikan ke Instagram Story.

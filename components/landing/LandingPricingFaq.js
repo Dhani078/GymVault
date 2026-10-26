@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Crown, Check, ChevronDown, ChevronUp } from 'lucide-react-native';
+import { Check, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { FAQS } from './landingData';
 
 export default function LandingPricingFaq({ onLoginPress, styles, isLarge }) {
@@ -11,10 +11,6 @@ export default function LandingPricingFaq({ onLoginPress, styles, isLarge }) {
       {/* ─── PRICING MATRIX ─── */}
       <View style={[styles.sectionContainer, { paddingHorizontal: isLarge ? 80 : 20 }]}>
         <View style={styles.sectionHeader}>
-          <View style={styles.miniTag}>
-            <Crown color="#D4F53C" size={14} />
-            <Text style={styles.miniTagText}>TRANSPARENT PRICING</Text>
-          </View>
           <Text style={styles.sectionHeading}>Investasi Terbaik untuk Fisik Anda</Text>
           <Text style={styles.sectionSub}>Pilih paket gratis atau nikmati AI tanpa batas via QRIS DANA 1-Click Instant Activation.</Text>
         </View>
@@ -35,8 +31,14 @@ export default function LandingPricingFaq({ onLoginPress, styles, isLarge }) {
               ))}
             </View>
 
-            <TouchableOpacity style={styles.planBtnSecondary} onPress={onLoginPress}>
-              <Text style={{ color: '#FFF', fontWeight: 'bold' }}>Mulai Gratis</Text>
+            <TouchableOpacity 
+              accessibilityRole="button"
+              accessibilityLabel="Mulai Versi Gratis Starter"
+              style={styles.planBtnSecondary} 
+              onPress={onLoginPress}
+              activeOpacity={0.8}
+            >
+              <Text style={{ color: '#FFF', fontWeight: 'bold', fontSize: 15 }}>Mulai Gratis</Text>
             </TouchableOpacity>
           </View>
 
@@ -64,7 +66,13 @@ export default function LandingPricingFaq({ onLoginPress, styles, isLarge }) {
               ))}
             </View>
 
-            <TouchableOpacity style={styles.planBtnPrimary} onPress={onLoginPress}>
+            <TouchableOpacity 
+              accessibilityRole="button"
+              accessibilityLabel="Upgrade ke Paket Pro"
+              style={styles.planBtnPrimary} 
+              onPress={onLoginPress}
+              activeOpacity={0.8}
+            >
               <Text style={{ color: '#000', fontWeight: 'bold', fontSize: 15 }}>Upgrade ke Pro</Text>
             </TouchableOpacity>
           </View>

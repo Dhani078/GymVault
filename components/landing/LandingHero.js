@@ -1,14 +1,9 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Sparkles, ArrowRight } from 'lucide-react-native';
+import { ArrowRight } from 'lucide-react-native';
 
 export default function LandingHero({ onLoginPress, styles, isLarge, isMedium }) {
   return (
     <View style={[styles.heroSection, { paddingHorizontal: isLarge ? 80 : 20 }]}>
-      <View style={styles.badge}>
-        <Sparkles color="#D4F53C" size={14} />
-        <Text style={styles.badgeText}>GYMVAULT FITNESS PLATFORM 2.0</Text>
-      </View>
-
       <Text style={[styles.heroTitle, { fontSize: isLarge ? 64 : isMedium ? 44 : 32, lineHeight: isLarge ? 74 : isMedium ? 52 : 40 }]}>
         ENGINEERED FOR{'\n'}
         <Text style={{ color: '#D4F53C', fontWeight: '600', letterSpacing: 1 }}>PRECISION TRAINING.</Text>
