@@ -27,13 +27,14 @@ export const theme = {
   get colors() {
     return activeColors;
   },
-  typography: { bold: '700', medium: '500', regular: '400' },
+  typography: { bold: '700', semibold: '600', medium: '500', regular: '400' },
 };
 
 export const AppText = ({ style, weight = 'regular', tabular = false, numberOfLines, children }) => {
   const { colors } = useTheme();
   const fontFamily = 
     weight === 'bold' ? 'Inter_700Bold' : 
+    (weight === 'semibold' || weight === '600') ? 'Inter_600SemiBold' : 
     weight === 'medium' ? 'Inter_500Medium' : 
     'Inter_400Regular';
 

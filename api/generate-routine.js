@@ -21,6 +21,14 @@ export default async function handler(req, res) {
   try {
     const { isHome = false, equipmentInventory = [], level = 'Intermediate', focus = 'Full Body', cnsScore = 3 } = req.body || {};
 
+    // 🛡️ OWASP API4 & Prompt Injection Sanitization
+    const safeLevel = String(level).slice(0, 30).replace(/[^\w\s-]/g, '') || 'Intermediate';
+    const safeFocus = String(focus).slice(0, 50).replace(/[^\w\s-]/g, '') || 'Full Body';
+    const safeCns = Math.min(Math.max(Number(cnsScore) || 3, 1), 5);
+    const safeInventory = Array.isArray(equipmentInventory)
+      ? equipmentInventory.slice(0, 20).map(i => String(i).slice(0, 50).replace(/[^\w\s-]/g, '')).filter(Boolean)
+      : [];
+
     const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
     if (!apiKey) {
       return res.status(500).json({ error: 'Gemini API key is not configured in server environment' });
@@ -29,10 +37,10 @@ export default async function handler(req, res) {
     const prompt = `You are an expert AI personal trainer.
 Create a workout routine returning ONLY a valid JSON object. No markdown, no backticks.
 The user is doing a ${isHome ? 'Home Workout' : 'Gym Workout'}.
-Available Equipment: ${isHome && equipmentInventory.length > 0 ? equipmentInventory.join(', ') : 'Full Gym Equipment'}.
-Difficulty: ${level}.
-Focus Area: ${focus}.
-CNS Fatigue (1=Tired, 5=Fresh): ${cnsScore}. 
+Available Equipment: ${isHome && safeInventory.length > 0 ? safeInventory.join(', ') : 'Full Gym Equipment'}.
+Difficulty: ${safeLevel}.
+Focus Area: ${safeFocus}.
+CNS Fatigue (1=Tired, 5=Fresh): ${safeCns}. 
 Adjust volume/intensity based on CNS. The routine MUST focus on the requested Focus Area (e.g., if Push, include Chest/Shoulders/Triceps; if Pull, include Back/Biceps; if Legs, include Quads/Hamstrings/Glutes/Calves).
 Format strictly:
 {

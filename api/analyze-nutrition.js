@@ -20,11 +20,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { base64Image, knownNames } = req.body;
+    const { base64Image, knownNames } = req.body || {};
 
     if (!base64Image) {
       return res.status(400).json({ error: 'No image provided' });
     }
+
+    // 🛡️ OWASP API4: Unrestricted Resource Consumption payload guard (max ~5MB image)
+    if (typeof base64Image !== 'string' || base64Image.length > 7 * 1024 * 1024) {
+      return res.status(413).json({ error: 'Payload too large (maximum image size is 5MB)' });
+    }
+
+    const safeKnownNames = String(knownNames || '').slice(0, 500).replace(/[^\w\s,.-]/g, '');
 
     // Mengambil API Key dari Environment Variable Vercel
     // Kita gunakan EXPO_PUBLIC_GEMINI_API_KEY sesuai dengan yang ada di screenshot Vercel kamu
@@ -35,7 +42,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Server configuration error (API Key missing)' });
     }
 
-    const promptText = `Analyze this food image. Classify it into one of these exact known categories if it matches or looks like them: [${knownNames || ''}]. Otherwise, estimate the calorie and macros. Return ONLY a valid JSON object strictly matching this format without markdown wrappers: {"food": "Category Name", "cal": 0, "p": 0, "c": 0, "f": 0}. If no food is detected, return {"food": "Unknown", "cal": 0, "p": 0, "c": 0, "f": 0}.`;
+    const promptText = `Analyze this food image. Classify it into one of these exact known categories if it matches or looks like them: [${safeKnownNames}]. Otherwise, estimate the calorie and macros. Return ONLY a valid JSON object strictly matching this format without markdown wrappers: {"food": "Category Name", "cal": 0, "p": 0, "c": 0, "f": 0}. If no food is detected, return {"food": "Unknown", "cal": 0, "p": 0, "c": 0, "f": 0}.`;
 
     const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash'];
     let lastError = null;
