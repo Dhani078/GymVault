@@ -8,7 +8,7 @@
 - **Product Name**: GymVault
 - **Description**: Certified 10/10 production-grade cross-platform fitness & workout tracking application featuring an adaptive gym-versus-home engine, real-time logging, AI coaching, computer vision nutrition analysis, and unified desktop/mobile routing.
 - **Visual Design Standard**: Strict AMOLED Pitch Black (`#000000`), Dark Surfaces (`#0E0E12`, `#16161A`), and Electric Green (`#CCFF00`) accents. Glassmorphism, micro-animations, and high-contrast typography.
-- **Repository Path**: `c:\xampp\htdocs\GYM`
+- **Repository Path**: `E:\Hermesproject\GYM`
 - **Live Production URL**: `https://gymvault-app.vercel.app`
 
 ---
@@ -74,7 +74,7 @@
 ## 4. Directory Structure & Key Artifacts
 
 ```text
-c:\xampp\htdocs\GYM\
+E:\Hermesproject\GYM\
 ├── types/
 │   └── gymvault.d.ts        # Master TypeScript Contract Interfaces
 ├── utils/
