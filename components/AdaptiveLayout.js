@@ -81,6 +81,8 @@ export default function AdaptiveLayout({ children, session }) {
   const renderDesktopSwitcher = () => (
     <View style={styles.floatingSwitcher}>
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel="Buka tampilan Landing Page"
         style={[styles.switchChip, isLandingActive ? styles.switchChipActive : null]}
         onPress={() => { setDesktopView('landing'); setShowLogin(false); }}
       >
@@ -92,6 +94,8 @@ export default function AdaptiveLayout({ children, session }) {
 
       {session && role === 'admin' && (
         <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Buka Control Panel Admin"
           style={[styles.switchChip, isAdminActive ? styles.switchChipActive : null]}
           onPress={() => setDesktopView('admin')}
         >
@@ -103,6 +107,8 @@ export default function AdaptiveLayout({ children, session }) {
       )}
 
       <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={session ? 'Buka tampilan Mobile App' : 'Buka Login atau Aplikasi'}
         style={[styles.switchChip, isAppActive ? styles.switchChipActive : null]}
         onPress={() => { setDesktopView('app'); setShowLogin(true); }}
       >

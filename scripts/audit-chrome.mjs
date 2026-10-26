@@ -2,7 +2,7 @@ import { spawn } from 'node:child_process';
 import http from 'node:http';
 
 const CHROME_PATH = 'C:\\Users\\Anomali\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe';
-const TARGET_URL = 'https://gymvault-app.vercel.app';
+const TARGET_URL = process.env.AUDIT_URL || 'https://gymvault-app.vercel.app';
 const PORT = 9222;
 
 function sleep(ms) {

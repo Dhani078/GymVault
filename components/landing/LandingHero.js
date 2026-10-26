@@ -20,7 +20,13 @@ export default function LandingHero({ onLoginPress, styles, isLarge, isMedium })
 
       {/* Hero CTAs */}
       <View style={styles.ctaContainer}>
-        <TouchableOpacity style={styles.primaryCta} onPress={onLoginPress} activeOpacity={0.8}>
+        <TouchableOpacity 
+          accessibilityRole="button" 
+          accessibilityLabel="Mulai Latihan Sekarang Gratis" 
+          style={styles.primaryCta} 
+          onPress={onLoginPress} 
+          activeOpacity={0.8}
+        >
           <Text style={styles.primaryCtaText}>Mulai Latihan Sekarang (Gratis)</Text>
           <ArrowRight color="#000" size={18} />
         </TouchableOpacity>

@@ -24,7 +24,13 @@ export default function LandingNavbar({ onLoginPress, styles, isLarge }) {
       )}
 
       <View style={{ flexDirection: 'row', gap: 12 }}>
-        <TouchableOpacity style={styles.loginBtn} onPress={onLoginPress} activeOpacity={0.8}>
+        <TouchableOpacity 
+          accessibilityRole="button" 
+          accessibilityLabel="Buka Web App GymVault" 
+          style={styles.loginBtn} 
+          onPress={onLoginPress} 
+          activeOpacity={0.8}
+        >
           <Text style={styles.loginBtnText}>Buka Web App</Text>
           <ArrowRight color="#000" size={16} />
         </TouchableOpacity>
