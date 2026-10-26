@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "build": "expo export -p web",
     "bot": "node scripts/telegram-listener.js",
-    "test": "node scripts/test-fitness-engine.js"
+    "test": "node scripts/test-fitness-engine.js && node scripts/test-doku.js",
+    "test:doku": "node scripts/test-doku.js"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",

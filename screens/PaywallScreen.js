@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { View, TouchableOpacity, Image, Modal, Alert, ActivityIndicator } from 'react-native';
-import { Check, Crown, Zap, Star, Shield, X, CreditCard, Upload, Clock } from "lucide-react-native";
+import { useState, useEffect, useRef } from "react";
+import { View, TouchableOpacity, Image, Modal, Alert, ActivityIndicator, Linking } from 'react-native';
+import { Check, Crown, Zap, Star, Shield, X, CreditCard, Upload, Clock, QrCode } from "lucide-react-native";
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme, styles } from '../theme';
@@ -31,6 +31,10 @@ export default function PaywallScreen({ onSkip, session }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [isDokuLoading, setIsDokuLoading] = useState(false);
+  const [showDokuModal, setShowDokuModal] = useState(false);
+  const [dokuInvoice, setDokuInvoice] = useState(null);
+  const pollingRef = useRef(null);
 
   useEffect(() => {
     checkPremium();
@@ -69,6 +73,77 @@ export default function PaywallScreen({ onSkip, session }) {
         await AsyncStorage.setItem(`is_premium_${userId}`, 'true');
         await AsyncStorage.setItem(`@premium_status_${userId}`, 'active');
       }
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
+
+  const handleDokuCheckout = async () => {
+    if (!session?.user?.id) {
+      Alert.alert(
+        'Login Diperlukan',
+        'Silakan masuk akun terlebih dahulu sebelum berlangganan agar paket Pro langsung aktif di akun Anda.'
+      );
+      return;
+    }
+
+    const currentPlan = PLANS.find(p => p.id === selectedPlan) || PLANS[1];
+    setIsDokuLoading(true);
+
+    try {
+      const BACKEND_URL = typeof window !== 'undefined' && window.location?.origin
+        ? window.location.origin
+        : (process.env.EXPO_PUBLIC_API_URL || 'https://gymvault-app.vercel.app');
+
+      const res = await fetch(`${BACKEND_URL}/api/doku-checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: session.user.id,
+          plan: selectedPlan,
+          amount: currentPlan.priceNum,
+          userEmail: session.user.email,
+          userName: session.user.user_metadata?.full_name || session.user.email?.split('@')[0]
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.paymentUrl) {
+        setDokuInvoice(data.invoiceNumber);
+        setShowDokuModal(true);
+        Linking.openURL(data.paymentUrl).catch(() => {});
+
+        // Polling realtime: cek apakah webhook DOKU sudah menyetujui transaksi
+        if (pollingRef.current) clearInterval(pollingRef.current);
+        pollingRef.current = setInterval(async () => {
+          const { data: profile } = await supabase
+            .from('users_profile')
+            .select('is_premium, premium_until')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profile?.is_premium) {
+            clearInterval(pollingRef.current);
+            setIsPremium(true);
+            setShowDokuModal(false);
+            Alert.alert('Sukses!', 'Pembayaran QRIS DOKU berhasil diverifikasi. Akun Anda telah aktif PRO!');
+          }
+        }, 3000);
+
+      } else {
+        // Fallback ke modal transfer manual jika DOKU sedang offline/sandbox
+        setShowPayment(true);
+      }
+    } catch (err) {
+      console.warn('[handleDokuCheckout] Error:', err);
+      setShowPayment(true);
+    } finally {
+      setIsDokuLoading(false);
     }
   };
 
@@ -255,29 +330,95 @@ export default function PaywallScreen({ onSkip, session }) {
         })}
       </View>
 
-      {/* CTA */}
+      {/* CTA: Primary DOKU QRIS */}
       <TouchableOpacity
         style={{
           backgroundColor: '#D4F53C', borderRadius: 14, paddingVertical: 16,
           flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10,
           shadowColor: '#000000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12, elevation: 6,
+          opacity: isDokuLoading ? 0.7 : 1,
         }}
-        onPress={() => setShowPayment(true)}
-        accessibilityLabel={`Bayar via QRIS DANA ${plan?.price}`}
+        onPress={handleDokuCheckout}
+        disabled={isDokuLoading}
+        accessibilityLabel={`Bayar Instan via DOKU QRIS ${plan?.price}`}
         accessibilityRole="button"
       >
-        <CreditCard color="#000" size={20} />
-        <AppText weight="bold" style={{ color: '#000', fontSize: 16 }}>Bayar via QRIS DANA ({plan?.price})</AppText>
+        {isDokuLoading ? (
+          <ActivityIndicator color="#000000" size="small" />
+        ) : (
+          <CreditCard color="#000" size={20} />
+        )}
+        <AppText weight="bold" style={{ color: '#000', fontSize: 16 }}>
+          {isDokuLoading ? 'Menyiapkan QRIS DOKU...' : `Bayar Instan QRIS DOKU (${plan?.price})`}
+        </AppText>
+      </TouchableOpacity>
+
+      {/* CTA: Secondary Manual Transfer */}
+      <TouchableOpacity
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 14, paddingVertical: 12,
+          flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8,
+          marginTop: 10, borderWidth: 1, borderColor: colors.border || '#252528'
+        }}
+        onPress={() => setShowPayment(true)}
+        accessibilityLabel="Transfer manual atau unggah screenshot bukti"
+        accessibilityRole="button"
+      >
+        <Upload color={colors.textMuted} size={15} />
+        <AppText weight="medium" style={{ color: colors.textMuted, fontSize: 13 }}>
+          Transfer Manual & Unggah Bukti
+        </AppText>
       </TouchableOpacity>
 
       <AppText style={{ color: theme.colors.textMuted, textAlign: 'center', marginTop: 12, fontSize: 11, lineHeight: 16 }}>
-        100% Bebas Biaya Transaksi • Verifikasi Cepat via Telegram Admin
+        ⚡ DOKU QRIS Resmi • Semua E-Wallet & Bank • Otomatis Aktif Seketika
       </AppText>
 
       {/* Skip */}
-      <TouchableOpacity style={{ marginTop: 24, alignItems: 'center', paddingVertical: 12 }} onPress={onSkip} accessibilityLabel="Lewati, gunakan versi gratis" accessibilityRole="button">
+      <TouchableOpacity style={{ marginTop: 20, alignItems: 'center', paddingVertical: 10 }} onPress={onSkip} accessibilityLabel="Lewati, gunakan versi gratis" accessibilityRole="button">
         <AppText weight="medium" style={{ color: theme.colors.textMuted, fontSize: 14 }}>Nanti saja, pakai versi gratis</AppText>
       </TouchableOpacity>
+
+      {/* ═══ DOKU Payment Active Modal ═══ */}
+      <Modal visible={showDokuModal} transparent animationType="fade" onRequestClose={() => setShowDokuModal(false)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+          <View style={{ backgroundColor: theme.colors.surface, borderRadius: 24, padding: 24, width: '100%', maxWidth: 420, borderWidth: 1, borderColor: theme.colors.border, alignItems: 'center' }}>
+            <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(212,245,60,0.12)', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+              <QrCode color="#D4F53C" size={28} />
+            </View>
+            <AppText weight="bold" style={{ fontSize: 18, color: theme.colors.text, textAlign: 'center' }}>
+              Pembayaran QRIS Sedang Diproses
+            </AppText>
+            <AppText style={{ color: theme.colors.textMuted, fontSize: 12, textAlign: 'center', marginTop: 6, lineHeight: 18 }}>
+              Halaman pembayaran resmi DOKU telah dibuka di browser Anda. Selesaikan pembayaran di aplikasi bank/e-wallet Anda.
+            </AppText>
+
+            {dokuInvoice && (
+              <View style={{ backgroundColor: theme.colors.card, paddingVertical: 8, paddingHorizontal: 16, borderRadius: 10, marginTop: 14 }}>
+                <AppText style={{ color: '#D4F53C', fontSize: 12, fontFamily: 'monospace' }}>
+                  Invoice: {dokuInvoice}
+                </AppText>
+              </View>
+            )}
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 20 }}>
+              <ActivityIndicator color="#D4F53C" size="small" />
+              <AppText style={{ color: theme.colors.textMuted, fontSize: 12 }}>
+                Menunggu verifikasi pembayaran otomatis...
+              </AppText>
+            </View>
+
+            <TouchableOpacity
+              style={{ marginTop: 24, backgroundColor: 'rgba(255,255,255,0.08)', paddingVertical: 12, paddingHorizontal: 24, borderRadius: 12, width: '100%', alignItems: 'center' }}
+              onPress={() => setShowDokuModal(false)}
+            >
+              <AppText weight="bold" style={{ color: theme.colors.text, fontSize: 14 }}>
+                Tutup Jendela Ini
+              </AppText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* ═══ Payment Modal ═══ */}
       <Modal visible={showPayment} transparent animationType="slide" onRequestClose={() => setShowPayment(false)}>

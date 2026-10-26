@@ -83,9 +83,11 @@ E:\Hermesproject\GYM\
 ├── services/
 │   ├── geminiService.js     # 7-layer Google Gemini 3.7 Flash Cascade Waterfall Engine
 │   ├── NutritionDataset.js  # USDA + Indonesian Food dataset + Custom Food AsyncStorage vault
-│   └── NotificationManager.js # Smart daily reminder scheduler
+│   ├── NotificationManager.js # Smart daily reminder scheduler
+│   └── dokuService.js       # DOKU QRIS Checkout & HMAC-SHA256 signature engine
 ├── scripts/
 │   ├── test-fitness-engine.js # Automated unit test runner (npm test - 61/61 assertions pass)
+│   ├── test-doku.js         # Automated DOKU QRIS signature & verification unit runner
 │   ├── start-telegram-bot.js # Local long-polling daemon for real-time Telegram Bot execution
 │   ├── set-webhook.js       # Telegram bot webhook registration script
 │   └── test-qiospay-webhook.js # Qiospay webhook simulation runner
@@ -121,7 +123,9 @@ E:\Hermesproject\GYM\
     ├── analyze-nutrition.js # Vercel serverless proxy for Gemini food image classification
     ├── payment-notify.js    # Telegram admin notification with HTML caption & Gemini receipt audit
     ├── telegram-webhook.js  # Telegram interactive command center (/stats, /grant, /broadcast, /check)
-    └── qiospay-callback.js  # Qiospay realtime QRIS webhook handler
+    ├── qiospay-callback.js  # Qiospay realtime QRIS webhook handler
+    ├── doku-checkout.js     # DOKU official QRIS checkout session generator
+    └── doku-webhook.js      # DOKU HMAC-SHA256 verified settlement webhook handler
 ```
 
 ---
