@@ -69,10 +69,7 @@ export function useProfileData(session, dbReady) {
 
         const isDhaniOrAdmin = Boolean(
           profileData.role === 'admin' ||
-          session.user.email?.toLowerCase().includes('dhani') ||
-          session.user.email?.toLowerCase().includes('admin') ||
-          profileData.username?.toLowerCase() === 'dhani' ||
-          profileData.name?.toLowerCase() === 'dhani'
+          session.user.email?.toLowerCase() === 'dhanisepeda@gmail.com'
         );
 
         const isPro = Boolean(

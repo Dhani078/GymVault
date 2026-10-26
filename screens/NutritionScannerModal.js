@@ -8,6 +8,7 @@ import { supabase } from '../supabaseClient';
 import Reanimated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, withSequence } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import useRewardedAd from '../components/DummyRewardedAd';
+import { getLocalDateString } from '../utils/dateHelpers';
 
 const LaserScanner = () => {
   const laserY = useSharedValue(0);
@@ -49,12 +50,6 @@ const LaserScanner = () => {
   );
 };
 
-const getLocalDateString = (date = new Date()) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 // URL Backend Vercel (Setup di .env EXPO_PUBLIC_API_URL atau gunakan domain vercel kamu)
 const BACKEND_URL = process.env.EXPO_PUBLIC_API_URL || 'https://gymvault-app.vercel.app';
 

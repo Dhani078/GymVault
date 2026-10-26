@@ -24,19 +24,13 @@ import TdeeCalculatorModal from '../components/profile/TdeeCalculatorModal';
 import EditProfileModal from '../components/profile/EditProfileModal';
 import SettingsModal from '../components/profile/SettingsModal';
 import PaywallScreen from './PaywallScreen';
+import { getLocalDateString } from '../utils/dateHelpers';
 
 const parseLocalDate = (dateStr) => {
   if (!dateStr || typeof dateStr !== 'string') return new Date();
   const parts = dateStr.split('-').map(Number);
   if (parts.length < 3 || isNaN(parts[0]) || isNaN(parts[1]) || isNaN(parts[2])) return new Date();
   return new Date(parts[0], parts[1] - 1, parts[2]);
-};
-
-const getLocalDateString = (date = new Date()) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
 };
 
 const calculateCheckInStreak = (historyList) => {

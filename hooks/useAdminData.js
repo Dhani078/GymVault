@@ -54,6 +54,23 @@ export default function useAdminData() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
+      // 🛡️ ANTI-HACK: Verify authenticated user is admin before executing admin fetches
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      const { data: profile } = await supabase
+        .from('users_profile')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profile?.role !== 'admin' && user.email?.toLowerCase() !== 'dhanisepeda@gmail.com') {
+        setLoading(false);
+        return;
+      }
+
       // 1. Ambil data semua user — pilih field spesifik, dengan fallback jika kolom status belum ada
       let { data: users, error: userError } = await supabase
         .from('users_profile')

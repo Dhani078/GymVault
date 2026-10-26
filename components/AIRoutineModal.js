@@ -5,13 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme, styles } from '../theme';
 import AICoachLogo from './AICoachLogo';
 import { generateWithGeminiCascade } from '../services/geminiService';
-
-const getLocalDateString = (date = new Date()) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+import { getLocalDateString } from '../utils/dateHelpers';
 
 function generateHeuristicRoutine({ level = 'Intermediate', focus = 'Full Body', isHome = false, equipmentInventory = [], cnsScore = 3 }) {
   const setsCount = cnsScore <= 2 ? 3 : (level === 'Expert' ? 4 : 3);
@@ -108,8 +102,7 @@ export default function AIRoutineModal({ visible, onClose, onStartRoutine, cnsSc
       const streakStr = await AsyncStorage.getItem(`checkin_streak_${userId}`);
       const streakNum = parseInt(streakStr || '0', 10);
       const isDhaniOrAdmin = Boolean(
-        session?.user?.email?.toLowerCase().includes('dhani') ||
-        session?.user?.email?.toLowerCase().includes('admin')
+        session?.user?.email?.toLowerCase() === 'dhanisepeda@gmail.com'
       );
       const hasActiveUntil = premUntil && new Date(premUntil) > new Date();
 

@@ -208,7 +208,7 @@ export default async function handler(req, res) {
       if (text.startsWith('/growth')) {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
         const { count: newUsersWeek } = await supabase.from('users_profile').select('id', { count: 'exact' }).gte('created_at', sevenDaysAgo);
-        const { count: sessionsWeek } = await supabase.from('workout_sessions').select('id', { count: 'exact' }).gte('created_at', sevenDaysAgo);
+        const { count: sessionsWeek } = await supabase.from('workout_sessions').select('id', { count: 'exact' }).gte('started_at', sevenDaysAgo);
         const { data: paymentsWeek } = await supabase.from('payment_requests').select('amount').eq('status', 'approved').gte('created_at', sevenDaysAgo);
 
         let gmvWeek = 0;

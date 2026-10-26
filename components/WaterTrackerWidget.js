@@ -4,14 +4,7 @@ import { Droplet, Check } from 'lucide-react-native';
 import { AppText, theme } from '../theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DeviceEventEmitter } from 'react-native';
-
-const getLocalDateString = () => {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+import { getLocalDateString } from '../utils/dateHelpers';
 
 export default function WaterTrackerWidget({ userProfile, refreshTrigger }) {
   const [waterMl, setWaterMl] = useState(0);

@@ -64,8 +64,7 @@ export default function PaywallScreen({ onSkip, session }) {
       
       const isDhaniOrAdmin = Boolean(
         data?.role === 'admin' ||
-        session.user.email?.toLowerCase().includes('dhani') ||
-        session.user.email?.toLowerCase().includes('admin')
+        session.user.email?.toLowerCase() === 'dhanisepeda@gmail.com'
       );
 
       const hasActiveDbDate = (data?.premium_until && new Date(data.premium_until) > new Date()) || (data?.pro_expires_at && new Date(data.pro_expires_at) > new Date());

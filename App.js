@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, StatusBar, View, TouchableOpacity, ActivityIndicator, Alert, Platform } from 'react-native';
+import { SafeAreaView, StatusBar, View, TouchableOpacity, ActivityIndicator, Alert, Platform, DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LayoutDashboard, Dumbbell, PenLine, BarChart3, Clock, Camera } from 'lucide-react-native';
 import { AppText, theme, styles } from './theme';
@@ -119,7 +119,6 @@ function AppContent() {
         }
       });
     };
-    const { DeviceEventEmitter } = require('react-native');
     const offlineSub = DeviceEventEmitter.addListener('offline_login', (guestSession) => {
       setSession(guestSession);
       setLoading(false);

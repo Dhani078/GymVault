@@ -7,15 +7,8 @@ import { MessageCircle, X, Send, User } from 'lucide-react-native';
 import { AppText, styles, theme } from '../theme';
 import AICoachLogo from '../components/AICoachLogo';
 import { GEMINI_MODELS_CASCADE } from '../services/geminiService';
+import { getLocalDateString } from '../utils/dateHelpers';
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
-
-const getLocalDateString = () => {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
 const SUGGESTIONS = [
   { label: '💧 +250ml', text: 'Saya minum air 250ml' },

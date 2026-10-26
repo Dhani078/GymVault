@@ -36,7 +36,7 @@ export default function AdaptiveLayout({ children, session }) {
   useEffect(() => {
     // 🛡️ ANTI-HACK: Fetch role directly from Supabase DB on server-side
     const fetchUserRole = async () => {
-      if (session?.user?.id && isDesktop) {
+      if (session?.user?.id) {
         setLoadingRole(true);
         try {
           const { data, error } = await supabase
@@ -47,17 +47,21 @@ export default function AdaptiveLayout({ children, session }) {
             
           if (!error && data) {
             setRole(data.role); // e.g. 'admin' or 'user'
+          } else {
+            setRole('user');
           }
         } catch (e) {
-
+          setRole('user');
         } finally {
           setLoadingRole(false);
         }
+      } else {
+        setRole(null);
       }
     };
     
     fetchUserRole();
-  }, [session, isDesktop]);
+  }, [session]);
 
   // 1. MOBILE VIEWPORT (< 768px)
   // Kembalikan 100% tampilan HP asli tanpa modifikasi apapun.

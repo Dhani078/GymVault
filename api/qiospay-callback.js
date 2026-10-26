@@ -24,6 +24,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Webhook secret validation if configured
+  const webhookSecret = process.env.QIOSPAY_WEBHOOK_SECRET || process.env.PAYMENT_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    const incomingSecret = req.headers['x-webhook-secret'] || req.headers['x-qiospay-secret'] || req.query?.secret;
+    if (incomingSecret !== webhookSecret) {
+      return res.status(401).json({ error: 'Unauthorized webhook call' });
+    }
+  }
+
   try {
     const payload = req.body || {};
     console.log('[QiosPay Webhook] Incoming Payload:', JSON.stringify(payload));
@@ -43,8 +52,11 @@ export default async function handler(req, res) {
     const txTime = data.time || new Date().toLocaleString('id-ID');
 
     // Initialize Supabase Client
-    const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://sjrzhiigrcrcpgvnfixo.supabase.co';
-    const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_QkDfIJZOVzZsO39jEdpI5w_fb4Bkavp';
+    const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('[qiospay-callback] Missing EXPO_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_ANON_KEY env vars');
+    }
     
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
