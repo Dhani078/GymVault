@@ -141,8 +141,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   statusActive: {
-    backgroundColor: 'rgba(204, 255, 0, 0.05)',
-    borderColor: 'rgba(204, 255, 0, 0.2)',
+    backgroundColor: 'rgba(212, 245, 60, 0.05)',
+    borderColor: 'rgba(212, 245, 60, 0.2)',
   },
   statusText: {
     fontFamily: 'Inter_700Bold',

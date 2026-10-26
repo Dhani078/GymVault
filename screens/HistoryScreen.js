@@ -515,7 +515,7 @@ Tracked with GymVault`;
               >
                 <Trash2 color="#EF4444" size={14} />
               </TouchableOpacity>
-              <View style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(204, 255, 0, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(212, 245, 60, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
                 <ChevronRight color={theme.colors.primary} size={18} />
               </View>
             </View>

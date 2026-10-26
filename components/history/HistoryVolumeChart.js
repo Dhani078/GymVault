@@ -39,7 +39,7 @@ export default function HistoryVolumeChart({ chartData }) {
       {/* Header */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: 'rgba(204,255,0,0.1)', justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
+          <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: 'rgba(212,245,60,0.1)', justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
             <TrendingUp color={theme.colors.primary} size={18} />
           </View>
           <View>

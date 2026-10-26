@@ -44,7 +44,7 @@ export default function UserModals({
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <View style={[styles.modalIconBox, userToToggleStatus?.status === 'suspended' ? { backgroundColor: 'rgba(204, 255, 0, 0.1)' } : { backgroundColor: 'rgba(255, 165, 0, 0.1)' }]}>
+            <View style={[styles.modalIconBox, userToToggleStatus?.status === 'suspended' ? { backgroundColor: 'rgba(212, 245, 60, 0.1)' } : { backgroundColor: 'rgba(255, 165, 0, 0.1)' }]}>
               {userToToggleStatus?.status === 'suspended' ? (
                 <UserCheck color="#D4F53C" size={32} />
               ) : (

@@ -622,8 +622,8 @@ export default function AIChatBubble() {
         icon = "🏋️";
         title = item.log.split || 'Latihan Beban';
         subtitle = item.log.exercises ? `${item.log.exercises.length} gerakan` : '';
-        cardBg = 'rgba(204, 255, 0, 0.04)';
-        cardBorder = 'rgba(204, 255, 0, 0.15)';
+        cardBg = 'rgba(212, 245, 60, 0.04)';
+        cardBorder = 'rgba(212, 245, 60, 0.15)';
         accentColor = theme.colors.primary;
       } else if (item.log.type === 'workout_live') {
         icon = "⚡";

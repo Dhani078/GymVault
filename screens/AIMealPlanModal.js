@@ -653,9 +653,9 @@ const localStyles = StyleSheet.create({
     fontSize: 15
   },
   resultHeader: {
-    backgroundColor: 'rgba(204,255,0,0.06)',
+    backgroundColor: 'rgba(212,245,60,0.06)',
     borderWidth: 1,
-    borderColor: 'rgba(204,255,0,0.15)',
+    borderColor: 'rgba(212,245,60,0.15)',
     borderRadius: 14,
     padding: 16,
     flexDirection: 'row',

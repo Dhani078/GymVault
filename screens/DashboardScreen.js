@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, ScrollView, TouchableOpacity, Modal, ActivityIndicator, RefreshControl, TextInput, DeviceEventEmitter } from "react-native";
+import { View, TouchableOpacity, ActivityIndicator, RefreshControl, TextInput, DeviceEventEmitter } from "react-native";
 import { Dumbbell, Activity, Flame, Trophy, TrendingUp, Target, Zap, Home } from "lucide-react-native";
 import { AppText, styles, theme } from '../theme';
 import { supabase, safeSelect, safeUpsert } from '../supabaseClient';
@@ -245,9 +245,9 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
                 </AppText>
               </View>
               <AppText weight="bold" style={{ fontSize: 30, color: theme.colors.text, lineHeight: 36 }}>
-                {userProfile?.name || t('good_morning')} 💪
+                {userProfile?.name || t('good_morning')}
               </AppText>
-              <AppText style={{ color: '#666', fontSize: 15, marginTop: 4 }}>
+              <AppText style={{ color: theme.colors.textMuted, fontSize: 15, marginTop: 4 }}>
                 {t('ready_to_break_limits')}
               </AppText>
             </View>
@@ -293,7 +293,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
         {isHome && (
           <View style={{ marginBottom: 24, padding: 16, backgroundColor: theme.colors.card, borderRadius: 20, borderWidth: 1, borderColor: theme.colors.border }}>
             <AppText weight="bold" style={{ fontSize: 16, marginBottom: 4 }}>Your Equipment</AppText>
-            <AppText style={{ fontSize: 13, color: '#666', marginBottom: 16 }}>Select what you have available at home</AppText>
+            <AppText style={{ fontSize: 13, color: theme.colors.textMuted, marginBottom: 16 }}>Select what you have available at home</AppText>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {HOME_EQUIPMENT_CATALOG.map(eq => {
                 const hasEq = equipmentInventory.includes(eq.id);
@@ -404,7 +404,6 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
               onChangeText={setQuickLogText}
               onSubmitEditing={() => {
                 if (quickLogText.trim()) {
-                  const { DeviceEventEmitter } = require('react-native');
                   DeviceEventEmitter.emit('open_ai_coach_chat', { message: quickLogText.trim() });
                   setQuickLogText('');
                 }
@@ -416,7 +415,6 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
             <TouchableOpacity 
               onPress={() => {
                 if (quickLogText.trim()) {
-                  const { DeviceEventEmitter } = require('react-native');
                   DeviceEventEmitter.emit('open_ai_coach_chat', { message: quickLogText.trim() });
                   setQuickLogText('');
                 }

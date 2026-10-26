@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, TouchableOpacity, Modal, ActivityIndicator, TextInput, Alert } from 'react-native';
-import { Flame, X } from "lucide-react-native";
+import { Flame, X, Utensils } from "lucide-react-native";
 import { AppText, theme } from '../theme';
 import { supabase, safeInsert } from '../supabaseClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -62,7 +62,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
           if (successCount > 0) {
             showNotification({
               type: 'success',
-              title: 'Nutrisi Sinkron! 🥗',
+              title: 'Nutrisi Sinkron!',
               subtitle: `Berhasil mengunggah ${successCount} riwayat makan offline.`,
               duration: 4000
             });
@@ -138,7 +138,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
       
       showNotification({
         type: 'success',
-        title: 'AI Parse Success 🥗',
+        title: 'AI Parse Sukses',
         subtitle: `Form terisi otomatis (${modelUsed}): ${parsed.food || 'Makanan'}`,
         duration: 2500,
       });
@@ -225,7 +225,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         <AppText weight="bold" style={{ fontSize: 18 }}>Daily Nutrition</AppText>
         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
           <TouchableOpacity 
-            onPress={() => setMealPlannerVisible(true)} 
+            onPress={() => setMealPlannerVisible(true)}
             style={{ 
               backgroundColor: 'rgba(245, 158, 11, 0.12)', 
               paddingHorizontal: 10, 
@@ -235,20 +235,21 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
               borderColor: 'rgba(245, 158, 11, 0.35)',
               flexDirection: 'row',
               alignItems: 'center',
-              gap: 4
+              gap: 5
             }}
           >
-            <AppText weight="bold" style={{ color: '#F59E0B', fontSize: 12 }}>🍳 AI Chef & Plan</AppText>
+            <Utensils color="#F59E0B" size={13} />
+            <AppText weight="bold" style={{ color: '#F59E0B', fontSize: 12 }}>AI Chef & Plan</AppText>
           </TouchableOpacity>
           <TouchableOpacity 
             onPress={() => setManualNutModal(true)}
             style={{ 
-              backgroundColor: 'rgba(204, 255, 0, 0.1)', 
+              backgroundColor: 'rgba(212, 245, 60, 0.1)', 
               paddingHorizontal: 10, 
               paddingVertical: 6, 
               borderRadius: 8, 
               borderWidth: 1, 
-              borderColor: 'rgba(204, 255, 0, 0.3)' 
+              borderColor: 'rgba(212, 245, 60, 0.3)' 
             }}
           >
             <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 12 }}>+ Log Meal</AppText>

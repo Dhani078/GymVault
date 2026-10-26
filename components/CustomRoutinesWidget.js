@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
 import { Zap, Trash2 } from 'lucide-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme } from '../theme';
 import { supabase } from '../supabaseClient';
 import { useDynamicIsland } from '../contexts/DynamicIslandContext';
@@ -20,7 +21,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
       }
     } else {
       Alert.alert(
-        "Delete Routine 🗑️",
+        "Delete Routine",
         `Are you sure you want to delete "${routine.name}"?`,
         [
           { text: "Cancel", style: "cancel" },
@@ -32,8 +33,6 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
 
   const fetchCustomRoutines = async () => {
     try {
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-      
       const routinesStr = await AsyncStorage.getItem('customRoutines');
       let localRoutines = [];
       if (routinesStr) {
@@ -74,7 +73,6 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
       const updated = customRoutines.filter(r => r.id !== routineId);
       setCustomRoutines(updated);
       
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       await AsyncStorage.setItem('customRoutines', JSON.stringify(updated));
 
       if (session?.user?.id && dbReady) {
@@ -86,7 +84,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
       }
       showNotification({
         type: 'success',
-        title: 'Routine Deleted 🗑️',
+        title: 'Routine Deleted',
         subtitle: 'The routine has been removed.',
         duration: 2500,
       });
@@ -103,7 +101,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
     <View style={{ marginTop: 8, marginBottom: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <AppText weight="bold" style={{ fontSize: 18 }}>My Routines</AppText>
-        <View style={{ backgroundColor: 'rgba(204,255,0,0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 }}>
+        <View style={{ backgroundColor: 'rgba(212,245,60,0.1)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 }}>
           <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 12 }}>{customRoutines.length}</AppText>
         </View>
       </View>
@@ -139,7 +137,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
                 >
                   <Trash2 color="#EF4444" size={13} />
                 </TouchableOpacity>
-                <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(204,255,0,0.06)', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(212,245,60,0.06)', justifyContent: 'center', alignItems: 'center' }}>
                   <Zap color={theme.colors.primary} size={14} />
                 </View>
               </View>
@@ -156,7 +154,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
                 </View>
               ))}
               {(routine.exercises || []).length > 2 && (
-                <View style={{ backgroundColor: 'rgba(204,255,0,0.06)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 0.5, borderColor: 'rgba(204,255,0,0.15)' }}>
+                <View style={{ backgroundColor: 'rgba(212,245,60,0.06)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 0.5, borderColor: 'rgba(212,245,60,0.15)' }}>
                   <AppText style={{ fontSize: 10, color: theme.colors.primary }}>+{(routine.exercises || []).length - 2}</AppText>
                 </View>
               )}

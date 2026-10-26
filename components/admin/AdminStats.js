@@ -12,7 +12,7 @@ export default function AdminStats({ stats = {} }) {
         {/* Card 1: Total Revenue */}
         <View style={[styles.statCard, styles.revenueCard]}>
           <View style={styles.statTopRow}>
-            <View style={[styles.statIconBox, { backgroundColor: 'rgba(204, 255, 0, 0.15)' }]}>
+            <View style={[styles.statIconBox, { backgroundColor: 'rgba(212, 245, 60, 0.15)' }]}>
               <Wallet color="#D4F53C" size={22} />
             </View>
             <View style={styles.trendBadgeGreen}>
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     borderColor: '#1E1E28',
   },
   revenueCard: {
-    borderColor: 'rgba(204, 255, 0, 0.25)',
+    borderColor: 'rgba(212, 245, 60, 0.25)',
     backgroundColor: '#0F1208',
   },
   statTopRow: {
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   chartTrend: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,

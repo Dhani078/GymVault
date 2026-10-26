@@ -103,7 +103,7 @@ export default function WorkoutDetailModal({
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <AppText tabular style={{ fontSize: 12, color: theme.colors.textMuted }}>{vol} kg</AppText>
-                  <View style={{ backgroundColor: 'rgba(204, 255, 0, 0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
+                  <View style={{ backgroundColor: 'rgba(212, 245, 60, 0.1)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 }}>
                     <AppText style={{ fontSize: 10, color: theme.colors.primary, fontWeight: 'bold' }}>✓ Selesai</AppText>
                   </View>
                 </View>

@@ -256,9 +256,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   countBadge: {
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.3)',
+    borderColor: 'rgba(212, 245, 60, 0.3)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     borderColor: '#222230',
   },
   pillActive: {
-    backgroundColor: 'rgba(204, 255, 0, 0.15)',
+    backgroundColor: 'rgba(212, 245, 60, 0.15)',
     borderColor: '#D4F53C',
   },
   pillText: {
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   yearlyBadge: {
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
   },
   monthlyBadge: {
     backgroundColor: 'rgba(96, 165, 250, 0.1)',
@@ -395,9 +395,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(204, 255, 0, 0.08)',
+    backgroundColor: 'rgba(212, 245, 60, 0.08)',
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.25)',
+    borderColor: 'rgba(212, 245, 60, 0.25)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,

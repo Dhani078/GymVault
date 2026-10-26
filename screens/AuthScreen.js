@@ -317,7 +317,7 @@ export default function AuthScreen() {
           borderRadius: 28,
           backgroundColor: 'rgba(255, 255, 255, 0.03)',
           borderWidth: 1,
-          borderColor: 'rgba(204, 255, 0, 0.2)',
+          borderColor: 'rgba(212, 245, 60, 0.2)',
           justifyContent: 'center',
           alignItems: 'center',
           shadowColor: theme.colors.primary,

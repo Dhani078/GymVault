@@ -10,7 +10,7 @@ export default function LeaderboardPreviewWidget({ leaderboardData, onShowLeader
           <Trophy color={theme.colors.primary} size={18} />
           <AppText weight="bold" style={{ fontSize: 16, color: theme.colors.text }}>Top Athletes</AppText>
         </View>
-        <TouchableOpacity onPress={onShowLeaderboard} style={{ backgroundColor: 'rgba(204,255,0,0.08)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
+        <TouchableOpacity onPress={onShowLeaderboard} style={{ backgroundColor: 'rgba(212,245,60,0.08)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
           <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 11 }}>View All</AppText>
         </TouchableOpacity>
       </View>
@@ -31,9 +31,9 @@ export default function LeaderboardPreviewWidget({ leaderboardData, onShowLeader
                   alignItems: 'center', 
                   padding: 10, 
                   borderRadius: 14, 
-                  backgroundColor: isMe ? 'rgba(204,255,0,0.06)' : theme.colors.inputBg,
+                  backgroundColor: isMe ? 'rgba(212,245,60,0.06)' : theme.colors.inputBg,
                   borderWidth: 1,
-                  borderColor: isMe ? 'rgba(204,255,0,0.15)' : 'transparent'
+                  borderColor: isMe ? 'rgba(212,245,60,0.15)' : 'transparent'
                 }}
               >
                 <View style={{ 
@@ -86,9 +86,9 @@ export default function LeaderboardPreviewWidget({ leaderboardData, onShowLeader
                       alignItems: 'center', 
                       padding: 10, 
                       borderRadius: 14, 
-                      backgroundColor: 'rgba(204,255,0,0.06)',
+                      backgroundColor: 'rgba(212,245,60,0.06)',
                       borderWidth: 1,
-                      borderColor: 'rgba(204,255,0,0.15)'
+                      borderColor: 'rgba(212,245,60,0.15)'
                     }}
                   >
                     <View style={{ 

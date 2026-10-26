@@ -303,7 +303,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
         {!isPremium && !showPaywall && (() => {
           const maxUsage = checkedInToday ? 15 : 3;
           return (
-            <View style={{ backgroundColor: 'rgba(204, 255, 0, 0.1)', padding: 12, borderRadius: 12, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(204, 255, 0, 0.3)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <View style={{ backgroundColor: 'rgba(212, 245, 60, 0.1)', padding: 12, borderRadius: 12, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(212, 245, 60, 0.3)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
               <AppText style={{ color: '#D4F53C', fontSize: 14 }}>Sisa AI Nutrition Hari Ini:</AppText>
               <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 16 }}>{Math.max(0, maxUsage - usageCount)} / {maxUsage}</AppText>
             </View>

@@ -257,7 +257,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up, Bench Press, Lat Pulldo
           ) : !showPaywall && (() => {
             const maxUsage = checkedInToday ? 15 : 3;
             return (
-              <View style={{ backgroundColor: 'rgba(204, 255, 0, 0.1)', padding: 12, borderRadius: 12, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(204, 255, 0, 0.3)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View style={{ backgroundColor: 'rgba(212, 245, 60, 0.1)', padding: 12, borderRadius: 12, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(212, 245, 60, 0.3)', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <AppText style={{ color: '#D4F53C', fontSize: 14 }}>Sisa AI Routine Hari Ini:</AppText>
                 <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 16 }}>{Math.max(0, maxUsage - usageCount)} / {maxUsage}</AppText>
               </View>

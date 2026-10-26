@@ -52,7 +52,7 @@ const AnimatedExerciseImage = ({ images }) => {
         resizeMode="contain"
       />
       {images.length > 1 && (
-        <View style={{ position: 'absolute', bottom: 12, right: 12, backgroundColor: 'rgba(204,255,0,0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 0.5, borderColor: theme.colors.primary }}>
+        <View style={{ position: 'absolute', bottom: 12, right: 12, backgroundColor: 'rgba(212,245,60,0.15)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, borderWidth: 0.5, borderColor: theme.colors.primary }}>
           <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 9, letterSpacing: 0.5 }}>ANIMATED</AppText>
         </View>
       )}
@@ -110,9 +110,9 @@ const ExerciseCard = React.memo(({ item, index, scrollY, onPress }) => (
       </AppText>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
         <View style={{
-          backgroundColor: 'rgba(204,255,0,0.06)',
+          backgroundColor: 'rgba(212,245,60,0.06)',
           paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6,
-          borderWidth: 0.5, borderColor: 'rgba(204,255,0,0.2)'
+          borderWidth: 0.5, borderColor: 'rgba(212,245,60,0.2)'
         }}>
           <AppText style={{ fontSize: 10, color: theme.colors.primary, fontWeight: 'bold' }}>
             {item.level}
@@ -476,7 +476,7 @@ export default function LibraryScreen({ onStartExercise }) {
             width: 50,
             height: 50,
             borderRadius: 16,
-            backgroundColor: isAnyFilterActive ? 'rgba(204,255,0,0.06)' : theme.colors.card,
+            backgroundColor: isAnyFilterActive ? 'rgba(212,245,60,0.06)' : theme.colors.card,
             borderWidth: 1,
             borderColor: isAnyFilterActive ? theme.colors.primary : theme.colors.border,
             justifyContent: 'center',
@@ -504,9 +504,9 @@ export default function LibraryScreen({ onStartExercise }) {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          backgroundColor: 'rgba(204,255,0,0.06)',
+          backgroundColor: 'rgba(212,245,60,0.06)',
           borderWidth: 1,
-          borderColor: 'rgba(204,255,0,0.25)',
+          borderColor: 'rgba(212,245,60,0.25)',
           borderRadius: 14,
           paddingHorizontal: 14,
           paddingVertical: 10,
@@ -524,7 +524,7 @@ export default function LibraryScreen({ onStartExercise }) {
               </AppText>
             </View>
           </View>
-          <View style={{ backgroundColor: 'rgba(204,255,0,0.15)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, borderWidth: 0.5, borderColor: theme.colors.primary }}>
+          <View style={{ backgroundColor: 'rgba(212,245,60,0.15)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, borderWidth: 0.5, borderColor: theme.colors.primary }}>
             <AppText style={{ fontSize: 9, color: theme.colors.primary, fontWeight: '900', letterSpacing: 0.5 }}>SYNCING</AppText>
           </View>
         </View>
@@ -608,7 +608,7 @@ export default function LibraryScreen({ onStartExercise }) {
                       onPress={() => setActiveLocation(item)}
                       style={{
                         paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12,
-                        backgroundColor: isActive ? 'rgba(204,255,0,0.08)' : theme.colors.surface,
+                        backgroundColor: isActive ? 'rgba(212,245,60,0.08)' : theme.colors.surface,
                         borderWidth: 1, borderColor: isActive ? theme.colors.primary : theme.colors.border,
                       }}
                     >
@@ -631,7 +631,7 @@ export default function LibraryScreen({ onStartExercise }) {
                       onPress={() => setActiveDifficulty(item)}
                       style={{
                         paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12,
-                        backgroundColor: isActive ? 'rgba(204,255,0,0.08)' : theme.colors.surface,
+                        backgroundColor: isActive ? 'rgba(212,245,60,0.08)' : theme.colors.surface,
                         borderWidth: 1, borderColor: isActive ? theme.colors.primary : theme.colors.border,
                       }}
                     >
@@ -654,7 +654,7 @@ export default function LibraryScreen({ onStartExercise }) {
                       onPress={() => setActiveMuscle(item)}
                       style={{
                         paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12,
-                        backgroundColor: isActive ? 'rgba(204,255,0,0.08)' : theme.colors.surface,
+                        backgroundColor: isActive ? 'rgba(212,245,60,0.08)' : theme.colors.surface,
                         borderWidth: 1, borderColor: isActive ? theme.colors.primary : theme.colors.border,
                       }}
                     >
@@ -719,7 +719,7 @@ export default function LibraryScreen({ onStartExercise }) {
                 <AppText weight="bold" style={{ fontSize: 22, marginBottom: 8, color: theme.colors.text }}>{selectedEx.name}</AppText>
 
                 <View style={{ flexDirection: 'row', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
-                  <View style={{ backgroundColor: 'rgba(204,255,0,0.06)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 0.5, borderColor: 'rgba(204,255,0,0.2)' }}>
+                  <View style={{ backgroundColor: 'rgba(212,245,60,0.06)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 0.5, borderColor: 'rgba(212,245,60,0.2)' }}>
                     <AppText style={{ fontSize: 12, color: theme.colors.primary, fontWeight: 'bold' }}>{selectedEx.level}</AppText>
                   </View>
                   <View style={{ backgroundColor: theme.colors.surface, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 0.5, borderColor: theme.colors.border }}>

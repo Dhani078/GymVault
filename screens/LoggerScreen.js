@@ -978,7 +978,7 @@ export default function LoggerScreen({
             <Pressable 
               onPress={toggleVoiceGuide}
               style={{ 
-                backgroundColor: voiceGuideEnabled ? 'rgba(204, 255, 0, 0.1)' : 'rgba(255, 255, 255, 0.03)', 
+                backgroundColor: voiceGuideEnabled ? 'rgba(212, 245, 60, 0.1)' : 'rgba(255, 255, 255, 0.03)', 
                 width: 36, 
                 height: 36, 
                 borderRadius: 10, 
@@ -986,7 +986,7 @@ export default function LoggerScreen({
                 alignItems: 'center', 
                 marginRight: 8,
                 borderWidth: 1,
-                borderColor: voiceGuideEnabled ? 'rgba(204, 255, 0, 0.3)' : theme.colors.border
+                borderColor: voiceGuideEnabled ? 'rgba(212, 245, 60, 0.3)' : theme.colors.border
               }}
             >
               {voiceGuideEnabled ? (
@@ -1089,9 +1089,9 @@ export default function LoggerScreen({
 
           return (
             <View style={{
-              backgroundColor: isBackoff ? 'rgba(245, 158, 11, 0.06)' : 'rgba(204, 255, 0, 0.04)',
+              backgroundColor: isBackoff ? 'rgba(245, 158, 11, 0.06)' : 'rgba(212, 245, 60, 0.04)',
               borderWidth: 1,
-              borderColor: isBackoff ? 'rgba(245, 158, 11, 0.3)' : 'rgba(204, 255, 0, 0.2)',
+              borderColor: isBackoff ? 'rgba(245, 158, 11, 0.3)' : 'rgba(212, 245, 60, 0.2)',
               borderRadius: 12,
               padding: 12,
               marginBottom: 14,

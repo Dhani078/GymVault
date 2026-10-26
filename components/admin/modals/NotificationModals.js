@@ -60,7 +60,7 @@ export default function NotificationModals({
                       styles.generateBtn, 
                       { flex: 1, paddingVertical: 12 },
                       newNotif.type === type && { 
-                        backgroundColor: type === 'warning' ? 'rgba(255, 165, 0, 0.2)' : type === 'info' ? 'rgba(68, 136, 255, 0.2)' : 'rgba(204, 255, 0, 0.2)',
+                        backgroundColor: type === 'warning' ? 'rgba(255, 165, 0, 0.2)' : type === 'info' ? 'rgba(68, 136, 255, 0.2)' : 'rgba(212, 245, 60, 0.2)',
                         borderColor: type === 'warning' ? '#FFA500' : type === 'info' ? '#4488FF' : '#D4F53C'
                       }
                     ]}
@@ -229,9 +229,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   generateBtn: {
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.3)',
+    borderColor: 'rgba(212, 245, 60, 0.3)',
     borderRadius: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',

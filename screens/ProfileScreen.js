@@ -44,7 +44,7 @@ const Toast = ({ visible, type, message }) => {
   return (
     <View style={{
       position: 'absolute', top: 50, left: 24, right: 24, zIndex: 999,
-      backgroundColor: isError ? 'rgba(239, 68, 68, 0.95)' : 'rgba(204, 255, 0, 0.95)',
+      backgroundColor: isError ? 'rgba(239, 68, 68, 0.95)' : 'rgba(212, 245, 60, 0.95)',
       padding: 16, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 12,
       shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5
     }}>
@@ -521,7 +521,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, flex: 1 }}>
-              <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(204, 255, 0, 0.15)', justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(212, 245, 60, 0.15)', justifyContent: 'center', alignItems: 'center' }}>
                 <Crown color="#D4F53C" size={22} />
               </View>
               <View style={{ flex: 1 }}>
@@ -579,8 +579,8 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         />
 
         {/* ─── Deload & Injury Risk ─── */}
-        <View style={{ backgroundColor: darkMode ? 'rgba(204, 255, 0, 0.05)' : '#FFFFFF', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: deloadSuggestion.status === 'Danger' ? '#EF4444' : (darkMode ? 'rgba(204, 255, 0, 0.2)' : '#E5E7EB'), marginBottom: 16, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
-          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: deloadSuggestion.status === 'Danger' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(204, 255, 0, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ backgroundColor: darkMode ? 'rgba(212, 245, 60, 0.05)' : '#FFFFFF', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: deloadSuggestion.status === 'Danger' ? '#EF4444' : (darkMode ? 'rgba(212, 245, 60, 0.2)' : '#E5E7EB'), marginBottom: 16, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: deloadSuggestion.status === 'Danger' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(212, 245, 60, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
             {deloadSuggestion.status === 'Danger' ? <AlertTriangle color="#EF4444" size={24} /> : <Zap color="#D4F53C" size={24} />}
           </View>
           <View style={{ flex: 1 }}>

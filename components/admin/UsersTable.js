@@ -160,7 +160,7 @@ export default function UsersTable({
                   </TouchableOpacity>
                   
                   <TouchableOpacity 
-                    style={[styles.actionBtnWarning, isSuspended && { backgroundColor: 'rgba(204, 255, 0, 0.1)', borderColor: 'rgba(204, 255, 0, 0.2)' }]}
+                    style={[styles.actionBtnWarning, isSuspended && { backgroundColor: 'rgba(212, 245, 60, 0.1)', borderColor: 'rgba(212, 245, 60, 0.2)' }]}
                     onPress={() => setUserToToggleStatus(user)}
                     title={isSuspended ? 'Unsuspend' : 'Suspend'}
                   >
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     borderColor: '#222230',
   },
   filterPillActive: {
-    backgroundColor: 'rgba(204, 255, 0, 0.12)',
+    backgroundColor: 'rgba(212, 245, 60, 0.12)',
     borderColor: '#D4F53C',
   },
   filterPillText: {
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   tierPro: {
-    backgroundColor: 'rgba(204, 255, 0, 0.12)',
+    backgroundColor: 'rgba(212, 245, 60, 0.12)',
   },
   tierFree: {
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -381,16 +381,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionBtnStarActive: {
-    backgroundColor: 'rgba(204, 255, 0, 0.15)',
+    backgroundColor: 'rgba(212, 245, 60, 0.15)',
     borderColor: '#D4F53C',
   },
   actionBtnInfo: {
     width: 30,
     height: 30,
     borderRadius: 8,
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.25)',
+    borderColor: 'rgba(212, 245, 60, 0.25)',
     justifyContent: 'center',
     alignItems: 'center',
   },

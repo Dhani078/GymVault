@@ -38,8 +38,8 @@ export default function NotificationSystem({ notifications, setShowNotifModal, s
               </Text>
               <View style={[styles.tableCell, styles.cellFlex1]}>
                 <View style={[styles.statusBadge, {
-                  backgroundColor: notif.type === 'warning' ? 'rgba(255, 165, 0, 0.1)' : notif.type === 'info' ? 'rgba(68, 136, 255, 0.1)' : 'rgba(204, 255, 0, 0.1)',
-                  borderColor: notif.type === 'warning' ? 'rgba(255, 165, 0, 0.3)' : notif.type === 'info' ? 'rgba(68, 136, 255, 0.3)' : 'rgba(204, 255, 0, 0.3)'
+                  backgroundColor: notif.type === 'warning' ? 'rgba(255, 165, 0, 0.1)' : notif.type === 'info' ? 'rgba(68, 136, 255, 0.1)' : 'rgba(212, 245, 60, 0.1)',
+                  borderColor: notif.type === 'warning' ? 'rgba(255, 165, 0, 0.3)' : notif.type === 'info' ? 'rgba(68, 136, 255, 0.3)' : 'rgba(212, 245, 60, 0.3)'
                 }]}>
                   <Text style={[styles.statusText, {
                     color: notif.type === 'warning' ? '#FFA500' : notif.type === 'info' ? '#4488FF' : '#D4F53C'

@@ -223,9 +223,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   generateBtn: {
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.3)',
+    borderColor: 'rgba(212, 245, 60, 0.3)',
     borderRadius: 12,
     paddingHorizontal: 16,
     justifyContent: 'center',

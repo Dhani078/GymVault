@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { View, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { ShieldAlert, RefreshCw } from 'lucide-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme } from '../theme';
 import { useDynamicIsland } from '../contexts/DynamicIslandContext';
+import { safeInsert, safeBatchInsert } from '../supabaseClient';
 
 export default function OfflineSyncBanner({ session, onSyncComplete }) {
   const { showNotification } = useDynamicIsland();
@@ -48,7 +50,6 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
   const loadOfflineQueueCount = async () => {
     try {
       if (!session?.user?.id) return [];
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       const queueStr = await AsyncStorage.getItem(`offline_workouts_${session.user.id}`);
       if (queueStr) {
         const queue = JSON.parse(queueStr);
@@ -68,7 +69,6 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
     try {
       if (!session?.user?.id) return;
       const userId = session.user.id;
-      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
 
       const queueStr = await AsyncStorage.getItem(`offline_workouts_${userId}`);
       if (!queueStr) return;
@@ -77,7 +77,6 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
       if (queue.length === 0) return;
 
       const successfulIds = [];
-      const { safeInsert, safeBatchInsert } = require('../supabaseClient');
 
       for (let i = 0; i < queue.length; i++) {
         const item = queue[i];

@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -514,12 +514,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 100,
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.3)',
+    borderColor: 'rgba(212, 245, 60, 0.3)',
   },
   chartTrendText: {
     color: '#D4F53C',
@@ -632,9 +632,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#1A1A1A',
   },
   roleAdmin: {
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.3)',
+    borderColor: 'rgba(212, 245, 60, 0.3)',
   },
   roleText: {
     fontFamily: 'Inter_700Bold',
@@ -653,8 +653,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   statusActive: {
-    backgroundColor: 'rgba(204, 255, 0, 0.05)',
-    borderColor: 'rgba(204, 255, 0, 0.2)',
+    backgroundColor: 'rgba(212, 245, 60, 0.05)',
+    borderColor: 'rgba(212, 245, 60, 0.2)',
   },
   statusSuspended: {
     backgroundColor: 'rgba(255, 165, 0, 0.05)',
@@ -687,10 +687,10 @@ const styles = StyleSheet.create({
   },
   actionBtnInfo: {
     padding: 8,
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.2)',
+    borderColor: 'rgba(212, 245, 60, 0.2)',
   },
   modalOverlay: {
     flex: 1,
@@ -842,9 +842,9 @@ const styles = StyleSheet.create({
     outlineStyle: 'none',
   },
   generateBtn: {
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.3)',
+    borderColor: 'rgba(212, 245, 60, 0.3)',
     borderRadius: 12,
     paddingHorizontal: 20,
     justifyContent: 'center',

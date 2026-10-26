@@ -31,8 +31,8 @@ export default function SupportSystem({ supportTickets, setSelectedTicket }) {
               </Text>
               <View style={[styles.tableCell, styles.cellFlex1]}>
                 <View style={[styles.statusBadge, {
-                  backgroundColor: ticket.status === 'open' ? 'rgba(255, 165, 0, 0.1)' : 'rgba(204, 255, 0, 0.1)',
-                  borderColor: ticket.status === 'open' ? 'rgba(255, 165, 0, 0.3)' : 'rgba(204, 255, 0, 0.3)'
+                  backgroundColor: ticket.status === 'open' ? 'rgba(255, 165, 0, 0.1)' : 'rgba(212, 245, 60, 0.1)',
+                  borderColor: ticket.status === 'open' ? 'rgba(255, 165, 0, 0.3)' : 'rgba(212, 245, 60, 0.3)'
                 }]}>
                   <Text style={[styles.statusText, {
                     color: ticket.status === 'open' ? '#FFA500' : '#D4F53C'
@@ -154,9 +154,9 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: 'rgba(204, 255, 0, 0.1)',
+    backgroundColor: 'rgba(212, 245, 60, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(204, 255, 0, 0.2)',
+    borderColor: 'rgba(212, 245, 60, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
   },
