@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
 import http from 'node:http';
+import fs from 'node:fs';
 
 const CHROME_PATH = 'C:\\Users\\Anomali\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe';
 const TARGET_URL = process.env.AUDIT_URL || 'https://gymvault-app.vercel.app';
@@ -145,6 +146,16 @@ async function runAudit() {
       })()`);
 
       console.log(`[${vp.name} (${vp.width}x${vp.height})] Overflow: ${metrics.hasOverflow ? '❌ YES (+' + metrics.overflowDiff + 'px)' : '✔ ZERO'}`);
+
+      if (vp.name === 'Desktop Standard' || vp.name === 'Mobile Standard') {
+        const shot = await send('Page.captureScreenshot', { format: 'png' });
+        if (shot && shot.data) {
+          const fileName = vp.mobile ? 'chrome-audit-mobile.png' : 'chrome-audit-desktop.png';
+          const outPath = `E:\\Hermesproject\\GYM\\artifacts\\${fileName}`;
+          fs.writeFileSync(outPath, Buffer.from(shot.data, 'base64'));
+          console.log(`📸 Screenshot captured: ${outPath}`);
+        }
+      }
     }
 
     // Inspect elements and switcher
