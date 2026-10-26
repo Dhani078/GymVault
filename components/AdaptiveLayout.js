@@ -1,8 +1,8 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { View, Text, TouchableOpacity, useWindowDimensions, StyleSheet, ActivityIndicator } from 'react-native';
+import { useState, useEffect, Suspense } from "react";
+import { View, Text, TouchableOpacity, useWindowDimensions, StyleSheet, ActivityIndicator, Platform } from 'react-native';
 import { supabase } from '../supabaseClient';
 import { useTheme } from '../contexts/ThemeContext';
-import { Globe, Smartphone, ShieldCheck, ArrowLeft } from 'lucide-react-native';
+import { Globe, Smartphone, ShieldCheck } from "lucide-react-native";
 
 import LandingPage from '../screens/LandingPage';
 import AdminDashboard from '../screens/AdminDashboard';
@@ -50,7 +50,7 @@ export default function AdaptiveLayout({ children, session }) {
           } else {
             setRole('user');
           }
-        } catch (e) {
+        } catch (_e) {
           setRole('user');
         } finally {
           setLoadingRole(false);
@@ -68,8 +68,6 @@ export default function AdaptiveLayout({ children, session }) {
   if (!isDesktop) {
     return <>{children}</>;
   }
-
-  // --- PC / DESKTOP VIEWPORT LOGIC (≥ 768px) ---
 
   if (loadingRole) {
     return (

@@ -27,7 +27,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
     runReactionTrial([], 0);
   };
 
-  const runReactionTrial = (trials, currentProgress) => {
+  const runReactionTrial = (_trials, _currentProgress) => {
     setReactionGameState('waiting');
     setReactionMsg('Tunggu sampai warna berubah menjadi NEON...');
     
@@ -38,7 +38,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
       setReactionMsg('KETUK SEKARANG!');
       try {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      } catch (e) {}
+      } catch (_e) {}
     }, randomDelay);
     
     setReactionTimer(timer);
@@ -55,7 +55,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
       if (reactionTimer) clearTimeout(reactionTimer);
       try {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      } catch (e) {}
+      } catch (_e) {}
       setReactionGameState('idle');
       setReactionMsg('Terlalu cepat! Silakan coba lagi.');
       return;
@@ -65,7 +65,7 @@ export default function NeuroGameWidget({ onResult, onCancel }) {
       const duration = Date.now() - reactionStartTime;
       try {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      } catch (e) {}
+      } catch (_e) {}
       
       const newTrials = [...reactionTrials, duration];
       setReactionTrials(newTrials);

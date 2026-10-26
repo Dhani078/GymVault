@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import Svg, { Path, G, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { AppText, theme } from '../theme';
-import { Shield, Zap, Activity, Info, Calendar, X } from 'lucide-react-native';
+import { Activity, Info, Calendar, X } from "lucide-react-native";
 import { useTheme } from '../contexts/ThemeContext';
 import { useDynamicIsland } from '../contexts/DynamicIslandContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -251,7 +251,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
       } else {
         setOverrides({});
       }
-    } catch (e) {
+    } catch (_e) {
 
     }
   };
@@ -291,7 +291,7 @@ export default function MuscleRecoveryMap({ completedSessions = [], session }) {
           isOverride: true
         });
       }
-    } catch (e) {
+    } catch (_e) {
 
     }
   };

@@ -8,7 +8,7 @@ const LoggerSetRow = ({
   index,
   proMode,
   isCurrentlyActive,
-  activeSetIndex,
+  activeSetIndex: _activeSetIndex,
   curEx,
   adjust,
   updateSetValueText,

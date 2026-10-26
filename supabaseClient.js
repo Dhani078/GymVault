@@ -10,7 +10,7 @@ try {
   if (Platform.OS !== 'web') {
     storage = require('@react-native-async-storage/async-storage').default;
   }
-} catch (e) {
+} catch (_e) {
   // AsyncStorage not available, fallback to default
 }
 
@@ -32,8 +32,6 @@ const subscription = AppState.addEventListener('change', (state) => {
   }
 });
 
-// ─── Database Bootstrap ───
-// Checks if required tables exist and shows setup instructions if not.
 let _dbReady = null; // cached result
 
 export async function ensureDatabase() {
@@ -53,14 +51,11 @@ export async function ensureDatabase() {
     }
     _dbReady = true;
     return true;
-  } catch (e) {
+  } catch (_e) {
     _dbReady = false;
     return false;
   }
 }
-
-// ─── Safe Query Helpers ───
-// Wraps all DB operations in try/catch with user-friendly error handling.
 
 /**
  * Safe SELECT query. Returns { data, error }.

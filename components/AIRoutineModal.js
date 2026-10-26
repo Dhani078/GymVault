@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { View, Modal, TouchableOpacity, ActivityIndicator, Alert, Image, Linking } from 'react-native';
-import { X, Zap, MessageCircle, Award, Crown, CheckCircle } from 'lucide-react-native';
+import { X, Zap, MessageCircle, Award, Crown } from "lucide-react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme, styles } from '../theme';
 import AICoachLogo from './AICoachLogo';
 import { generateWithGeminiCascade } from '../services/geminiService';
 import { getLocalDateString } from '../utils/dateHelpers';
 
-function generateHeuristicRoutine({ level = 'Intermediate', focus = 'Full Body', isHome = false, equipmentInventory = [], cnsScore = 3 }) {
+function generateHeuristicRoutine({ level = 'Intermediate', focus = 'Full Body', isHome = false, equipmentInventory: _equipmentInventory = [], cnsScore = 3 }) {
   const setsCount = cnsScore <= 2 ? 3 : (level === 'Expert' ? 4 : 3);
   
   const routinesMap = {
@@ -129,7 +129,7 @@ export default function AIRoutineModal({ visible, onClose, onStartRoutine, cnsSc
       } else {
         setUsageCount(0);
       }
-    } catch (e) {}
+    } catch (_e) {}
   };
 
   const handleGenerate = async () => {
@@ -146,7 +146,6 @@ export default function AIRoutineModal({ visible, onClose, onStartRoutine, cnsSc
       ? window.location.origin
       : (process.env.EXPO_PUBLIC_API_URL || 'https://gymvault-app.vercel.app');
 
-    // ─── TIER 1: Vercel Serverless Function ───
     try {
       const res = await fetch(`${BACKEND_URL}/api/generate-routine`, {
         method: 'POST',
@@ -165,11 +164,10 @@ export default function AIRoutineModal({ visible, onClose, onStartRoutine, cnsSc
           routine = data;
         }
       }
-    } catch (apiErr) {
+    } catch (_apiErr) {
       // Fallback to Tier 2
     }
 
-    // ─── TIER 2: Direct Gemini Multi-Model Cascade ───
     if (!routine) {
       try {
         const prompt = `You are an expert AI personal trainer.
@@ -206,12 +204,11 @@ Ensure exercise names are popular (e.g., Squat, Push Up, Bench Press, Lat Pulldo
         if (parsed && Array.isArray(parsed.exercises) && parsed.exercises.length > 0) {
           routine = parsed;
         }
-      } catch (geminiErr) {
+      } catch (_geminiErr) {
         // Fallback to Tier 3
       }
     }
 
-    // ─── TIER 3: Intelligent Expert Workout Synthesizer (Guaranteed 100% Reliability) ───
     if (!routine) {
       routine = generateHeuristicRoutine({ level, focus, isHome, equipmentInventory, cnsScore });
     }
@@ -230,7 +227,7 @@ Ensure exercise names are popular (e.g., Squat, Push Up, Bench Press, Lat Pulldo
       if (typeof onStartRoutine === 'function' && routine) {
         onStartRoutine(routine);
       }
-    } catch (e) {
+    } catch (_e) {
       Alert.alert("Perhatian", "Gagal memproses jadwal latihan. Silakan coba kembali.");
     } finally {
       setLoading(false);
@@ -282,7 +279,6 @@ Ensure exercise names are popular (e.g., Squat, Push Up, Bench Press, Lat Pulldo
                   style={{ width: '100%', height: '100%' }}
                   resizeMode="contain"
                   defaultSource={{uri: 'https://via.placeholder.com/200?text=Scan+QRIS'}}
-                  onError={(e) => console.log('Place your qris.jpg in assets/ folder')}
                 />
               </View>
 

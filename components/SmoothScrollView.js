@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from "react";
 import { Animated, View } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 

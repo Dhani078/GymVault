@@ -6,7 +6,7 @@ const hasNotifeeNativeModule = () => {
   try {
     const { NativeModules } = require('react-native');
     return !!NativeModules.NotifeeApiModule;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 };
@@ -17,7 +17,7 @@ if (hasNotifeeNativeModule()) {
     const { EventType } = require('@notifee/react-native');
 
     // Register Notifee foreground service task
-    notifee.registerForegroundService((notification) => {
+    notifee.registerForegroundService((_notification) => {
       return new Promise(() => {
         // Keeps the foreground service alive
       });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { View, TouchableOpacity, Modal, TextInput, ActivityIndicator } from 'react-native';
 import { Award } from 'lucide-react-native';
 import { AppText, theme } from '../../theme';
@@ -58,7 +58,7 @@ export default function RedeemCodeModal({
       } else {
         showToast('error', data?.message || 'Kode promo tidak valid atau sudah dipakai ❌');
       }
-    } catch (e) {
+    } catch (_e) {
       showToast('error', 'Terjadi kesalahan jaringan.');
     } finally {
       setLoading(false);

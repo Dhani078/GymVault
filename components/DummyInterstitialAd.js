@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef } from "react";
 
 // Coba import AdMob — kalau gagal (Expo Go / Web), pakai dummy
 let InterstitialAd, AdEventType, adUnitIds;
@@ -10,7 +10,7 @@ try {
   AdEventType = admob.AdEventType;
   adUnitIds = require('../config/ads').adUnitIds;
   isAdMobAvailable = true;
-} catch (e) {
+} catch (_e) {
   isAdMobAvailable = false;
 }
 
@@ -42,7 +42,7 @@ export default function useInterstitialAd() {
       interstitial.load();
     });
 
-    const unsubscribeError = interstitial.addAdEventListener(AdEventType.ERROR, (error) => {
+    const unsubscribeError = interstitial.addAdEventListener(AdEventType.ERROR, (_error) => {
 
       setLoaded(false);
     });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { View, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { ShieldAlert, RefreshCw } from 'lucide-react-native';
 import { AppText, theme } from '../theme';
@@ -55,7 +55,7 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
         setOfflineQueueCount(queue.length);
         return queue;
       }
-    } catch (e) {
+    } catch (_e) {
 
     }
     setOfflineQueueCount(0);
@@ -120,13 +120,13 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
             let { error: setsErr } = await safeBatchInsert('workout_sets', setRows);
             if (setsErr) {
               // Retry without exercise_name in case remote table lacks the column
-              const minimalSets = setRows.map(({ exercise_name, ...rest }) => rest);
+              const minimalSets = setRows.map(({ exercise_name: _exercise_name, ...rest }) => rest);
               await safeBatchInsert('workout_sets', minimalSets);
             }
           }
 
           successfulIds.push(i);
-        } catch (err) {
+        } catch (_err) {
 
         }
       }
@@ -155,7 +155,7 @@ export default function OfflineSyncBanner({ session, onSyncComplete }) {
           if (onSyncComplete) onSyncComplete();
         }
       }
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setIsSyncing(false);

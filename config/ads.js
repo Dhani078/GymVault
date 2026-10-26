@@ -24,7 +24,7 @@ const TEST_REWARDED_ID = 'ca-app-pub-3940256099942544/5224354917';
 let TestIds;
 try {
   TestIds = require('react-native-google-mobile-ads').TestIds;
-} catch (e) {
+} catch (_e) {
   // Jika react-native-google-mobile-ads tidak tersedia (Expo Go / Web),
   // gunakan hardcoded test IDs sebagai fallback
   TestIds = {

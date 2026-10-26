@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, TouchableOpacity, Modal, ActivityIndicator, RefreshControl, Animated, Easing, TextInput, Alert, Platform, Image, DeviceEventEmitter } from 'react-native';
-import { Dumbbell, Activity, Flame, Trophy, Calendar, TrendingUp, Target, Zap, Coffee, ShieldAlert, Home, CheckCircle2, Check, Droplet, Gamepad2, Timer, RefreshCw, X, Users } from 'lucide-react-native';
+import { useState, useEffect } from "react";
+import { View, ScrollView, TouchableOpacity, Modal, ActivityIndicator, RefreshControl, TextInput, DeviceEventEmitter } from "react-native";
+import { Dumbbell, Activity, Flame, Trophy, TrendingUp, Target, Zap, Home } from "lucide-react-native";
 import { AppText, styles, theme } from '../theme';
 import { supabase, safeSelect, safeUpsert } from '../supabaseClient';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -22,7 +22,7 @@ import OfflineSyncBanner from '../components/OfflineSyncBanner';
 import CustomRoutinesWidget from '../components/CustomRoutinesWidget';
 import CommunitySocialFeedWidget from '../components/CommunitySocialFeedWidget';
 import LeaderboardPreviewWidget from '../components/LeaderboardPreviewWidget';
-import { formatShortDate, getLocalDateString } from '../utils/dateHelpers';
+import { formatShortDate } from "../utils/dateHelpers";
 import { MotiView } from 'moti';
 
 
@@ -30,7 +30,7 @@ import { MotiView } from 'moti';
 export default function DashboardScreen({ onStartWorkout, onStartRoutine, session, dbReady, hasActiveWorkout }) {
   const { t } = useTranslation();
   const { showNotification } = useDynamicIsland();
-  const { mode, setMode, isHome, equipmentInventory, toggleEquipment } = useAppMode();
+  const { mode: _mode, setMode, isHome, equipmentInventory, toggleEquipment } = useAppMode();
   const [aiModalVisible, setAiModalVisible] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -158,11 +158,11 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
         } else if (rpcErr) {
 
         }
-      } catch (leaderboardErr) {
+      } catch (_leaderboardErr) {
 
       }
 
-    } catch (e) {
+    } catch (_e) {
 
       setDbError(true);
     }
@@ -179,7 +179,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
     try {
       const Haptics = require('expo-haptics');
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    } catch (e) {}
+    } catch (_e) {}
     setLoading(true);
     if (session?.user && !dbError) {
       try {
@@ -189,7 +189,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           email: session.user.email,
           cns_fatigue: 3, // Default Neutral
         });
-      } catch (e) {
+      } catch (_e) {
 
       }
     }

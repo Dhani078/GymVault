@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { View, Pressable } from 'react-native';
 import { AppText } from '../theme';
 import { Target, Activity, Zap, ChevronRight } from 'lucide-react-native';

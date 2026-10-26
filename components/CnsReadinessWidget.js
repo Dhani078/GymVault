@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Modal, ActivityIndicator, StyleSheet } from 'react-native';
-import { Activity, X, Gamepad2, Zap, Coffee, ShieldAlert } from 'lucide-react-native';
+import { View, TouchableOpacity, Modal, ActivityIndicator } from "react-native";
+import { Activity, X, Gamepad2 } from "lucide-react-native";
 import { AppText, styles, theme } from '../theme';
 import { safeUpsert } from '../supabaseClient';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -28,7 +28,7 @@ export default function CnsReadinessWidget({ session, userProfile, dbError, onSt
           email: session.user.email,
           cns_fatigue: averageCns,
         });
-      } catch (e) {
+      } catch (_e) {
 
       }
     }

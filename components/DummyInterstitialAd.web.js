@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export default function useInterstitialAd() {
   const [loaded] = useState(false);

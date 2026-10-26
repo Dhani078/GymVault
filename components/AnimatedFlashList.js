@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, Dimensions } from "react-native";
 import { FlashList } from '@shopify/flash-list';
 import Animated, { 
   useAnimatedScrollHandler, 
@@ -18,12 +18,12 @@ export const AnimatedFlashList = React.forwardRef(({
   data, 
   renderItem, 
   onScroll, 
-  scrollEventThrottle = 16, 
+  scrollEventThrottle: _scrollEventThrottle = 16, 
   decelerationRate = "normal", 
   ...rest 
 }, ref) => {
   const scrollY = useSharedValue(0);
-  const { graphicsQuality, fpsLimit } = useTheme();
+  const { graphicsQuality: _graphicsQuality, fpsLimit } = useTheme();
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {

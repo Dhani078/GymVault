@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef } from "react";
 
 // Coba import AdMob — kalau gagal (Expo Go / Web), pakai dummy
 let RewardedAd, RewardedAdEventType, AdEventType, adUnitIds;
@@ -11,7 +11,7 @@ try {
   AdEventType = admob.AdEventType;
   adUnitIds = require('../config/ads').adUnitIds;
   isAdMobAvailable = true;
-} catch (e) {
+} catch (_e) {
   isAdMobAvailable = false;
 }
 
@@ -36,7 +36,7 @@ export default function useRewardedAd() {
 
     const unsubscribeEarned = rewarded.addAdEventListener(
       RewardedAdEventType.EARNED_REWARD,
-      (reward) => {
+      (_reward) => {
         if (onRewardCallbackRef.current) {
           onRewardCallbackRef.current();
           onRewardCallbackRef.current = null;
@@ -49,7 +49,7 @@ export default function useRewardedAd() {
       rewarded.load();
     });
 
-    const unsubscribeError = rewarded.addAdEventListener(AdEventType.ERROR, (error) => {
+    const unsubscribeError = rewarded.addAdEventListener(AdEventType.ERROR, (_error) => {
 
       setLoaded(false);
     });

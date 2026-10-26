@@ -39,7 +39,7 @@ async function runAudit() {
       try {
         versionData = await getJson(`http://127.0.0.1:${PORT}/json/version`);
         if (versionData && versionData.webSocketDebuggerUrl) break;
-      } catch (e) {}
+      } catch (_e) {}
     }
 
     if (!versionData) {

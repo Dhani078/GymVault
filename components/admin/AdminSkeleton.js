@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated } from 'react-native';
 
 export default function AdminSkeleton() {

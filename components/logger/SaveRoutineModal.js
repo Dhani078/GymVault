@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { View, Pressable, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme } from '../../theme';
@@ -53,7 +53,7 @@ export default function SaveRoutineModal({
         });
       }
       if (typeof onClose === 'function') onClose();
-    } catch (e) {
+    } catch (_e) {
       Alert.alert('Error', 'Failed to save routine.');
     } finally {
       setSaving(false);

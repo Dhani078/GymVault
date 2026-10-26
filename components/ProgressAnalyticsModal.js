@@ -7,8 +7,8 @@ import { useTheme } from '../contexts/ThemeContext';
 import SkiaLineChart from './SkiaLineChart';
 
 export default function ProgressAnalyticsModal({ visible, onClose, userId, dbReady }) {
-  const { colors, darkMode } = useTheme();
-  const { width: screenWidth } = useWindowDimensions();
+  const { colors, darkMode: _darkMode } = useTheme();
+  const { width: _screenWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
   const [exercisesList, setExercisesList] = useState([]);
   const [selectedExerciseId, setSelectedExerciseId] = useState(null);
@@ -113,7 +113,7 @@ export default function ProgressAnalyticsModal({ visible, onClose, userId, dbRea
             setHistoryData([]);
           }
         }
-      } catch (e) {
+      } catch (_e) {
         // Fallback gracefully on exception
       } finally {
         setLoading(false);

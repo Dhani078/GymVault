@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { View, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator, ScrollView, Modal } from 'react-native';
-import { Search, Plus, X, Dumbbell, PlayCircle, Filter, ChevronRight, Database, Sparkles, CheckCircle2 } from 'lucide-react-native';
+import { View, TextInput, TouchableOpacity, Image, ActivityIndicator, ScrollView, Modal } from "react-native";
+import { Search, X, Dumbbell, Filter, ChevronRight, Database, Sparkles, CheckCircle2 } from "lucide-react-native";
 import { AppText, theme, styles } from '../theme';
-import { supabase } from '../supabaseClient';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useAppMode, EXERCISE_SWAP_MAP } from '../contexts/AppModeContext';
 import { FALLBACK_EXERCISES } from './FallbackExercises';
@@ -377,7 +376,7 @@ export default function LibraryScreen({ onStartExercise }) {
       globalCachedMuscleGroups = sortedGroups;
       globalCachedExercises = merged;
 
-    } catch (err) {
+    } catch (_err) {
 
     } finally {
       setIsFetchingMore(false);

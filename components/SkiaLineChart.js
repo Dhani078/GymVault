@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
+import { useEffect } from "react";
 import { View, StyleSheet, useWindowDimensions, Platform } from 'react-native';
-import { Canvas, Path, Skia, LinearGradient, vec, Circle, Text, matchFont } from '@shopify/react-native-skia';
-import Animated, { 
-  useSharedValue, 
-  withTiming, 
-  useDerivedValue,
-  Easing 
-} from 'react-native-reanimated';
+import { Canvas, Path, Skia, LinearGradient, vec, Circle, Text } from "@shopify/react-native-skia";
+import Animated, {
+  useSharedValue,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
 import { AppText, theme } from '../theme';
 import { useTheme } from '../contexts/ThemeContext';
 

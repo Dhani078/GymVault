@@ -5,7 +5,7 @@ const getNotifee = () => {
     const { NativeModules } = require('react-native');
     if (!NativeModules.NotifeeApiModule) return null;
     return require('@notifee/react-native');
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 };
@@ -29,7 +29,7 @@ class LiveActivityManager {
     this.listeners.forEach(l => {
       try {
         l(actionId);
-      } catch (err) {
+      } catch (_err) {
 
       }
     });
@@ -51,7 +51,7 @@ class LiveActivityManager {
         vibration: false,
         sound: 'default',
       });
-    } catch (e) {
+    } catch (_e) {
 
     }
   }
@@ -94,7 +94,7 @@ class LiveActivityManager {
           ],
         },
       });
-    } catch (e) {
+    } catch (_e) {
 
     }
   }
@@ -141,7 +141,7 @@ class LiveActivityManager {
           ],
         },
       });
-    } catch (e) {
+    } catch (_e) {
 
     }
   }
@@ -158,7 +158,7 @@ class LiveActivityManager {
     try {
       await notifee.stopForegroundService();
       await notifee.cancelNotification('active_workout');
-    } catch (e) {
+    } catch (_e) {
 
     }
   }

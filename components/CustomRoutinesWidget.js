@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { View, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
 import { Zap, Trash2 } from 'lucide-react-native';
 import { AppText, theme } from '../theme';
@@ -64,7 +64,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
 
         }
       }
-    } catch (e) {
+    } catch (_e) {
 
     }
   };
@@ -90,7 +90,7 @@ export default function CustomRoutinesWidget({ session, dbReady, onStartRoutine 
         subtitle: 'The routine has been removed.',
         duration: 2500,
       });
-    } catch (e) {
+    } catch (_e) {
 
     }
   };

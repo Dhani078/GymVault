@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { View, TouchableOpacity, Image, Modal, Alert, ActivityIndicator } from 'react-native';
-import { Check, Crown, Zap, Star, Shield, X, CreditCard, QrCode, Upload, CheckCircle, Clock } from 'lucide-react-native';
+import { Check, Crown, Zap, Star, Shield, X, CreditCard, Upload, Clock } from "lucide-react-native";
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme, styles } from '../theme';
@@ -9,11 +9,6 @@ import GymVaultLogo from '../components/GymVaultLogo';
 import SmoothScrollView from '../components/SmoothScrollView';
 import { supabase } from '../supabaseClient';
 
-const DANA_CONFIG = {
-  merchantName: 'GymVault QRIS DANA',
-  // Masukkan link QRIS DANA Anda jika ada, atau biarkan default
-  qrImageUrl: '',
-};
 
 const PLANS = [
   { id: 'monthly', label: 'Bulanan', price: 'Rp 29.900', priceNum: 29900, period: '/bulan', popular: false },
@@ -141,7 +136,7 @@ export default function PaywallScreen({ onSkip, session }) {
       } else {
         throw new Error(json.error || 'Gagal mengirim notifikasi.');
       }
-    } catch (e) {
+    } catch (_e) {
 
       Alert.alert('Gagal Mengirim', 'Terjadi kesalahan saat mengirim bukti. Pastikan koneksi internet Anda stabil.');
     } finally {

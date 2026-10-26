@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 import { View, TouchableOpacity, Modal, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, Animated, ScrollView, DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../supabaseClient';
 import { FlashList } from '@shopify/flash-list';
-import { MessageCircle, X, Send, User } from 'lucide-react-native';
-import { AppText, styles, theme } from '../theme';
+import { X, Send, User } from "lucide-react-native";
+import { AppText, theme } from "../theme";
 import AICoachLogo from '../components/AICoachLogo';
 import { GEMINI_MODELS_CASCADE } from '../services/geminiService';
 import { getLocalDateString } from '../utils/dateHelpers';
@@ -86,7 +86,7 @@ export default function AIChatBubble() {
             if (parsed.date === todayStr) {
               currentMl = parsed.ml || 0;
             }
-          } catch (e) {}
+          } catch (_e) {}
         }
 
         const newMl = currentMl + mlToAdd;
@@ -96,7 +96,7 @@ export default function AIChatBubble() {
         const historyStr = await AsyncStorage.getItem('water_history');
         let history = {};
         if (historyStr) {
-          try { history = JSON.parse(historyStr); } catch (e) {}
+          try { history = JSON.parse(historyStr); } catch (_e) {}
         }
         history[todayStr] = newMl;
         await AsyncStorage.setItem('water_history', JSON.stringify(history));
@@ -124,7 +124,7 @@ export default function AIChatBubble() {
             c = matched.c;
             f = matched.f;
           }
-        } catch (e) {
+        } catch (_e) {
 
         }
 
@@ -198,7 +198,7 @@ export default function AIChatBubble() {
                 exerciseId = newEx.id;
               }
             }
-          } catch (exErr) {}
+          } catch (_exErr) {}
 
           if (ex.sets && ex.sets.length > 0) {
             const setRows = ex.sets.map((s, idx) => ({
@@ -214,7 +214,7 @@ export default function AIChatBubble() {
             let { error: insertErr } = await supabase.from('workout_sets').insert(setRows);
             if (insertErr) {
               // Resilient retry without exercise_name in case table schema lacks exercise_name column
-              const fallbackRows = setRows.map(({ exercise_name, ...rest }) => rest);
+              const fallbackRows = setRows.map(({ exercise_name: _exercise_name, ...rest }) => rest);
               await supabase.from('workout_sets').insert(fallbackRows);
             }
           }
@@ -223,7 +223,7 @@ export default function AIChatBubble() {
         DeviceEventEmitter.emit('activity_logged');
         return { type: 'workout', id: sessionId, split: splitName, exercises: exercises };
       }
-    } catch (e) {
+    } catch (_e) {
 
     }
     return null;
@@ -249,7 +249,7 @@ export default function AIChatBubble() {
               newMl = Math.max(0, (parsed.ml || 0) - mlToSubtract);
               await AsyncStorage.setItem('daily_water_ml', JSON.stringify({ date: todayStr, ml: newMl }));
             }
-          } catch (e) {}
+          } catch (_e) {}
         }
 
         const historyStr = await AsyncStorage.getItem('water_history');
@@ -262,7 +262,7 @@ export default function AIChatBubble() {
               history[todayStr] = newMl;
             }
             await AsyncStorage.setItem('water_history', JSON.stringify(history));
-          } catch (e) {}
+          } catch (_e) {}
         }
       } 
       
@@ -307,7 +307,7 @@ export default function AIChatBubble() {
         return m;
       }));
 
-    } catch (e) {
+    } catch (_e) {
 
     }
   };
@@ -320,7 +320,7 @@ export default function AIChatBubble() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       userId = session?.user?.id;
-    } catch (e) {}
+    } catch (_e) {}
 
     // 1. WATER DETECTOR
     if (cleanText.includes('minum') || cleanText.includes('air') || cleanText.includes('water') || cleanText.includes('💧')) {
@@ -342,7 +342,7 @@ export default function AIChatBubble() {
           if (parsed.date === todayStr) {
             currentMl = parsed.ml || 0;
           }
-        } catch (e) {}
+        } catch (_e) {}
       }
       const newMl = currentMl + ml;
       await AsyncStorage.setItem('daily_water_ml', JSON.stringify({ date: todayStr, ml: newMl }));
@@ -350,7 +350,7 @@ export default function AIChatBubble() {
       const historyStr = await AsyncStorage.getItem('water_history');
       let history = {};
       if (historyStr) {
-        try { history = JSON.parse(historyStr); } catch (e) {}
+        try { history = JSON.parse(historyStr); } catch (_e) {}
       }
       history[todayStr] = newMl;
       await AsyncStorage.setItem('water_history', JSON.stringify(history));
@@ -428,7 +428,7 @@ export default function AIChatBubble() {
         };
         const workoutData = [{
           name: exerciseName,
-          sets: Array.from({ length: sets }, (_, i) => ({ completed: true, kg: kg, reps: reps }))
+          sets: Array.from({ length: sets }, (_, _i) => ({ completed: true, kg: kg, reps: reps }))
         }];
 
         const queueStr = await AsyncStorage.getItem(`offline_workouts_${userId}`);
@@ -514,7 +514,7 @@ export default function AIChatBubble() {
 
             break;
           }
-        } catch (err) {
+        } catch (_err) {
 
         }
       }
@@ -536,7 +536,7 @@ export default function AIChatBubble() {
         const parsed = JSON.parse(cleanJsonStr);
         replyText = parsed.reply || aiText;
         logData = parsed.log;
-      } catch (err) {
+      } catch (_err) {
 
       }
 
@@ -551,14 +551,14 @@ export default function AIChatBubble() {
         text: replyText,
         log: loggedInfo
       }]);
-    } catch (error) {
+    } catch (_error) {
 
       
       // Attempt offline pattern matching
       let offlineResult = null;
       try {
         offlineResult = await processOfflineMessage(textToSend);
-      } catch (offErr) {
+      } catch (_offErr) {
 
       }
 

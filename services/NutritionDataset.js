@@ -5,7 +5,6 @@
  */
 
 export const NUTRITION_DATASET = [
-  // --- PROTEINS (MEATS, SEAFOOD & VEGAN PROTEINS) ---
   {
     name: "Dada Ayam (Chicken Breast)",
     keywords: ["dada ayam", "chicken breast", "chicken breast raw", "chicken breast cooked", "dada ayam rebus", "dada ayam panggang", "dada ayam bakar"],
@@ -163,7 +162,6 @@ export const NUTRITION_DATASET = [
     unit: "100g"
   },
 
-  // --- CARBS & GRAINS ---
   {
     name: "Nasi Putih (White Rice)",
     keywords: ["nasi putih", "white rice", "nasi", "cooked rice", "nasi beras putih"],
@@ -243,7 +241,6 @@ export const NUTRITION_DATASET = [
     unit: "100g"
   },
 
-  // --- SEEDS, NUTS & FATS ---
   {
     name: "Selai Kacang (Peanut Butter)",
     keywords: ["selai kacang", "peanut butter", "skippy"],
@@ -281,7 +278,6 @@ export const NUTRITION_DATASET = [
     unit: "100g"
   },
 
-  // --- DAIRY & PRODUCTS ---
   {
     name: "Susu Sapi Full Cream (Whole Milk)",
     keywords: ["susu sapi", "milk", "whole milk", "susu full cream", "ultramilk"],
@@ -337,7 +333,6 @@ export const NUTRITION_DATASET = [
     unit: "100g"
   },
 
-  // --- FRUITS & VEGETABLES ---
   {
     name: "Pisang (Banana)",
     keywords: ["pisang", "banana", "banana raw"],
@@ -435,7 +430,6 @@ export const NUTRITION_DATASET = [
     unit: "100g"
   },
 
-  // --- LOCAL FAVORITES / INDONESIAN DISHES ---
   {
     name: "Rendang Sapi",
     keywords: ["rendang", "rendang sapi", "beef rendang"],
@@ -575,7 +569,6 @@ export const NUTRITION_DATASET = [
     unit: "100g"
   },
 
-  // --- POPULAR INDONESIAN FRITTERS & SNACKS ---
   {
     name: "Martabak Manis (Terang Bulan - 1 Potong)",
     keywords: ["martabak manis", "terang bulan", "martabak cokelat"],
@@ -625,7 +618,6 @@ export const NUTRITION_DATASET = [
     unit: "1 piece"
   },
 
-  // --- FAST FOOD & CHEAT MEALS ---
   {
     name: "Cheeseburger",
     keywords: ["cheeseburger", "burger", "mcdonalds burger", "burger keju"],
@@ -651,7 +643,6 @@ export const NUTRITION_DATASET = [
     unit: "1 medium piece (57g)"
   },
 
-  // --- LIQUIDS & BEVERAGES ---
   {
     name: "Kopi Hitam (Black Coffee)",
     keywords: ["kopi hitam", "black coffee", "espresso", "kopi tanpa gula"],
@@ -733,7 +724,7 @@ export async function getCustomFoods(userId = 'guest') {
     const AsyncStorage = require('@react-native-async-storage/async-storage').default;
     const json = await AsyncStorage.getItem(`@gymvault_custom_foods_${userId}`);
     return json ? JSON.parse(json) : [];
-  } catch (e) {
+  } catch (_e) {
 
     return [];
   }
@@ -758,7 +749,7 @@ export async function saveCustomFood(userId = 'guest', food) {
     const updated = [newEntry, ...existing.filter(e => e.id !== newEntry.id)];
     await AsyncStorage.setItem(`@gymvault_custom_foods_${userId}`, JSON.stringify(updated));
     return newEntry;
-  } catch (e) {
+  } catch (_e) {
 
     return null;
   }
@@ -771,7 +762,7 @@ export async function deleteCustomFood(userId = 'guest', foodId) {
     const filtered = existing.filter(f => f.id !== foodId);
     await AsyncStorage.setItem(`@gymvault_custom_foods_${userId}`, JSON.stringify(filtered));
     return true;
-  } catch (e) {
+  } catch (_e) {
 
     return false;
   }

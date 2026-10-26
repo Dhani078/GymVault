@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { View, TouchableOpacity, Modal, ScrollView, Switch, Platform, Alert } from 'react-native';
 import {
   X, ChevronRight, Globe, Zap, Activity, Target, Moon, Bell, Shield,
@@ -151,7 +151,7 @@ export default function SettingsModal({
                     if (session?.user?.id) {
                       await updateProfile({ is_private: nextPriv });
                     }
-                  } catch (e) {}
+                  } catch (_e) {}
                   showToast('success', nextPriv ? t('toast_workout_logs_are_now') : t('toast_workout_logs_are_publ'));
                 }}
               />
@@ -332,7 +332,7 @@ export default function SettingsModal({
               <TouchableOpacity 
                 key={g.code} 
                 onPress={() => { 
-                  try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {}); } catch(e){}
+                  try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {}); } catch(_e){}
                   setGraphicsQuality(g.code); 
                   setGraphicsModalVisible(false); 
                   showToast('success', `Graphics set to ${g.label}`); 
@@ -378,7 +378,7 @@ export default function SettingsModal({
               <TouchableOpacity 
                 key={f.code} 
                 onPress={() => { 
-                  try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
+                  try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(_e){}
                   setFpsLimit(f.code); 
                   setFpsModalVisible(false); 
                   showToast('success', `FPS set to ${f.label}`); 

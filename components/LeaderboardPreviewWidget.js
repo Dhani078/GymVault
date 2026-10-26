@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Trophy, Flame } from 'lucide-react-native';
 import { AppText, theme } from '../theme';

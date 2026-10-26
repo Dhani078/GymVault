@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, TouchableOpacity, Modal } from 'react-native';
 import { Trash2 } from 'lucide-react-native';
 import { AppText, theme } from '../../theme';

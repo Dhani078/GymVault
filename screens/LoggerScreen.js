@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { View, ScrollView, Pressable, Image, ImageBackground, ActivityIndicator, Alert, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
-import { Plus, Minus, Check, ChevronLeft, ChevronRight, Clock, Trophy, Trash2, Dumbbell, AlertCircle, Save, X, Volume2, VolumeX, Mic, MicOff } from 'lucide-react-native';
+import { Plus, Check, ChevronLeft, ChevronRight, Clock, Trophy, Trash2, Dumbbell, AlertCircle, Save, X, Volume2, VolumeX, Mic, MicOff } from "lucide-react-native";
 import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
@@ -14,7 +14,6 @@ import SmoothScrollView from '../components/SmoothScrollView';
 import DummyAdBanner from '../components/DummyAdBanner';
 import useInterstitialAd from '../components/DummyInterstitialAd';
 
-import * as Crypto from 'expo-crypto';
 import { makeId } from '../utils/makeId';
 import { calculateProgressiveOverload, calculateRecommendedRestTime, getBiomechanicalCue, parseVoiceWorkoutCommand } from '../utils/fitnessMath';
 import LoggerSetRow from '../components/LoggerSetRow';
@@ -45,7 +44,7 @@ export default function LoggerScreen({
 
   // Share Modal & Ads
   const [showShareModal, setShowShareModal] = useState(false);
-  const { isLoaded: isInterstitialLoaded, showAd: showInterstitialAd } = useInterstitialAd();
+  const { isLoaded: _isInterstitialLoaded, showAd: showInterstitialAd } = useInterstitialAd();
 
   // Live Duration Stopwatch
   const [sessionDuration, setSessionDuration] = useState(0);
@@ -75,13 +74,13 @@ export default function LoggerScreen({
         if (navigator?.mediaDevices?.getUserMedia) {
           try {
             await navigator.mediaDevices.getUserMedia({ audio: true });
-          } catch (permErr) {
+          } catch (_permErr) {
 
           }
         }
 
         if (recognitionRef.current) {
-          try { recognitionRef.current.abort(); } catch(e){}
+          try { recognitionRef.current.abort(); } catch(_e){}
         }
 
         const recognition = new SpeechRecognition();
@@ -143,7 +142,7 @@ export default function LoggerScreen({
 
         recognitionRef.current = recognition;
         recognition.start();
-      } catch (err) {
+      } catch (_err) {
 
         setIsListening(false);
         setMicStatusMsg('Gagal mengaktifkan mikrofon.');
@@ -160,7 +159,7 @@ export default function LoggerScreen({
 
   const stopListening = () => {
     if (recognitionRef.current) {
-      try { recognitionRef.current.abort(); } catch(e){}
+      try { recognitionRef.current.abort(); } catch(_e){}
     }
     setIsListening(false);
     setMicStatusMsg('');
@@ -201,7 +200,7 @@ export default function LoggerScreen({
 
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    } catch (e) {}
+    } catch (_e) {}
 
     // Auto-trigger dynamic rest time
     const recRest = calculateRecommendedRestTime(curEx.name, parsed.weightKg, parsed.reps, 8);
@@ -247,12 +246,11 @@ export default function LoggerScreen({
                   || voices.find(v => v.language.toLowerCase().includes('en'));
                   
         setVoiceMap({ id: bestId?.identifier, en: bestEn?.identifier });
-      } catch (e) {}
+      } catch (_e) {}
     };
     loadVoiceSetting();
   }, []);
 
-  // ─── LOAD HISTORICAL PERSONAL RECORDS (PR) ───
   useEffect(() => {
     let isMounted = true;
     const loadHistoricalPRs = async () => {
@@ -295,7 +293,7 @@ export default function LoggerScreen({
                 await AsyncStorage.setItem(storageKey, JSON.stringify(prMap));
               }
             }
-          } catch (dbErr) {
+          } catch (_dbErr) {
             // Non-critical background sync
           }
         }
@@ -339,7 +337,7 @@ export default function LoggerScreen({
         await newSound.playAsync();
       }
       return true;
-    } catch (e) {
+    } catch (_e) {
 
       return false;
     }
@@ -400,14 +398,14 @@ export default function LoggerScreen({
             } else {
 
             }
-          } catch (modelErr) {
+          } catch (_modelErr) {
 
             continue;
           }
         }
         
 
-      } catch (e) {
+      } catch (_e) {
 
       }
     }
@@ -442,7 +440,7 @@ export default function LoggerScreen({
       } else {
         Speech.stop();
       }
-    } catch(e){}
+    } catch(_e){}
   };
 
   // Speak when workout first starts
@@ -550,7 +548,7 @@ export default function LoggerScreen({
           exerciseName: currentExName
         });
       }
-    } catch (err) {
+    } catch (_err) {
 
     }
   }, [timerActive, workoutStartTime, currentIndex]);
@@ -569,14 +567,12 @@ export default function LoggerScreen({
         }
       });
       return () => unsubscribe();
-    } catch (e) {
+    } catch (_e) {
 
     }
   }, []);
 
   const fmt = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
-
-  // ─── CRUD ───
 
   const toggleSet = (setId) => {
     setWorkoutData(prev => prev.map((ex, i) => {
@@ -623,14 +619,14 @@ export default function LoggerScreen({
             subtitle = allTime1RM > 0
               ? `Est. 1RM: ${estimated1RM}kg (+${estimated1RM - allTime1RM}kg!)`
               : `Est. 1RM: ${estimated1RM}kg`;
-            try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch(e){}
+            try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch(_e){}
             showNotification({ type: 'fire', title, subtitle, duration: 3000 });
             speakText(
               `Luar biasa! Rekor pribadi baru untuk ${exName}, perkiraan satu repetisi maksimum ${estimated1RM} kilogram. Mulai istirahat.`,
               `Awesome! New personal record for ${exName}, estimated one rep max ${estimated1RM} kilograms. Starting rest.`
             );
           } else {
-            try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
+            try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(_e){}
             showNotification({ type: 'success', title, subtitle, duration: 2500 });
             
             const currentEx = workoutData[currentIndex];
@@ -650,7 +646,7 @@ export default function LoggerScreen({
             }
           }
         } else {
-          try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
+          try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(_e){}
         }
         return { ...s, completed: !s.completed };
       })};
@@ -699,7 +695,6 @@ export default function LoggerScreen({
     });
   };
 
-  // ─── FINISH WORKOUT ───
   const handleFinish = async () => {
     if (!session?.user) { setSaveError('You must be logged in.'); return; }
     if (workoutData.length === 0) { setSaveError('No exercises.'); return; }
@@ -711,8 +706,6 @@ export default function LoggerScreen({
     setSaving(true);
     setSaveError(null);
 
-    // ─── FINALIZE AND SAVE TRUE PERSONAL RECORDS (PR) ───
-    // Evaluates ONLY finalized completed sets at this moment, completely immunizing against typos!
     const finalizeAndSavePRs = async () => {
       try {
         const AsyncStorage = require('@react-native-async-storage/async-storage').default;
@@ -837,7 +830,7 @@ export default function LoggerScreen({
             });
           }
         }
-      } catch (e) {}
+      } catch (_e) {}
 
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       const setRows = [];
@@ -869,7 +862,7 @@ export default function LoggerScreen({
           if (retryErr) {
             // Secondary fallback: strip exercise_name if the remote DB column does not exist yet
             console.warn('[Logger] Retrying without exercise_name column fallback:', retryErr.message);
-            const minimalSets = safeFallbackSets.map(({ exercise_name, ...rest }) => rest);
+            const minimalSets = safeFallbackSets.map(({ exercise_name: _exercise_name, ...rest }) => rest);
             const { error: minimalErr } = await safeBatchInsert('workout_sets', minimalSets);
             if (minimalErr) {
               console.error('[Logger] Minimal fallback sets save error:', minimalErr.message);
@@ -892,7 +885,7 @@ export default function LoggerScreen({
               AsyncStorage.setItem(lastKey, JSON.stringify({ kg: lastSet.kg, reps: lastSet.reps }));
             }
           });
-        } catch (e) {}
+        } catch (_e) {}
       }
 
       setSaving(false);
@@ -915,7 +908,6 @@ export default function LoggerScreen({
     }
   };
 
-  // ─── EMPTY STATE ───
   if (workoutData.length === 0) {
     return (
       <View style={[styles.screen, { justifyContent: 'center', alignItems: 'center', padding: 32 }]}>
@@ -1132,7 +1124,7 @@ export default function LoggerScreen({
                 onPress={() => {
                   try {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-                  } catch (e) {}
+                  } catch (_e) {}
                   setWorkoutData(prev => prev.map((ex, i) => {
                     if (i !== safeIdx) return ex;
                     const nextUncompletedIdx = ex.sets.findIndex(s => !s.completed);
@@ -1182,7 +1174,7 @@ export default function LoggerScreen({
             <Pressable
               key={amt}
               onPress={() => {
-                try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
+                try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(_e){}
                 const activeSet = curEx.sets[activeSetIndex] || curEx.sets[0];
                 if (activeSet) adjust(activeSet.id, 'kg', amt);
               }}
@@ -1205,7 +1197,7 @@ export default function LoggerScreen({
             <Pressable
               key={amt}
               onPress={() => {
-                try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(e){}
+                try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } catch(_e){}
                 const activeSet = curEx.sets[activeSetIndex] || curEx.sets[0];
                 if (activeSet) adjust(activeSet.id, 'reps', amt);
               }}

@@ -1,18 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Pressable, ScrollView, Modal, Alert, Platform, Image, Dimensions } from 'react-native';
-import { 
-  Dumbbell, Flame, Trophy, Crown, Sparkles, Share2, Download, Copy, 
-  Check, X, Clock, Zap, CheckCircle2, Award, Shield, BarChart3
-} from 'lucide-react-native';
+import { useState, useRef, useEffect } from "react";
+import { View, Pressable, ScrollView, Modal, Alert, Platform, Image } from "react-native";
+import {
+  Dumbbell,
+  Flame,
+  Trophy,
+  Sparkles,
+  Share2,
+  Download,
+  Copy,
+  Check,
+  X,
+  CheckCircle2,
+} from "lucide-react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as MediaLibrary from 'expo-media-library';
-import { AppText, theme } from '../../theme';
+import { AppText } from "../../theme";
 import { getVolumeComparison } from '../../utils/volumeComparison';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// ─── 7 LUXURY TEMPLATE THEMES FOR IG & TIKTOK ───
 const TEMPLATES = [
   {
     id: 'cyber_neon',
@@ -122,7 +128,6 @@ const TEMPLATES = [
   }
 ];
 
-// ─── STICKER / MOOD CHOICES ───
 const MOOD_STICKERS = [
   '🔥 PR Smashed',
   '🦍 Beast Mode',
@@ -185,7 +190,7 @@ export default function WorkoutSummaryModal({
       const now = Date.now();
       const diffMins = Math.max(1, Math.round((now - start) / (1000 * 60)));
       return diffMins > 240 ? 60 : diffMins; // cap if runaway timer
-    } catch (e) {
+    } catch (_e) {
       return 45;
     }
   })();

@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { View, TouchableOpacity, Switch, Alert, Platform } from 'react-native';
-import { 
-  ChevronRight, Shield, Globe, Zap, Activity, Moon, Bell, Target, 
-  Trash2, Database, Smartphone, Check, Cpu 
-} from 'lucide-react-native';
+import {
+  ChevronRight,
+  Zap,
+  Activity,
+  Moon,
+  Bell,
+  Target,
+  Trash2,
+  Database,
+  Check,
+} from "lucide-react-native";
 import { AppText, theme, styles } from '../theme';
 import SmoothScrollView from '../components/SmoothScrollView';
 import { useTheme } from '../contexts/ThemeContext';
@@ -11,16 +18,16 @@ import { useLanguage } from '../contexts/LanguageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 
-export default function SettingsScreen({ onBack }) {
+export default function SettingsScreen({ onBack: _onBack }) {
   const { 
     darkMode, setDarkMode, 
-    graphicsQuality, setGraphicsQuality, 
-    fpsLimit, setFpsLimit, 
+    graphicsQuality, setGraphicsQuality: _setGraphicsQuality, 
+    fpsLimit, setFpsLimit: _setFpsLimit, 
     proMode, setProMode,
     colors
   } = useTheme();
 
-  const { language, setLanguage, t } = useLanguage();
+  const { language: _language, setLanguage: _setLanguage, t: _t } = useLanguage();
   const [notifications, setNotifications] = useState(true);
   const [cacheCleared, setCacheCleared] = useState(false);
 
@@ -36,7 +43,7 @@ export default function SettingsScreen({ onBack }) {
     try {
       await AsyncStorage.setItem('notifications_enabled', String(next));
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-    } catch(e){}
+    } catch(_e){}
   };
 
   const handleClearCache = async () => {
@@ -44,7 +51,7 @@ export default function SettingsScreen({ onBack }) {
       setCacheCleared(true);
       setTimeout(() => setCacheCleared(false), 3000);
       Alert.alert("Cache Cleared! ⚡", "Local temporary app cache and image caches have been cleared.");
-    } catch(e){}
+    } catch(_e){}
   };
 
   return (

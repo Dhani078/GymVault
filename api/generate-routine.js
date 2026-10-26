@@ -1,6 +1,3 @@
-// ====================================================================
-// GYMVAULT AI ROUTINE GENERATOR (VERCEL SERVERLESS FUNCTION)
-// ====================================================================
 
 export default async function handler(req, res) {
   // CORS Setup

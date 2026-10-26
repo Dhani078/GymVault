@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Server, Zap, ShieldCheck, RefreshCw, Cpu, Database, Bot, CheckCircle2 } from 'lucide-react-native';
+import { Server, Zap, RefreshCw, Database, Bot } from "lucide-react-native";
 
 export default function SystemHealthWidget({ onPing }) {
   const [latency, setLatency] = useState(48);
@@ -14,7 +14,7 @@ export default function SystemHealthWidget({ onPing }) {
       if (onPing) await onPing();
       else await new Promise(r => setTimeout(r, 250));
       setLatency(Math.max(18, Date.now() - start));
-    } catch (e) {
+    } catch (_e) {
       setLatency(120);
     } finally {
       setIsPinging(false);

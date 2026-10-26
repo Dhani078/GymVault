@@ -65,7 +65,7 @@ export function useProfileData(session, dbReady) {
           if (isPremVal === 'true' || premStatusVal === 'active' || hasLocalActiveDate || localRole === 'admin' || streakNum >= 3) {
             localIsPrem = true;
           }
-        } catch (storageErr) {}
+        } catch (_storageErr) {}
 
         const isDhaniOrAdmin = Boolean(
           profileData.role === 'admin' ||
@@ -142,7 +142,7 @@ export function useProfileData(session, dbReady) {
         const localGoals = await AsyncStorage.getItem(`nutrition_goals_${session.user.id}`);
         if (localGoals) setNutritionGoals(JSON.parse(localGoals));
         
-      } catch (e) {}
+      } catch (_e) {}
 
     } catch (err) {
       setError(err.message);
@@ -172,7 +172,7 @@ export function useProfileData(session, dbReady) {
           const newLogs = [...weightLogs, { weight: updates.body_weight, date: new Date().toISOString() }].slice(-30); // keep last 30
           await AsyncStorage.setItem(`weight_logs_${session.user.id}`, JSON.stringify(newLogs));
           setWeightLogs(newLogs);
-        } catch (e) {}
+        } catch (_e) {}
       }
       
       const { error: upsertErr } = await safeUpsert('users_profile', payload);
@@ -192,13 +192,11 @@ export function useProfileData(session, dbReady) {
       setter(value);
       const AsyncStorage = require('@react-native-async-storage/async-storage').default;
       await AsyncStorage.setItem(`${key}_${session.user.id}`, JSON.stringify(value));
-    } catch (e) {}
+    } catch (_e) {}
   };
 
   const updateMeasurements = (newVals) => saveLocalState('measurements', { ...measurements, ...newVals }, setMeasurements);
   const updateNutritionGoals = (newVals) => saveLocalState('nutrition_goals', { ...nutritionGoals, ...newVals }, setNutritionGoals);
-
-  // ─── AI COACH ENGINE (Memoized Aggregators) ───
 
   // [Injury Risk] Logic: Delta Week N vs Week N-1 > 40%
   const injuryRisk = useMemo(() => {

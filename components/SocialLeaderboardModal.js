@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { View, Modal, TouchableOpacity, Image, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { AnimatedFlashList, AnimatedScrollCard } from './AnimatedFlashList';
@@ -40,7 +40,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
         }));
         setSearchResults(mapped);
       }
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setSearching(false);
@@ -67,7 +67,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
       if (stored) {
         setFollowingIds(JSON.parse(stored));
       }
-    } catch (e) {}
+    } catch (_e) {}
   };
 
   const toggleFollow = async (targetId, targetName) => {
@@ -88,7 +88,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
         t('friend_action'),
         `${targetName} ${isAdding ? t('friend_added') : t('friend_removed')}`
       );
-    } catch (e) {}
+    } catch (_e) {}
   };
 
   const fetchLeaderboard = async () => {
@@ -220,7 +220,7 @@ export default function SocialLeaderboardModal({ visible, onClose, currentUserPr
       realData.sort((a, b) => b.volume - a.volume);
       const rankedData = realData.map((u, i) => ({ ...u, rank: i + 1 }));
       setLeaderboard(rankedData);
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setLoading(false);

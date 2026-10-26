@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, TextInput } from 'react-native';
+import { useState, useEffect } from "react";
+import { View, TouchableOpacity, TextInput, DeviceEventEmitter } from "react-native";
 import { Droplet, Check } from 'lucide-react-native';
 import { AppText, theme } from '../theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DeviceEventEmitter } from 'react-native';
 import { getLocalDateString } from '../utils/dateHelpers';
 
 export default function WaterTrackerWidget({ userProfile, refreshTrigger }) {
@@ -22,7 +21,7 @@ export default function WaterTrackerWidget({ userProfile, refreshTrigger }) {
           setWaterMl(0);
         }
       }
-    } catch (e) {
+    } catch (_e) {
 
     }
   };
@@ -41,7 +40,7 @@ export default function WaterTrackerWidget({ userProfile, refreshTrigger }) {
     const historyStr = await AsyncStorage.getItem('water_history');
     let history = {};
     if (historyStr) {
-      try { history = JSON.parse(historyStr); } catch (e) {}
+      try { history = JSON.parse(historyStr); } catch (_e) {}
     }
     history[todayStr] = newMl;
     await AsyncStorage.setItem('water_history', JSON.stringify(history));

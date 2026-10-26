@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, TouchableOpacity, Modal } from 'react-native';
 import { Flame, CheckCircle, Check, Award, Crown, X } from 'lucide-react-native';
 import { AppText } from '../../theme';

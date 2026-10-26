@@ -1,6 +1,5 @@
-import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Users, Activity, Star, Ban, TrendingUp, DollarSign, Wallet, ShieldCheck, Dumbbell } from 'lucide-react-native';
+import { Users, Star, TrendingUp, Wallet, Dumbbell } from "lucide-react-native";
 
 export default function AdminStats({ stats = {} }) {
   const totalRevenue = stats.totalRevenue || 0;

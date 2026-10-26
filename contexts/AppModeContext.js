@@ -18,14 +18,12 @@
  *    useAppMode(): Hook to access mode + setMode + inventory controls
  */
 
-import React, { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react';
+import { createContext, useState, useContext, useEffect, useCallback, useMemo } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// ─── Storage Keys ────────────────────────────────────────────────
 const STORAGE_KEY_MODE = '@gymvault_app_mode';
 const STORAGE_KEY_INVENTORY = '@gymvault_equipment_inventory';
 
-// ─── Equipment Catalog ───────────────────────────────────────────
 export const HOME_EQUIPMENT_CATALOG = [
   { id: 'dumbbells', label: 'Dumbbells', icon: '🏋️' },
   { id: 'resistance_bands', label: 'Resistance Bands', icon: '🪢' },
@@ -38,7 +36,6 @@ export const HOME_EQUIPMENT_CATALOG = [
   { id: 'body_only', label: 'Bodyweight Only', icon: '💪' },
 ];
 
-// ─── Exercise Swap Map (Gym → Home) ──────────────────────────────
 export const EXERCISE_SWAP_MAP = {
   'lat pulldown':           { home: 'Resistance Band Lat Pulldown', equipment: 'resistance_bands' },
   'cable crossover':        { home: 'Resistance Band Crossover',    equipment: 'resistance_bands' },
@@ -54,7 +51,6 @@ export const EXERCISE_SWAP_MAP = {
   'hack squat':             { home: 'Pistol Squat',                 equipment: 'body_only' },
 };
 
-// ─── Context ─────────────────────────────────────────────────────
 const AppModeContext = createContext(null);
 
 export function AppModeProvider({ children }) {
@@ -125,7 +121,6 @@ export function AppModeProvider({ children }) {
   );
 }
 
-// ─── Consumer Hook ───────────────────────────────────────────────
 export function useAppMode() {
   const ctx = useContext(AppModeContext);
   if (!ctx) throw new Error('useAppMode must be used within <AppModeProvider>');

@@ -1,4 +1,3 @@
-import React from 'react';
 import { ScrollView, View, Image } from 'react-native';
 import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 import { AppText, theme } from '../../theme';

@@ -15,7 +15,6 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Handle health check GET
   if (req.method === 'GET') {
     return res.status(200).json({ status: 'active', gateway: 'Qiospay QRIS Webhook Endpoint' });
   }
@@ -40,7 +39,6 @@ export default async function handler(req, res) {
     const status = payload.status;
     const data = payload.data || payload;
 
-    // Validate transaction status
     if (status !== 'success' && data.status !== 'success' && data.type !== 'CR') {
       return res.status(200).json({ received: true, message: 'Non-credit or pending transaction ignored' });
     }
@@ -51,7 +49,6 @@ export default async function handler(req, res) {
     const nmid = data.nmid || '-';
     const txTime = data.time || new Date().toLocaleString('id-ID');
 
-    // Initialize Supabase Client
     const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) {
@@ -86,7 +83,7 @@ export default async function handler(req, res) {
         await supabase.rpc('approve_payment_request', { request_id: matchedRequest.id });
         activatedUserId = matchedRequest.user_id;
         planActivated = matchedRequest.plan || planActivated;
-      } catch (e) {
+      } catch (_e) {
         // Fallback update
         await supabase
           .from('payment_requests')
@@ -106,7 +103,6 @@ export default async function handler(req, res) {
         }
       }
     } else {
-      // Log standalone payment in payment_requests
       await supabase.from('payment_requests').insert({
         user_name: payerName,
         user_email: `qios_${refId}@gymvault.id`,

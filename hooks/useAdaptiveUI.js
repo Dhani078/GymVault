@@ -1,17 +1,3 @@
-/**
- * ═══════════════════════════════════════════════════════════════════
- *  useAdaptiveUI: Adaptive UI Engine Hook
- * ═══════════════════════════════════════════════════════════════════
- *
- *  This hook consumes AppModeContext and provides:
- *   • Feature visibility flags (show/hide gym-only features)
- *   • Exercise name swapping (gym → home alternatives)
- *   • Adaptive measurement labels
- *   • Equipment-based exercise filtering
- *
- *  Usage:
- *    const { adaptExercise, shouldShow, labels, filterForMode } = useAdaptiveUI();
- */
 
 import { useMemo, useCallback } from 'react';
 import { useAppMode, EXERCISE_SWAP_MAP } from '../contexts/AppModeContext';

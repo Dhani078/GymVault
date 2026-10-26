@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { Search, Eye, UserCheck, Ban, Trash2, Users, Star, Shield } from 'lucide-react-native';
+import { Search, Eye, UserCheck, Ban, Trash2, Users, Star } from "lucide-react-native";
 
 export default function UsersTable({ 
   usersList = [], 

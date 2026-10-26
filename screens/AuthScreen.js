@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, ScrollView, Animated, Easing } from 'react-native';
 import { Mail, Lock, User, AtSign, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react-native';
 import { AppText, theme, styles } from '../theme';
@@ -6,7 +6,6 @@ import { supabase } from '../supabaseClient';
 import GymVaultLogo from '../components/GymVaultLogo';
 import SmoothScrollView from '../components/SmoothScrollView';
 
-// ─── NOTIFICATION BANNER ───
 const BANNER_TYPES = {
   success: { bg: '#0D3B0D', border: '#22C55E', icon: CheckCircle, iconColor: '#22C55E' },
   error: { bg: '#3B0D0D', border: '#EF4444', icon: XCircle, iconColor: '#EF4444' },
@@ -93,7 +92,6 @@ export default function AuthScreen() {
     setNotif({ visible: false, type: 'info', title: '', message: '' });
   };
 
-  // ─── SIGN IN ───
   const handleSignIn = async () => {
     clearNotif();
 
@@ -164,7 +162,6 @@ export default function AuthScreen() {
           showNotif('error', 'Login Failed', error.message);
         }
       } else if (data?.session) {
-        // --- CHECK IF USER IS SUSPENDED ---
         try {
           const { data: profileData, error: profileError } = await supabase
             .from('users_profile')
@@ -177,9 +174,8 @@ export default function AuthScreen() {
             showNotif('error', 'Account Suspended', 'Your account has been suspended by an administrator. Please contact support.');
             return;
           }
-        } catch (e) {}
+        } catch (_e) {}
 
-        // --- RESTORE PRO STATUS IF THEY HAVE A REDEEMED CODE ---
         try {
           const { data: promoData, error: promoError } = await supabase
             .from('promo_codes')
@@ -197,7 +193,7 @@ export default function AuthScreen() {
             await AsyncStorage.setItem(`is_premium_${userId}`, 'true');
             await AsyncStorage.setItem(`@premium_status_${userId}`, 'active');
           }
-        } catch (e) {}
+        } catch (_e) {}
         
         showNotif('success', 'Welcome Back!', 'You are now logged in. Redirecting to dashboard...');
         const { DeviceEventEmitter } = require('react-native');
@@ -211,7 +207,6 @@ export default function AuthScreen() {
     }
   };
 
-  // ─── SIGN UP ───
   const handleSignUp = async () => {
     clearNotif();
 
@@ -289,7 +284,6 @@ export default function AuthScreen() {
     }
   };
 
-  // ─── FORGOT PASSWORD ───
   const handleForgotPassword = async () => {
     clearNotif();
     const cleanId = identifier.trim();

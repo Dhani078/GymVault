@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { View, TouchableOpacity, Image, Alert, Platform, Modal, DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  User, Target, Activity, Zap, TrendingUp, AlertTriangle, CheckCircle,
-  XCircle, Settings, Clock, Flame, Award, ChevronRight, Crown
-} from 'lucide-react-native';
+  User,
+  Target,
+  Zap,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Settings,
+  Clock,
+  ChevronRight,
+  Crown,
+} from "lucide-react-native";
 import * as ImagePicker from 'expo-image-picker';
 import * as Notifications from 'expo-notifications';
-import { AppText, styles, theme } from '../theme';
+import { AppText, theme } from "../theme";
 import { useProfileData } from '../hooks/useProfileData';
 import { supabase, safeSelect, safeUpsert } from '../supabaseClient';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -26,18 +35,7 @@ import SettingsModal from '../components/profile/SettingsModal';
 import PaywallScreen from './PaywallScreen';
 import { getLocalDateString } from '../utils/dateHelpers';
 
-const parseLocalDate = (dateStr) => {
-  if (!dateStr || typeof dateStr !== 'string') return new Date();
-  const parts = dateStr.split('-').map(Number);
-  if (parts.length < 3 || isNaN(parts[0]) || isNaN(parts[1]) || isNaN(parts[2])) return new Date();
-  return new Date(parts[0], parts[1] - 1, parts[2]);
-};
 
-const calculateCheckInStreak = (historyList) => {
-  if (!historyList || !Array.isArray(historyList) || historyList.length === 0) return 0;
-  const uniqueDates = Array.from(new Set(historyList)).filter(Boolean);
-  return uniqueDates.length;
-};
 
 // Toast notification
 const Toast = ({ visible, type, message }) => {
@@ -64,12 +62,12 @@ const SkeletonBox = ({ width, height, borderRadius = 8, style }) => (
 
 export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
   const {
-    profile, loading, sessions, updateProfile, injuryRisk, deloadSuggestion,
-    stats, weightLogs, measurements, updateMeasurements, nutritionGoals, updateNutritionGoals
+    profile, loading, sessions, updateProfile, injuryRisk: _injuryRisk, deloadSuggestion,
+    stats, weightLogs: _weightLogs, measurements, updateMeasurements, nutritionGoals, updateNutritionGoals
   } = useProfileData(session, dbReady);
   const { showNotification } = useDynamicIsland();
   const themeContext = useTheme();
-  const { darkMode, proMode } = themeContext;
+  const { darkMode, proMode: _proMode } = themeContext;
   const languageContext = useTranslation();
   const { t } = languageContext;
 
@@ -94,7 +92,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
 
   // Premium status
   const [isPremium, setIsPremium] = useState(false);
-  const [premiumUntilDate, setPremiumUntilDate] = useState('');
+  const [_premiumUntilDate, setPremiumUntilDate] = useState('');
 
   const showToast = (type, message) => {
     setToast({ visible: true, type, message });
@@ -255,7 +253,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
         subtitle: rewardSubtitle,
         duration: 5000
       });
-    } catch (e) {
+    } catch (_e) {
       Alert.alert("Gagal", "Terjadi kesalahan saat melakukan check-in.");
     }
   };
@@ -305,7 +303,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
           if (profile.premium_until) {
             setPremiumUntilDate(new Date(profile.premium_until).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }));
           }
-        } catch (e) {
+        } catch (_e) {
           setIsPremium(Boolean(profile.is_premium));
         }
       };
@@ -376,7 +374,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
     try {
       await AsyncStorage.setItem(`health_kit_connected_${session?.user?.id}`, String(nextVal));
       showToast('success', nextVal ? 'Health Kit Connected' : 'Health Kit Disconnected');
-    } catch (e) {}
+    } catch (_e) {}
   };
 
   const handleResetPassword = async () => {
@@ -393,7 +391,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
       setSettingsVisible(false);
       try {
         await AsyncStorage.removeItem('@supabase.auth.token');
-      } catch (e) {}
+      } catch (_e) {}
       await supabase.auth.signOut();
       DeviceEventEmitter.emit('offline_login', null);
     };
@@ -438,7 +436,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
     try {
       await AsyncStorage.setItem('notifications_enabled', String(next));
       showToast('success', next ? t('toast_notifications_on') : t('toast_notifications_off'));
-    } catch (err) {}
+    } catch (_err) {}
   };
 
   const getBmi = () => {

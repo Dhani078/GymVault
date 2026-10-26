@@ -1,13 +1,32 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Dimensions, TextInput, Platform, useWindowDimensions } from 'react-native';
+import { useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity, Dimensions, TextInput, useWindowDimensions } from "react-native";
 import {
-  Dumbbell, Activity, Cpu, ShieldCheck, Zap, Flame, Award, ChevronRight,
-  TrendingUp, Sparkles, Smartphone, Check, ArrowRight, Star, Heart,
-  Timer, BarChart2, Layers, QrCode, Crown, CheckCircle2, ChevronDown, ChevronUp,
-  Scale, Calculator, Droplets, Target, Repeat, Sliders, BatteryCharging, Compass,
-  Eye, Shield, Radio, PlayCircle, BarChart, FileText, CheckCircle, Utensils, Mic
-} from 'lucide-react-native';
-import { calculate1RM, calculatePlateBreakdown, calculateTDEE, calculateHeartRateZones } from '../utils/fitnessMath';
+  Dumbbell,
+  Activity,
+  Cpu,
+  Zap,
+  Flame,
+  Award,
+  TrendingUp,
+  Sparkles,
+  Smartphone,
+  Check,
+  Heart,
+  Timer,
+  Layers,
+  CheckCircle2,
+  Scale,
+  Calculator,
+  Droplets,
+  Target,
+  Sliders,
+  Compass,
+  PlayCircle,
+  CheckCircle,
+  Utensils,
+  Mic,
+} from "lucide-react-native";
+import { calculate1RM, calculatePlateBreakdown, calculateTDEE } from "../utils/fitnessMath";
 import { MUSCLE_DATA, FOOD_PRESETS, SPLIT_PROGRAMS } from '../components/landing/landingData';
 import { styles } from '../components/landing/landingStyles';
 import LandingNavbar from '../components/landing/LandingNavbar';
@@ -15,7 +34,7 @@ import LandingHero from '../components/landing/LandingHero';
 import LandingPricingFaq from '../components/landing/LandingPricingFaq';
 import LandingFooter from '../components/landing/LandingFooter';
 
-const { width } = Dimensions.get('window');
+const { width: _width } = Dimensions.get('window');
 
 export default function LandingPage({ onLoginPress }) {
   const { width } = useWindowDimensions();
@@ -33,7 +52,7 @@ export default function LandingPage({ onLoginPress }) {
 
   // Interactive Fridge Chef Playground State
   const [fridgeSelectedIngredients, setFridgeSelectedIngredients] = useState(['3 Butir Telur', '1 Papan Tempe', '1 Centong Nasi']);
-  const [fridgeTargetCal, setFridgeTargetCal] = useState('650');
+  const [fridgeTargetCal, _setFridgeTargetCal] = useState('650');
 
   // Interactive Voice Logger Simulator State
   const [voiceSimCommand, setVoiceSimCommand] = useState('Coach, catat 80 kilo 8 repetisi');

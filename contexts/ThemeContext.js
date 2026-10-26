@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import { createContext, useState, useContext, useEffect, useRef } from "react";
 import { Animated, StyleSheet, View, LayoutAnimation, Platform, UIManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateActiveColors } from '../theme';
@@ -60,23 +60,23 @@ export function ThemeProvider({ children }) {
     overlayOpacity.setValue(1);
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setDarkModeState(value);
-    try { await AsyncStorage.setItem('gymvault_dark_mode', String(value)); } catch (e) {}
+    try { await AsyncStorage.setItem('gymvault_dark_mode', String(value)); } catch (_e) {}
     Animated.timing(overlayOpacity, { toValue: 0, duration: 600, useNativeDriver: true }).start();
   };
 
   const setGraphicsQuality = async (value) => {
     setGraphicsQualityState(value);
-    try { await AsyncStorage.setItem('gymvault_graphics_quality', value); } catch (e) {}
+    try { await AsyncStorage.setItem('gymvault_graphics_quality', value); } catch (_e) {}
   };
 
   const setFpsLimit = async (value) => {
     setFpsLimitState(value);
-    try { await AsyncStorage.setItem('gymvault_fps_limit', value); } catch (e) {}
+    try { await AsyncStorage.setItem('gymvault_fps_limit', value); } catch (_e) {}
   };
 
   const setProMode = async (value) => {
     setProModeState(value);
-    try { await AsyncStorage.setItem('gymvault_pro_mode', String(value)); } catch (e) {}
+    try { await AsyncStorage.setItem('gymvault_pro_mode', String(value)); } catch (_e) {}
   };
 
   updateActiveColors(colors);

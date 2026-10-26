@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator, Modal, Platform, Alert, TextInput, RefreshControl } from 'react-native';
-import { Users, Activity, BarChart, LogOut, ShieldAlert, Trash2, Eye, Download, X, Ban, UserCheck, Star, TrendingUp, Ticket, Plus, Send, MessageSquare, CheckCircle, Search } from 'lucide-react-native';
-import { supabase } from '../supabaseClient';
+import { useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal, Alert, RefreshControl } from "react-native";
+import { Users, LogOut, ShieldAlert, Download, X, Ticket, Send, Search } from "lucide-react-native";
 import { useTheme } from '../contexts/ThemeContext';
 import AdminStats from '../components/admin/AdminStats';
 import UsersTable from '../components/admin/UsersTable';
@@ -21,7 +20,7 @@ import SupportModals from '../components/admin/modals/SupportModals';
 
 import useAdminData from '../hooks/useAdminData';
 export default function AdminDashboard() {
-  const { colors } = useTheme();
+  const { colors: _colors } = useTheme();
   
   const {
     stats, usersList, searchQuery, setSearchQuery, adminLogs, loading,

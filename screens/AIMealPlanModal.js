@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Modal, ActivityIndicator, ScrollView, TextInput, Alert, StyleSheet, Animated, Platform } from 'react-native';
-import { X, Sparkles, Flame, Check, RefreshCw, Apple, MessageSquare, ChevronDown } from 'lucide-react-native';
-import { AppText, theme, styles } from '../theme';
-import { supabase } from '../supabaseClient';
+import { useState, useEffect } from "react";
+import { View, TouchableOpacity, Modal, ActivityIndicator, ScrollView, TextInput, Alert, StyleSheet, Platform } from "react-native";
+import { X, Sparkles, Flame, Check, RefreshCw, Apple } from "lucide-react-native";
+import { AppText, theme } from "../theme";
 import { generateWithGeminiCascade } from '../services/geminiService';
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
-export default function AIMealPlanModal({ visible, onClose, session, userProfile, onApplyTarget }) {
+export default function AIMealPlanModal({ visible, onClose, session: _session, userProfile, onApplyTarget }) {
   const [activeTab, setActiveTab] = useState('meal_plan'); // 'meal_plan' | 'fridge_chef'
   const [calories, setCalories] = useState('2000');
   const [goal, setGoal] = useState('fat_loss'); // 'fat_loss' | 'muscle_gain' | 'healthy'
@@ -87,7 +85,7 @@ Kembalikan format JSON murni TANPA pembungkus markdown apapun dengan struktur be
 }
 Sangat penting: semua penjelasan nama makanan dan instruksi harus dalam Bahasa Indonesia yang ramah dan profesional.`;
 
-      const { text: rawText, modelUsed } = await generateWithGeminiCascade({
+      const { text: rawText, modelUsed: _modelUsed } = await generateWithGeminiCascade({
         prompt,
         responseMimeType: 'application/json'
       });
@@ -100,7 +98,7 @@ Sangat penting: semua penjelasan nama makanan dan instruksi harus dalam Bahasa I
 
       const parsed = JSON.parse(cleanText);
       setFridgeRecipe(parsed);
-    } catch (e) {
+    } catch (_e) {
 
       Alert.alert("Gagal Meracik Resep ⚠️", "Sistem sedang sibuk. Silakan coba beberapa saat lagi.");
     } finally {
@@ -149,7 +147,7 @@ Kembalikan format JSON murni TANPA pembungkus markdown (markdown code block sepe
 }
 Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indonesia yang ramah dan profesional.`;
 
-      const { text: rawText, modelUsed } = await generateWithGeminiCascade({
+      const { text: rawText, modelUsed: _modelUsed } = await generateWithGeminiCascade({
         prompt,
         responseMimeType: 'application/json'
       });
@@ -166,7 +164,7 @@ Sangat penting: semua penjelasan nama makanan dan tips harus dalam Bahasa Indone
 
       const parsed = JSON.parse(cleanText);
       setMealPlan(parsed);
-    } catch (e) {
+    } catch (_e) {
 
       Alert.alert("Gagal Membuat Menu ⚠️", "Sistem sedang sibuk. Silakan coba beberapa saat lagi.");
     } finally {

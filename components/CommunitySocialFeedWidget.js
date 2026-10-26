@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, ScrollView, Image } from 'react-native';
 import { Users } from 'lucide-react-native';
 import { AppText, theme } from '../theme';

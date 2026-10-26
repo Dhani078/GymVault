@@ -145,7 +145,7 @@ export default function useAdminData() {
         if (!logError && logs) {
           setAdminLogs(logs);
         }
-      } catch (err) {}
+      } catch (_err) {}
       
       // 4. Fetch Promo Codes
       try {
@@ -156,7 +156,7 @@ export default function useAdminData() {
         if (!promoError && promos) {
           setPromoCodes(promos);
         }
-      } catch (err) {}
+      } catch (_err) {}
       
       // 5. Fetch Global Notifications
       try {
@@ -167,7 +167,7 @@ export default function useAdminData() {
         if (!notifError && notifs) {
           setNotifications(notifs);
         }
-      } catch (err) {}
+      } catch (_err) {}
       
       // 6. Fetch Support Tickets
       try {
@@ -181,7 +181,7 @@ export default function useAdminData() {
         if (!ticketError && tickets) {
           setSupportTickets(tickets);
         }
-      } catch (err) {}
+      } catch (_err) {}
 
       // 7. Fetch QRIS Payment Requests & Compute Financial Telemetry
       let fetchedPayReqs = [];
@@ -194,7 +194,7 @@ export default function useAdminData() {
           fetchedPayReqs = payReqs;
           setPaymentRequests(payReqs);
         }
-      } catch (err) {}
+      } catch (_err) {}
 
       // Calculate Total Revenue from Approved Payments
       const totalRevenue = fetchedPayReqs
@@ -210,7 +210,7 @@ export default function useAdminData() {
         proConversionRate: proCVR
       }));
       
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setLoading(false);
@@ -220,13 +220,13 @@ export default function useAdminData() {
   const handleApprovePayment = async (requestId) => {
     setActionLoadingId(requestId);
     try {
-      const { data, error } = await supabase.rpc('approve_payment_request', { request_id: requestId });
+      const { data: _data, error } = await supabase.rpc('approve_payment_request', { request_id: requestId });
       if (!error) {
         setPaymentRequests(prev => prev.map(p => p.id === requestId ? { ...p, status: 'approved' } : p));
         // Refresh users list so pro status is reflected
         fetchAdminData();
       }
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setActionLoadingId(null);
@@ -236,11 +236,11 @@ export default function useAdminData() {
   const handleRejectPayment = async (requestId) => {
     setActionLoadingId(requestId);
     try {
-      const { data, error } = await supabase.rpc('reject_payment_request', { request_id: requestId });
+      const { data: _data, error } = await supabase.rpc('reject_payment_request', { request_id: requestId });
       if (!error) {
         setPaymentRequests(prev => prev.map(p => p.id === requestId ? { ...p, status: 'rejected' } : p));
       }
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setActionLoadingId(null);
@@ -274,12 +274,12 @@ export default function useAdminData() {
             details: `Deleted user: ${userToDelete.email || userToDelete.id}`
           });
         }
-      } catch(e) {}
+      } catch(_e) {}
       
       // Update UI
       setUsersList(usersList.filter(u => u.id !== userToDelete.id));
       setStats(prev => ({ ...prev, totalUsers: prev.totalUsers - 1 }));
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setUserToDelete(null);
@@ -310,13 +310,13 @@ export default function useAdminData() {
             details: `Changed status to ${newStatus} for user: ${userToToggleStatus.email || userToToggleStatus.id}`
           });
         }
-      } catch(e) {}
+      } catch(_e) {}
       
       // Update UI
       setUsersList(usersList.map(u => 
         u.id === userToToggleStatus.id ? { ...u, status: newStatus } : u
       ));
-    } catch (e) {
+    } catch (_e) {
 
       Alert.alert("Error", "Gagal mengubah status. Pastikan kolom 'status' ada di database.");
     } finally {
@@ -340,7 +340,7 @@ export default function useAdminData() {
       } else {
         setUserWorkouts([]);
       }
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setLoadingDetail(false);
@@ -385,7 +385,7 @@ export default function useAdminData() {
             action: 'CREATE_PROMO',
             details: `Created promo code: ${newPromoConfig.code.toUpperCase()} for ${newPromoConfig.durationDays} days`
           });
-        } catch(e) {}
+        } catch(_e) {}
       }
 
       setShowPromoModal(false);
@@ -419,9 +419,9 @@ export default function useAdminData() {
             details: `Deleted promo code: ${promoToDelete.code}`
           });
         }
-      } catch(e) {}
+      } catch(_e) {}
       
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setPromoToDelete(null);
@@ -458,7 +458,7 @@ export default function useAdminData() {
             action: 'CREATE_NOTIFICATION',
             details: `Broadcast: ${newNotif.title}`
           });
-        } catch(e) {}
+        } catch(_e) {}
       }
 
       setShowNotifModal(false);
@@ -497,9 +497,9 @@ export default function useAdminData() {
             details: `Deleted notification: ${notifToDelete.title}`
           });
         }
-      } catch(e) {}
+      } catch(_e) {}
       
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setNotifToDelete(null);
@@ -530,10 +530,10 @@ export default function useAdminData() {
             details: `Resolved ticket from user: ${selectedTicket.users_profile?.email}`
           });
         }
-      } catch(e) {}
+      } catch(_e) {}
       
       setSelectedTicket(null);
-    } catch (e) {
+    } catch (_e) {
 
     } finally {
       setIsResolvingTicket(false);
@@ -603,7 +603,7 @@ export default function useAdminData() {
           premiumUsers: newIsPro ? (prev.premiumUsers + 1) : Math.max(0, prev.premiumUsers - 1)
         }));
       }
-    } catch (e) {
+    } catch (_e) {
 
     }
   };

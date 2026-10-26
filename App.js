@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView, StatusBar, View, TouchableOpacity, ActivityIndicator, Alert, Platform, DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LayoutDashboard, Dumbbell, PenLine, BarChart3, Clock, Camera } from 'lucide-react-native';
+import { LayoutDashboard, Dumbbell, PenLine, BarChart3, Camera } from "lucide-react-native";
 import { AppText, theme, styles } from './theme';
 import { supabase, ensureDatabase } from './supabaseClient';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -42,7 +42,6 @@ const TABS = [
   { key: 'Profile', label: 'Profile', icon: BarChart3 },
 ];
 
-import * as Crypto from 'expo-crypto';
 import { makeId } from './utils/makeId';
 
 
@@ -143,10 +142,6 @@ function AppContent() {
       subscription.unsubscribe();
     };
   }, []);
-
-  if (!fontsLoaded && Platform.OS !== 'web') {
-    return <View style={{ flex: 1, backgroundColor: '#0E0E0F' }} />;
-  }
 
   // Save active workout state to AsyncStorage whenever it changes
   useEffect(() => {
@@ -269,7 +264,7 @@ function AppContent() {
         if (parsed?.kg) defaultKg = Number(parsed.kg) || 0;
         if (parsed?.reps) defaultReps = Number(parsed.reps) || 10;
       }
-    } catch (e) {}
+    } catch (_e) {}
 
     setWorkoutData(prev => {
       const existing = prev.findIndex(e => e.name === ex.name);
@@ -329,7 +324,6 @@ function AppContent() {
 
   // Handle start live workout from AI Coach
   useEffect(() => {
-    const { DeviceEventEmitter } = require('react-native');
     const sub = DeviceEventEmitter.addListener('start_live_workout', (event) => {
       if (!event || !event.exercises) return;
 

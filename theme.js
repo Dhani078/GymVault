@@ -1,8 +1,6 @@
-import React from 'react';
 import { Text } from 'react-native';
 import { useTheme } from './contexts/ThemeContext';
 
-// --- ACTIVE COLOR STATE FOR DYNAMIC GETTERS ---
 export let activeColors = {
   background: '#0E0E0F',
   surface: '#161618',
@@ -25,7 +23,6 @@ export const updateActiveColors = (newColors) => {
   activeColors.inputBg = newColors.inputBg;
 };
 
-// --- STITCH DESIGN TOKENS ---
 export const theme = {
   get colors() {
     return activeColors;
@@ -33,7 +30,6 @@ export const theme = {
   typography: { bold: '700', medium: '500', regular: '400' },
 };
 
-// --- AppText Component ---
 export const AppText = ({ style, weight = 'regular', tabular = false, numberOfLines, children }) => {
   const { colors } = useTheme();
   const fontFamily = 
@@ -58,7 +54,6 @@ export const AppText = ({ style, weight = 'regular', tabular = false, numberOfLi
   );
 };
 
-// --- Dynamic Shared Styles ---
 export const styles = {
   get screen() { return { flex: 1 }; },
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 import { View, TouchableOpacity, Modal, ScrollView, Image, Alert } from 'react-native';
 import { Share2, Download, X, ChevronRight } from 'lucide-react-native';
 import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
@@ -138,7 +138,7 @@ export default function ShareVolumeModal({
                     } else {
                       Alert.alert("Error", "Sharing is not available on this device.");
                     }
-                  } catch (e) {
+                  } catch (_e) {
 
                   }
                 }}
@@ -159,7 +159,7 @@ export default function ShareVolumeModal({
                     } else {
                       Alert.alert("Error", "Izin akses galeri dibutuhkan untuk menyimpan gambar.");
                     }
-                  } catch (e) {
+                  } catch (_e) {
 
                     Alert.alert("Gagal menyimpan", "Terjadi kesalahan saat memproses gambar.");
                   }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { View, TouchableOpacity, Modal, ActivityIndicator, TextInput, Alert } from 'react-native';
-import { Flame, CheckCircle2, X } from 'lucide-react-native';
+import { Flame, X } from "lucide-react-native";
 import { AppText, theme } from '../theme';
 import { supabase, safeInsert } from '../supabaseClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,7 +10,6 @@ import { useDynamicIsland } from '../contexts/DynamicIslandContext';
 
 import { generateWithGeminiCascade } from '../services/geminiService';
 
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 export default function NutritionWidget({ session, userProfile, refreshTrigger }) {
   const { showNotification } = useDynamicIsland();
@@ -70,7 +69,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
           }
         }
       }
-    } catch (nutErr) {
+    } catch (_nutErr) {
 
     } finally {
       setIsSyncing(false);
@@ -108,7 +107,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
       } else {
         setMacroTarget({ target_calories: 0, target_protein: 0 });
       }
-    } catch (e) {
+    } catch (_e) {
 
     }
   };
@@ -143,7 +142,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         subtitle: `Form terisi otomatis (${modelUsed}): ${parsed.food || 'Makanan'}`,
         duration: 2500,
       });
-    } catch (e) {
+    } catch (_e) {
 
       Alert.alert("Gagal memproses", "AI gagal mendeteksi makanan. Coba ketik dengan format lebih jelas (cth: dada ayam bakar 200 kalori).");
     } finally {
@@ -196,7 +195,7 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
         .update({ nutrition_goals: target })
         .eq('id', session.user.id);
       if (error) console.warn("[NutritionWidget] Failed to sync nutrition target to Supabase:", error.message);
-    } catch (err) {
+    } catch (_err) {
 
     }
   };

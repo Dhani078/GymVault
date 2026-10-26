@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { useState } from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { X } from 'lucide-react-native';
-import { AppText, theme } from '../theme';
 
 // Coba import AdMob — kalau gagal (Expo Go / Web), pakai dummy
 let BannerAd, BannerAdSize, adUnitIds;
@@ -13,7 +12,7 @@ try {
   BannerAdSize = admob.BannerAdSize;
   adUnitIds = require('../config/ads').adUnitIds;
   isAdMobAvailable = true;
-} catch (e) {
+} catch (_e) {
   // react-native-google-mobile-ads tidak tersedia (Expo Go / Web)
   isAdMobAvailable = false;
 }
@@ -32,7 +31,7 @@ export default function DummyAdBanner() {
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
           }}
-          onAdFailedToLoad={(error) => {
+          onAdFailedToLoad={(_error) => {
 
             setIsVisible(false);
           }}

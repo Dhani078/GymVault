@@ -14,14 +14,13 @@
  *    showNotification({ type: 'success', title: 'Set Complete!', subtitle: '80kg × 12 reps' });
  */
 
-import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useRef } from "react";
 import { View, Animated, Easing, Platform } from 'react-native';
 import { CheckCircle, Trophy, Clock, Flame, Dumbbell, AlertCircle, Zap } from 'lucide-react-native';
-import { AppText, theme } from '../theme';
+import { AppText } from "../theme";
 
 const DynamicIslandContext = createContext(null);
 
-// ─── Notification Config ─────────────────────────────────────────
 const NOTIFICATION_TYPES = {
   success: { icon: CheckCircle, color: '#10B981', bg: 'rgba(16,185,129,0.12)', border: 'rgba(16,185,129,0.25)' },
   pr: { icon: Trophy, color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.25)' },
@@ -34,7 +33,6 @@ const NOTIFICATION_TYPES = {
 
 const DURATION_DEFAULT = 3000;
 
-// ─── Provider ────────────────────────────────────────────────────
 export function DynamicIslandProvider({ children }) {
   const [notification, setNotification] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -132,7 +130,6 @@ export function DynamicIslandProvider({ children }) {
   );
 }
 
-// ─── Island Pill Component ───────────────────────────────────────
 function IslandPill({ notification, expandWidth }) {
   const config = NOTIFICATION_TYPES[notification.type] || NOTIFICATION_TYPES.success;
   const IconComponent = config.icon;
@@ -199,7 +196,6 @@ function IslandPill({ notification, expandWidth }) {
   );
 }
 
-// ─── Consumer Hook ───────────────────────────────────────────────
 export function useDynamicIsland() {
   const ctx = useContext(DynamicIslandContext);
   if (!ctx) throw new Error('useDynamicIsland must be used within <DynamicIslandProvider>');

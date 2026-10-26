@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Dumbbell, ArrowRight } from 'lucide-react-native';
 

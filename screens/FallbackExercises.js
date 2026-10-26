@@ -1,5 +1,4 @@
 const BASE_EXERCISES = [
-  // --- CHEST ---
   {
     id: "fb-chest-1",
     name: "Barbell Bench Press",
@@ -87,7 +86,6 @@ const BASE_EXERCISES = [
     instructions: "Support yourself on dip bars. Lean your torso slightly forward, flare elbows slightly out, and lower yourself until chest is stretched, then press up."
   },
 
-  // --- BACK ---
   {
     id: "fb-back-1",
     name: "Pull-Ups",
@@ -169,7 +167,6 @@ const BASE_EXERCISES = [
     instructions: "Position yourself on a hyperextension bench. Lower your torso, then lift it back up using your glutes, hamstrings, and lower back."
   },
 
-  // --- SHOULDERS ---
   {
     id: "fb-shoulder-1",
     name: "Overhead Press (Barbell)",
@@ -243,7 +240,6 @@ const BASE_EXERCISES = [
     instructions: "Stand holding a barbell. Shrug your shoulders straight up toward your ears, squeeze the traps, and lower slowly."
   },
 
-  // --- ARMS (BICEPS / TRICEPS) ---
   {
     id: "fb-arms-1",
     name: "Barbell Bicep Curl",
@@ -325,7 +321,6 @@ const BASE_EXERCISES = [
     instructions: "Lie flat on a bench. Grip the barbell with hands shoulder-width apart. Lower to chest and press up, targeting triceps."
   },
 
-  // --- QUADS ---
   {
     id: "fb-quads-1",
     name: "Barbell Back Squat",
@@ -383,7 +378,6 @@ const BASE_EXERCISES = [
     instructions: "Place shoulders under pads on hack squat machine. Lower sled by bending knees, then press up to target outer quads."
   },
 
-  // --- HAMSTRINGS / GLUTES ---
   {
     id: "fb-hams-1",
     name: "Romanian Deadlift (Barbell)",
@@ -433,7 +427,6 @@ const BASE_EXERCISES = [
     instructions: "Place shoulders under pads. Raise heels as high as possible, contract calves, and lower below the platform level."
   },
 
-  // --- CORE / ABS ---
   {
     id: "fb-core-1",
     name: "Plank",

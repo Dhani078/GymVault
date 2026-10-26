@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Modal, ActivityIndicator, Animated, Image, Linking, TextInput, ScrollView, Alert, DeviceEventEmitter } from 'react-native';
+import { View, TouchableOpacity, Modal, ActivityIndicator, Animated, Image, Linking, TextInput, Alert, DeviceEventEmitter } from "react-native";
 import { X, CheckCircle, Award, MessageCircle } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -80,7 +80,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
   }, [isAnalyzing]);
   const [isPremium, setIsPremium] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
-  const { isLoaded: isRewardedLoaded, showAd: showRewardedAd } = useRewardedAd();
+  const { isLoaded: _isRewardedLoaded, showAd: showRewardedAd } = useRewardedAd();
   const [usageCount, setUsageCount] = useState(0);
 
   // States for portion adjustment & correction
@@ -135,7 +135,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
       } else {
         setUsageCount(0);
       }
-    } catch (e) {}
+    } catch (_e) {}
   };
 
   const analyzeImageWithGemini = async (base64Image) => {
@@ -173,11 +173,11 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
           parsedResult.c = matched.c;
           parsedResult.f = matched.f;
         }
-      } catch (e) {
+      } catch (_e) {
 
       }
       return parsedResult;
-    } catch (error) {
+    } catch (_error) {
 
       return { food: "Error Jaringan / Server", cal: 0, p: 0, c: 0, f: 0 };
     }
@@ -214,7 +214,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
           quality: 0.5,
           base64: true, // we need base64 for the API
         });
-      } catch (e) {
+      } catch (_e) {
         result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
@@ -246,7 +246,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
         setNutritionResult(apiResult);
         setIsAnalyzing(false);
       }
-    } catch (e) {
+    } catch (_e) {
 
       setIsAnalyzing(false);
     }
@@ -325,7 +325,6 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                 style={{ width: '100%', height: '100%' }}
                 resizeMode="contain"
                 defaultSource={{uri: 'https://via.placeholder.com/200?text=Scan+QRIS'}}
-                onError={(e) => console.log('Place your qris.jpg in assets/ folder')}
               />
             </View>
 
@@ -527,7 +526,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                   try {
                     const { error } = await supabase.from('nutrition_logs').insert(mealPayload);
                     if (!error) saveSucceeded = true;
-                  } catch (e) {}
+                  } catch (_e) {}
 
                   if (!saveSucceeded) {
                     try {
@@ -536,7 +535,7 @@ export default function NutritionScannerModal({ visible, onClose, session }) {
                       const existingQueue = JSON.parse((await AsyncStorage.getItem(queueKey)) || '[]');
                       existingQueue.push(mealPayload);
                       await AsyncStorage.setItem(queueKey, JSON.stringify(existingQueue));
-                    } catch (e) {}
+                    } catch (_e) {}
                   }
 
                   Alert.alert(

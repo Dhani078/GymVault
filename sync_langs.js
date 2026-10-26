@@ -44,7 +44,7 @@ content = content.replace(
 
 // 3. Language Toast
 content = content.replace(
-  /showToast\('success', language === 'id' \? \`Bahasa diubah ke \$\{l\.label\}\` : \`Language changed to \$\{l\.label\}\`\);/g,
+  /showToast\('success', language === 'id' \? `Bahasa diubah ke \$\{l\.label\}` : `Language changed to \$\{l\.label\}`\);/g,
   `showToast('success', \`\${t('toast_lang_changed')} \${l.label}\`);`
 );
 
@@ -74,4 +74,3 @@ const oldLangArrayRegex = /\{\[\s*\{ code: 'en'[\s\S]*?\]\.map\(l => \(/;
 content = content.replace(oldLangArrayRegex, langArray.trim());
 
 fs.writeFileSync('screens/ProfileScreen.js', content);
-console.log('Language sync complete.');

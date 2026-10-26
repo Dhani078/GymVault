@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from "react";
 import { View, StyleSheet, Platform } from 'react-native';
 import { Canvas, Path, Skia, LinearGradient, vec } from '@shopify/react-native-skia';
-import Animated, { 
+import { 
   useSharedValue, 
   withTiming, 
-  useDerivedValue,
   Easing 
 } from 'react-native-reanimated';
 import { AppText, theme } from '../theme';
@@ -12,7 +11,28 @@ import { useTheme } from '../contexts/ThemeContext';
 
 const IS_WEB = Platform.OS === 'web';
 
-export const SkiaProgressRing = ({
+function WebProgressRing({
+  size = 120,
+  strokeWidth = 12,
+  primaryColor = theme.colors.primary,
+  title = "",
+  subtitle = "",
+  label = "",
+  value = ""
+}) {
+  return (
+    <View style={[styles.container, { width: size, height: size, borderRadius: size / 2, borderWidth: strokeWidth, borderColor: primaryColor }]}>
+      <View style={styles.centerTextContainer}>
+        {title ? <AppText style={styles.valueText}>{title}</AppText> : null}
+        {subtitle ? <AppText style={styles.labelText}>{subtitle}</AppText> : null}
+        {value ? <AppText style={styles.valueText}>{value}</AppText> : null}
+        {label ? <AppText style={styles.labelText}>{label}</AppText> : null}
+      </View>
+    </View>
+  );
+}
+
+function NativeSkiaProgressRing({
   size = 120,
   strokeWidth = 12,
   progress = 0,
@@ -23,28 +43,9 @@ export const SkiaProgressRing = ({
   label = "",
   value = "",
   gradientColors = null
-}) => {
+}) {
   const { graphicsQuality } = useTheme();
-  
-  if (IS_WEB) {
-    return (
-      <View style={[styles.container, { width: size, height: size, borderRadius: size/2, borderWidth: strokeWidth, borderColor: primaryColor }]}>
-        <View style={styles.centerTextContainer}>
-          {title ? <AppText style={styles.valueText}>{title}</AppText> : null}
-          {subtitle ? <AppText style={styles.labelText}>{subtitle}</AppText> : null}
-          {value ? <AppText style={styles.valueText}>{value}</AppText> : null}
-          {label ? <AppText style={styles.labelText}>{label}</AppText> : null}
-        </View>
-      </View>
-    );
-  }
-
-  // Set default gradient if none provided
   const activeGradient = gradientColors || [primaryColor, primaryColor];
-  
-  // Calculate SVG arc paths
-  const radius = (size - strokeWidth) / 2;
-  const center = size / 2;
 
   const animatedProgress = useSharedValue(0);
 
@@ -53,13 +54,13 @@ export const SkiaProgressRing = ({
       duration: 1500,
       easing: Easing.bezier(0.25, 1, 0.5, 1),
     });
-  }, [progress]);
+  }, [progress, animatedProgress]);
 
   const path = Skia.Path.Make();
   path.addArc(
     { x: strokeWidth / 2, y: strokeWidth / 2, width: size - strokeWidth, height: size - strokeWidth },
-    270, // Start angle (top)
-    360 // Sweep angle
+    270,
+    360
   );
 
   const backgroundPath = Skia.Path.Make();
@@ -110,6 +111,13 @@ export const SkiaProgressRing = ({
       </View>
     </View>
   );
+}
+
+export const SkiaProgressRing = (props) => {
+  if (IS_WEB) {
+    return <WebProgressRing {...props} />;
+  }
+  return <NativeSkiaProgressRing {...props} />;
 };
 
 const styles = StyleSheet.create({

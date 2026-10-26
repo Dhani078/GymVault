@@ -72,7 +72,7 @@ export const NotificationManager = {
 
       await AsyncStorage.setItem(NOTIFICATION_SETUP_KEY, 'true');
 
-    } catch (error) {
+    } catch (_error) {
 
     }
   },
@@ -81,7 +81,7 @@ export const NotificationManager = {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
       await AsyncStorage.removeItem(NOTIFICATION_SETUP_KEY);
-    } catch (e) {
+    } catch (_e) {
 
     }
   }

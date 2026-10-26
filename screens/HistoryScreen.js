@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, SectionList, ActivityIndicator, RefreshControl, Dimensions, TouchableOpacity, Alert, Modal, ScrollView, Share, Platform, DeviceEventEmitter } from 'react-native';
+import { useState, useEffect, useCallback } from "react";
+import { View, SectionList, ActivityIndicator, RefreshControl, TouchableOpacity, Alert, Modal, Share, Platform, DeviceEventEmitter } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Clock, Dumbbell, Trash2, Calendar, Flame, AlertCircle, TrendingUp, ChevronRight, ChevronLeft, X, CheckCircle2, RotateCcw, Share2, Layers, AlertTriangle, Droplets, Info } from 'lucide-react-native';
+import { Dumbbell, Trash2, Calendar, AlertCircle, ChevronRight, ChevronLeft } from "lucide-react-native";
 import WorkoutDetailModal from '../components/history/WorkoutDetailModal';
 import NutritionDetailModal from '../components/history/NutritionDetailModal';
 import WaterDetailModal from '../components/history/WaterDetailModal';
@@ -32,7 +32,7 @@ const formatTimeStr = (d) => {
   return `${displayHours}:${minutes} ${ampm}`;
 };
 
-export default function HistoryScreen({ session, dbReady, onStartWorkout, onStartRoutine, onBack }) {
+export default function HistoryScreen({ session, dbReady: _dbReady, onStartWorkout, onStartRoutine, onBack }) {
   const { t } = useTranslation();
   const { graphicsQuality } = useTheme();
   const [historyData, setHistoryData] = useState([]);
@@ -195,7 +195,7 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
         let parsed = {};
         try {
           parsed = JSON.parse(waterHistoryStr) || {};
-        } catch (e) {
+        } catch (_e) {
           parsed = {};
         }
         
@@ -245,15 +245,15 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
     fetchHistory();
   }, [session]);
 
-  // ─── Repeat Workout Handler ───
   const handleRepeatWorkout = (sessionItem) => {
     if (!sessionItem) return;
     try {
       const Haptics = require('expo-haptics');
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    } catch(e){}
+    } catch(_e){}
 
-    let raw = sessionItem.split_name || 'Workout';
+    const splitStr = sessionItem.split_name || 'Workout';
+    let raw = splitStr;
     const parenMatch = raw.match(/\((.*?)\)/);
     if (parenMatch && parenMatch[1].includes(',')) {
       raw = parenMatch[1];
@@ -303,7 +303,6 @@ export default function HistoryScreen({ session, dbReady, onStartWorkout, onStar
     }
   };
 
-  // ─── Share Workout Session ───
   const handleShareSession = async (sess) => {
     if (!sess) return;
     try {
@@ -321,7 +320,7 @@ Tracked with GymVault`;
           try {
             await navigator.share({ title: 'GymVault Workout Log', text });
             return;
-          } catch(e) {}
+          } catch(_e) {}
         }
         if (typeof navigator !== 'undefined' && navigator.clipboard) {
           await navigator.clipboard.writeText(text);
@@ -330,7 +329,7 @@ Tracked with GymVault`;
         }
       }
       await Share.share({ message: text, title: 'GymVault Workout Log' });
-    } catch(e) {}
+    } catch(_e) {}
   };
 
   if (loading) {
@@ -341,7 +340,6 @@ Tracked with GymVault`;
     );
   }
 
-  // ─── Delete Handlers ───
   const handleDeleteWorkout = (id) => {
     setDeleteConfirm({ visible: true, type: 'workout', id });
   };
@@ -369,7 +367,7 @@ Tracked with GymVault`;
       if (type === 'workout') {
         try {
           await supabase.from('workout_sets').delete().eq('session_id', id);
-        } catch(e){}
+        } catch(_e){}
 
         const { data: sessionDeleted, error: sessionError } = await supabase.from('workout_sessions').delete().eq('id', id).select();
         if (sessionError) throw sessionError;
@@ -410,7 +408,7 @@ Tracked with GymVault`;
           let parsed = {};
           try {
             parsed = JSON.parse(waterHistoryStr) || {};
-          } catch (e) {
+          } catch (_e) {
             parsed = {};
           }
           
@@ -442,7 +440,6 @@ Tracked with GymVault`;
     }
   };
 
-  // ─── Chart Renderer ───
   const renderChart = () => {
     if (activeTab !== 'workouts') return null;
     return <HistoryVolumeChart chartData={chartData} />;
@@ -704,7 +701,7 @@ Tracked with GymVault`;
                   try {
                     const Haptics = require('expo-haptics');
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  } catch(e){}
+                  } catch(_e){}
                   if (typeof onStartWorkout === 'function') onStartWorkout();
                 }}
                 style={{

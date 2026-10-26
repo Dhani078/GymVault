@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ActivityIndicator } from 'react-native';
 import { ShieldAlert, UserCheck, Ban, X, Activity } from 'lucide-react-native';
 

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { TRANSLATIONS } from '../config/Translations';
@@ -16,7 +16,7 @@ export function LanguageProvider({ children }) {
           setLanguageState(saved);
         }
       } catch (e) {
-        console.log('Failed to load language', e);
+        console.error('Failed to load language', e);
       }
     };
     loadLang();
@@ -28,7 +28,7 @@ export function LanguageProvider({ children }) {
       try {
         await AsyncStorage.setItem('gymvault_lang', langCode);
       } catch (e) {
-        console.log('Failed to save language', e);
+        console.error('Failed to save language', e);
       }
     }
   };

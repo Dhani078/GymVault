@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, TextInput, Modal } from 'react-native';
-import { CreditCard, CheckCircle2, XCircle, Clock, ExternalLink, Search, Check, X, Eye } from 'lucide-react-native';
+import { CreditCard, Clock, Search, Check, X, Eye } from "lucide-react-native";
 
 export default function PaymentRequestsTable({
   paymentRequests = [],
