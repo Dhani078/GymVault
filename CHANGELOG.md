@@ -6,6 +6,25 @@ Maintained by: **Dhani078**
 
 ---
 
+## [2.5.0] - 2026-10-31
+
+### Added
+- **Global Error Boundary**: Implemented `components/ErrorBoundary.js` wrapping root `App.js` with AMOLED `#000000` + Electric Lime `#D4F53C` interface and crash recovery reload button.
+- **PWA Offline Service Worker**: Added `web/sw.js` and `public/sw.js` with stale-while-revalidate caching and offline navigation fallback for basement gym sessions.
+- **PWA Web Manifest & SEO**: Created `web/manifest.json`, `web/robots.txt`, `web/sitemap.xml`, and JSON-LD `HealthAndFitnessApplication` schema in `web/index.html`.
+- **Sliding-Window API Rate Limiter**: Integrated IP-based in-memory rate limiter on `api/doku-checkout.js` (max 10 requests/minute) against spam invoice generation.
+- **Test Suite 15 (Edge Cases & Mathematical Bounds)**: Added 6 new assertions covering negative rep clamps, extreme rep caps (>12), plate breakdown under bar weight, 1.25kg micro-plate calculation, and leap day calendar evaluation (71/71 tests passing).
+- **Automated CI/CD Workflow**: Added `.github/workflows/ci.yml` running test verification on Node.js 22 LTS on every push/PR.
+- **Accessibility & ARIA Labels**: Added `accessibilityRole="button"` and descriptive `accessibilityLabel` to icon-only controls in `screens/LoggerScreen.js`.
+
+### Fixed
+- **ProfileScreen Theme Reference**: Resolved `ReferenceError: colors is not defined` in `screens/ProfileScreen.js:448-452` by extracting `colors` from `useTheme()`.
+- **Vercel Regex Rewrites**: Added `manifest\\.json` and `sw\\.js` exclusions in `vercel.json` rewrite rule to prevent JSON PWA manifest from being rewritten to `index.html`.
+- **Vercel Security Headers**: Enforced `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin`, `Strict-Transport-Security`, and `Permissions-Policy`.
+- **Dead Import & Unused Variable Cleanup**: Removed 11 unused imports across `App.js`, `screens/AdminDashboard.js`, `screens/AuthScreen.js`, `screens/DashboardScreen.js`, `screens/HistoryScreen.js`, `screens/LandingPage.js`, `screens/LoggerScreen.js`, and `screens/SettingsScreen.js`. Returned `userId: activatedUserId` in `api/qiospay-callback.js`.
+
+---
+
 ## [2.4.0] - 2026-10-26
 
 ### Added
