@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet, Animated, Platform } from 'react-native';
 
 export default function AdminSkeleton() {
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
@@ -10,12 +10,12 @@ export default function AdminSkeleton() {
         Animated.timing(pulseAnim, {
           toValue: 0.7,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
         Animated.timing(pulseAnim, {
           toValue: 0.3,
           duration: 800,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
       ])
     ).start();

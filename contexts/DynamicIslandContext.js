@@ -48,9 +48,9 @@ export function DynamicIslandProvider({ children }) {
 
   const dismissCurrent = useCallback(() => {
     Animated.parallel([
-      Animated.timing(translateY, { toValue: -100, duration: 400, easing: Easing.in(Easing.cubic), useNativeDriver: true }),
-      Animated.timing(scale, { toValue: 0.8, duration: 300, useNativeDriver: true }),
-      Animated.timing(opacity, { toValue: 0, duration: 300, useNativeDriver: true }),
+      Animated.timing(translateY, { toValue: -100, duration: 400, easing: Easing.in(Easing.cubic), useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(scale, { toValue: 0.8, duration: 300, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(opacity, { toValue: 0, duration: 300, useNativeDriver: Platform.OS !== 'web' }),
     ]).start(() => {
       setIsVisible(false);
       setNotification(null);
@@ -75,9 +75,9 @@ export function DynamicIslandProvider({ children }) {
 
     // Enter animation (bouncy spring)
     Animated.parallel([
-      Animated.spring(translateY, { toValue: 0, tension: 80, friction: 10, useNativeDriver: true }),
-      Animated.spring(scale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: true }),
-      Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+      Animated.spring(translateY, { toValue: 0, tension: 80, friction: 10, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.spring(scale, { toValue: 1, tension: 100, friction: 8, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: Platform.OS !== 'web' }),
     ]).start();
 
     // Progress bar animation

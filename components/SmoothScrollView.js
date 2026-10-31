@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Animated, View } from 'react-native';
+import { Animated, View, Platform } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 
 export const SmoothScrollView = ({
@@ -18,7 +18,7 @@ export const SmoothScrollView = ({
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
     {
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
       listener: (event) => {
         if (onScrollPosition && event?.nativeEvent?.contentOffset) {
           onScrollPosition(event.nativeEvent.contentOffset.y);

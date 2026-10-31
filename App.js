@@ -132,7 +132,9 @@ function AppContent() {
         setWorkoutIndex(0);
         setWorkoutStartTime(null);
         // Reset notif timer saat logout agar bisa menjadwalkan ulang
-        Notifications.cancelAllScheduledNotificationsAsync().catch(() => {});
+        if (Platform.OS !== 'web') {
+          Notifications.cancelAllScheduledNotificationsAsync().catch(() => {});
+        }
       }
     });
 
@@ -188,6 +190,7 @@ function AppContent() {
 
   // Setup Inactivity Reminder (3 Days) — hanya jadwalkan jika belum ada
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     const setupNotifications = async () => {
       const { status } = await Notifications.requestPermissionsAsync();
       if (status !== 'granted') return;

@@ -20,7 +20,7 @@ function NotifBanner({ type, title, message, visible }) {
     Animated.timing(fadeAnim, {
       toValue: visible ? 1 : 0,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
   }, [visible]);
 
@@ -72,13 +72,13 @@ export default function AuthScreen() {
           toValue: -8,
           duration: 2000,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
         Animated.timing(floatAnim, {
           toValue: 0,
           duration: 2000,
           easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         })
       ])
     ).start();

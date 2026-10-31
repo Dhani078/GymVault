@@ -61,7 +61,7 @@ export function ThemeProvider({ children }) {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setDarkModeState(value);
     try { await AsyncStorage.setItem('gymvault_dark_mode', String(value)); } catch (_e) {}
-    Animated.timing(overlayOpacity, { toValue: 0, duration: 600, useNativeDriver: true }).start();
+    Animated.timing(overlayOpacity, { toValue: 0, duration: 600, useNativeDriver: Platform.OS !== 'web' }).start();
   };
 
   const setGraphicsQuality = async (value) => {
