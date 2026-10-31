@@ -1,15 +1,15 @@
 # GymVault — Persistent AI Memory & Knowledge Ledger
 
-> **AI CONTEXT MEMORY**: This document serves as the master source of truth for any AI agent interacting with the GymVault codebase. It outlines core architectural invariants, database models, security mandates, design standards, and active workflows to ensure zero hallucinations and maximum execution precision.
+> AI CONTEXT MEMORY: This document serves as the master source of truth for any AI agent interacting with the GymVault codebase. It outlines core architectural invariants, database models, security mandates, design standards, and active workflows to ensure zero hallucinations and maximum execution precision.
 
 ---
 
 ## 1. Project Overview & Identity
-- **Product Name**: GymVault
-- **Description**: Certified 10/10 production-grade cross-platform fitness & workout tracking application featuring an adaptive gym-versus-home engine, real-time logging, AI coaching, computer vision nutrition analysis, and unified desktop/mobile routing.
-- **Visual Design Standard**: Strict AMOLED Pitch Black (`#000000`), Dark Surfaces (`#0E0E12`, `#16161A`), and Electric Lime (`#D4F53C`) accents. Glassmorphism, micro-animations, and high-contrast typography.
-- **Repository Path**: `E:\Hermesproject\GYM`
-- **Live Production URL**: `https://gymvault-app.vercel.app`
+- Product Name: GymVault
+- Description: Certified 10/10 production-grade cross-platform fitness & workout tracking application featuring an adaptive gym-versus-home engine, real-time logging, AI coaching, computer vision nutrition analysis, and unified desktop/mobile routing.
+- Visual Design Standard: Strict AMOLED Pitch Black (`#000000`), Dark Surfaces (`#0E0E12`, `#16161A`), and Electric Lime (`#D4F53C`) accents. Glassmorphism, micro-animations, and high-contrast typography.
+- Repository Path: `E:\Hermesproject\GYM`
+- Live Production URL: `https://gymvault-app.vercel.app`
 
 ---
 
@@ -17,49 +17,49 @@
 
 | Layer | Technology | Key Details & Rules |
 | :--- | :--- | :--- |
-| **Mobile Runtime** | React Native (Expo SDK ~54.0.36) | Read versioned docs at `https://docs.expo.dev/versions/v54.0.0/`. Do NOT use deprecated APIs. |
-| **Styling & Theme** | StyleSheet + Custom Tokens | AMOLED theme in `theme.js` & `contexts/ThemeContext.js`. Primary `#D4F53C`, Background `#000000`. |
-| **Backend & Auth** | Supabase (PostgreSQL 15+) | Project ID `sjrzhiigrcrcpgvnfixo`. Strict RLS on all tables. Safe queries in `supabaseClient.js`. |
-| **AI Integration** | Google Gemini 3.7 Cascade | 7-tier Waterfall (`gemini-3.7-flash` ➔ `3.6-flash` ➔ `3.5-flash` ➔ `3.1-flash-lite` ➔ `2.5-flash` ➔ `2.5-flash-lite` ➔ `1.5-flash`) in `services/geminiService.js`. |
-| **Mathematical Engine** | Pure Functional Module | `utils/fitnessMath.js` (1RM Brzycki, Olympic Plate Loading, TDEE, HR Zones, CNS Decay, Double Progression, Kinetic Chain Fatigue Warning, Plateau Breaker, Voice Command Parser). |
-| **Test Automation** | Zero-Dep Test Runner | `scripts/test-fitness-engine.js` + `scripts/test-doku.js` executed via `npm test` validating **65 assertion scenarios across 15 test suites** (100% pass rate). |
-| **Payment Gateway** | DOKU Official QRIS + Qiospay | Instant QRIS invoice generation, HMAC-SHA256 timing-safe webhook verification, atomic subscription provisioning (`approve_payment_request`), and real-time polling in `services/dokuService.js`. |
-| **Hands-Free Voice** | Web Speech API / TTS | Real mic voice logging in `screens/LoggerScreen.js` + bilingual TTS voice coach (`expo-speech`). |
-| **Smart Fridge Chef** | Gemini Multimodal Meal AI | `screens/AIMealPlanModal.js` Fridge-to-Macro engine generating gram-precise recipes from available ingredients. |
-| **Telegram SaaS Bot** | 2-Way Webhook + Polling | `api/telegram-webhook.js` & `scripts/start-telegram-bot.js` supporting 8 admin commands (`/stats`, `/growth`, `/recent`, `/check`, `/grant`, `/revoke`, `/broadcast`, `/clearnotif`) + instant QRIS approval. |
-| **State & Modes** | React Context + AsyncStorage | `AppModeContext` (Gym vs Home), `ThemeContext`, `DynamicIslandContext`, `LanguageContext`. |
-| **List Performance**| `@shopify/flash-list` (v2.0.2) | Prefer `FlashList` for high-volume datasets (Exercise Library, History, Logs). |
-| **Graphics & Canvas**| `@shopify/react-native-skia` | Used for hardware-accelerated rings and progress charts. |
-| **Animations** | `react-native-reanimated` | 60/120 FPS UI-thread animations and smooth gestures. |
-| **Desktop Web** | Single Vercel URL Deployment | Responsive routing in `components/AdaptiveLayout.js` with Desktop View Switcher (`[ 🌐 Landing Page ]` / `[ 👑 Admin Panel ]` / `[ 📱 App View ]`). |
+| Mobile Runtime | React Native (Expo SDK ~54.0.36) | Read versioned docs at `https://docs.expo.dev/versions/v54.0.0/`. Do NOT use deprecated APIs. |
+| Styling & Theme | StyleSheet + Custom Tokens | AMOLED theme in `theme.js` & `contexts/ThemeContext.js`. Primary `#D4F53C`, Background `#000000`. |
+| Backend & Auth | Supabase (PostgreSQL 15+) | Project ID `sjrzhiigrcrcpgvnfixo`. Strict RLS on all tables. Safe queries in `supabaseClient.js`. |
+| AI Integration | Google Gemini 3.7 Cascade | 7-tier Waterfall (`gemini-3.7-flash` ➔ `3.6-flash` ➔ `3.5-flash` ➔ `3.1-flash-lite` ➔ `2.5-flash` ➔ `2.5-flash-lite` ➔ `1.5-flash`) in `services/geminiService.js`. |
+| Mathematical Engine | Pure Functional Module | `utils/fitnessMath.js` (1RM Brzycki, Olympic Plate Loading, TDEE, HR Zones, CNS Decay, Double Progression, Kinetic Chain Fatigue Warning, Plateau Breaker, Voice Command Parser). |
+| Test Automation | Zero-Dep Test Runner | `scripts/test-fitness-engine.js` + `scripts/test-doku.js` executed via `npm test` validating 65 assertion scenarios across 15 test suites (100% pass rate). |
+| Payment Gateway | DOKU Official QRIS + Qiospay | Instant QRIS invoice generation, HMAC-SHA256 timing-safe webhook verification, atomic subscription provisioning (`approve_payment_request`), and real-time polling in `services/dokuService.js`. |
+| Hands-Free Voice | Web Speech API / TTS | Real mic voice logging in `screens/LoggerScreen.js` + bilingual TTS voice coach (`expo-speech`). |
+| Smart Fridge Chef | Gemini Multimodal Meal AI | `screens/AIMealPlanModal.js` Fridge-to-Macro engine generating gram-precise recipes from available ingredients. |
+| Telegram SaaS Bot | 2-Way Webhook + Polling | `api/telegram-webhook.js` & `scripts/start-telegram-bot.js` supporting 8 admin commands (`/stats`, `/growth`, `/recent`, `/check`, `/grant`, `/revoke`, `/broadcast`, `/clearnotif`) + instant QRIS approval. |
+| State & Modes | React Context + AsyncStorage | `AppModeContext` (Gym vs Home), `ThemeContext`, `DynamicIslandContext`, `LanguageContext`. |
+| List Performance| `@shopify/flash-list` (v2.0.2) | Prefer `FlashList` for high-volume datasets (Exercise Library, History, Logs). |
+| Graphics & Canvas| `@shopify/react-native-skia` | Used for hardware-accelerated rings and progress charts. |
+| Animations | `react-native-reanimated` | 60/120 FPS UI-thread animations and smooth gestures. |
+| Desktop Web | Single Vercel URL Deployment | Responsive routing in `components/AdaptiveLayout.js` with Desktop View Switcher (`[ 🌐 Landing Page ]` / `[ 👑 Admin Panel ]` / `[ 📱 App View ]`). |
 
 ---
 
 ## 3. Database Schema & Policy Map (Supabase)
 
 ### Tables & Primary Keys
-1. **`users_profile`** (`id` UUID PRIMARY KEY references `auth.users`)
+1. `users_profile` (`id` UUID PRIMARY KEY references `auth.users`)
    - Columns: `name`, `username` (UNIQUE), `email`, `body_weight`, `height`, `cns_fatigue`, `custom_routines` (JSONB), `role` ('admin' | 'user'), `is_premium` (BOOL), `premium_plan`, `premium_until`, `avatar_url`, `created_at`.
    - Security: RLS enabled. UPDATE policy protected by `trg_prevent_profile_privilege_escalation` trigger preventing unauthorized client elevation to `role = 'admin'`.
-2. **`exercises`** (`id` UUID PRIMARY KEY)
+2. `exercises` (`id` UUID PRIMARY KEY)
    - Columns: `name` (UNIQUE), `muscle_group`, `equipment_type`, `thumbnail_url`.
    - Security: Public SELECT (`true`).
-3. **`workout_sessions`** (`id` UUID PRIMARY KEY)
+3. `workout_sessions` (`id` UUID PRIMARY KEY)
    - Columns: `user_id` (UUID references `users_profile.id`), `split_name`, `started_at`, `is_completed`.
    - Security: RLS enabled. Full CRUD restricted to `auth.uid() = user_id`.
-4. **`workout_sets`** (`id` UUID PRIMARY KEY)
+4. `workout_sets` (`id` UUID PRIMARY KEY)
    - Columns: `session_id` (UUID references `workout_sessions.id` ON DELETE CASCADE), `exercise_id`, `set_index`, `weight_kg`, `reps`, `is_checked`.
    - Security: RLS restricted to sessions owned by `auth.uid()`.
-5. **`nutrition_logs`** (`id` UUID PRIMARY KEY)
+5. `nutrition_logs` (`id` UUID PRIMARY KEY)
    - Columns: `user_id`, `meal_name`, `calories`, `protein_g`, `carbs_g`, `fat_g`, `logged_at`.
    - Security: RLS restricted to `auth.uid() = user_id`.
-6. **`payment_requests`** (`id` UUID PRIMARY KEY)
+6. `payment_requests` (`id` UUID PRIMARY KEY)
    - Columns: `user_id`, `user_name`, `user_email`, `plan`, `amount`, `status` ('pending' | 'approved' | 'rejected'), `proof_url`, `reviewed_at`, `created_at`.
    - Security: RLS enabled. Users insert/view own requests; Admin full CRUD. Atomic RPC `approve_payment_request` and `reject_payment_request`.
-7. **`promo_codes`** (`id` UUID PRIMARY KEY)
+7. `promo_codes` (`id` UUID PRIMARY KEY)
    - Columns: `code` (UNIQUE), `discount_percent`, `duration_days`, `max_uses`, `used_count`, `is_active`, `expires_at`, `created_at`.
    - Security: RLS enabled. Atomic RPC `redeem_promo_code`.
-8. **`system_notifications`** (`id` UUID PRIMARY KEY)
+8. `system_notifications` (`id` UUID PRIMARY KEY)
    - Columns: `title`, `message`, `type`, `target_user_id`, `created_at`. Broadcast repository for admin announcements.
 
 ### Custom Stored Functions & RPCs
@@ -145,26 +145,26 @@ To prevent data collision between different logged-in users or guest sessions, a
 
 ## 6. Non-Negotiable Engineering Rules (The 8 Pillars)
 
-1. **Ponytail Minimalist Rule**: Always follow the ladder (YAGNI > Re-use > Stdlib > Native Platform > Existing Dep > Minimal 1-liner). Never write 50 lines of wrapper when standard components suffice.
-2. **Strix Zero-Trust Security**: Never trust client inputs. Always enforce Supabase RLS. Never bypass auth checks or expose secret keys (`service_role`).
-3. **No Hardcoded Credentials**: API keys (Gemini, Supabase, Telegram) must NEVER be hardcoded into client code. Use environment variables.
-4. **AMOLED Design Integrity**: Pitch black `#000000`, surface `#0E0E12`, electric lime `#D4F53C`. No generic white backgrounds, raw unicode emoji in buttons, or AI kicker pill badges.
-5. **Separation of Concerns**: Keep mathematical calculations in `utils/fitnessMath.js`, business logic inside hooks/services, and UI in components.
-6. **Cross-Platform Safety**: Always verify `Platform.OS === 'web'` when using browser APIs (`window`, `navigator`) or native modules (`AsyncStorage`, `ImagePicker`, `Notifications`).
-7. **Complete Output Enforcement**: Never truncate code with placeholders like `// ... rest of code unchanged`. Always provide exact, complete code blocks.
-8. **Automated Test Integrity**: Run `npm test` before major releases to guarantee zero mathematical regressions across 1RM, TDEE, Plate Loading, Progressive Overload, Kinetic Chain Fatigue, Voice Parsing, and DOKU QRIS HMAC Signature Verification (65/65 Assertions).
+1. Ponytail Minimalist Rule: Always follow the ladder (YAGNI > Re-use > Stdlib > Native Platform > Existing Dep > Minimal 1-liner). Never write 50 lines of wrapper when standard components suffice.
+2. Strix Zero-Trust Security: Never trust client inputs. Always enforce Supabase RLS. Never bypass auth checks or expose secret keys (`service_role`).
+3. No Hardcoded Credentials: API keys (Gemini, Supabase, Telegram) must NEVER be hardcoded into client code. Use environment variables.
+4. AMOLED Design Integrity: Pitch black `#000000`, surface `#0E0E12`, electric lime `#D4F53C`. No generic white backgrounds, raw unicode emoji in buttons, or AI kicker pill badges.
+5. Separation of Concerns: Keep mathematical calculations in `utils/fitnessMath.js`, business logic inside hooks/services, and UI in components.
+6. Cross-Platform Safety: Always verify `Platform.OS === 'web'` when using browser APIs (`window`, `navigator`) or native modules (`AsyncStorage`, `ImagePicker`, `Notifications`).
+7. Complete Output Enforcement: Never truncate code with placeholders like `// ... rest of code unchanged`. Always provide exact, complete code blocks.
+8. Automated Test Integrity: Run `npm test` before major releases to guarantee zero mathematical regressions across 1RM, TDEE, Plate Loading, Progressive Overload, Kinetic Chain Fatigue, Voice Parsing, and DOKU QRIS HMAC Signature Verification (65/65 Assertions).
 
 ---
 
 ## 7. Database & UI Invariants (Learned Lessons)
 
-- **`workout_sets` Foreign Key Safety**: `exercise_id` in `workout_sets` references `exercises(id)`. Client-generated UUIDs (`makeId()`) must NEVER be inserted directly into `exercise_id` without resolving against `exercises(id)`. In `LoggerScreen.js`, fallback to `exercise_id = null` on batch insert error guarantees zero data loss.
-- **`HistoryScreen.js` Interactivity**: Workout, Nutrition, and Water history cards must always be clickable (`TouchableOpacity`) and render comprehensive AMOLED inspection modals (`selectedSession`, `selectedNutrition`, `selectedWater`) with quick action triggers ("Ulangi Sesi", "Hapus Sesi", "Bagikan").
-- **Modular Component Architecture (< 300 - 800 lines)**: To prevent monolith bloat and isolated re-renders, large screens are modularized into dedicated subdirectories: `components/logger/` (workout modals), `components/landing/` (landing page sections, styles & datasets), `components/history/` (history inspection modals & SVG volume chart), `components/profile/` (profile modal suite), and `components/admin/` (admin tables & management widgets). All extracted components must maintain strict prop contracts, pass universal Babel compilation, and verify 0 broken handlers.
-- **Telegram Bot & Webhook Schema Alignment**: `scripts/start-telegram-bot.js` and `api/telegram-webhook.js` aligned with `users_profile` schema (`is_premium` & `premium_until` synchronized alongside `is_pro` & `pro_expires_at`). `/growth` query column aligned to `started_at` in `workout_sessions`. Commands `/stats`, `/check`, `/grant`, and `/revoke` ensure full bidirectional synchronization between Telegram admin and the mobile client.
-- **Pure Top-Level Module Resolution & Zero DRY Duplication**: Cleaned all repeated inline `require()` calls and eliminated local `getLocalDateString` duplications across `AIRoutineModal.js`, `AIChatBubble.js`, `NutritionScannerModal.js`, `ProfileScreen.js`, and `WaterTrackerWidget.js` into canonical imports (`utils/dateHelpers.js`), eliminating runtime bundler overhead.
-- **Serverless API Hardening & Privilege Defense**: `api/qiospay-callback.js` stripped of hardcoded credentials and protected with webhook secret validation; `api/analyze-nutrition.js` upgraded with 4-layer Gemini cascade and safe candidate chaining; privilege escalation vulnerability in email matching restricted to strict authenticated admin role and exact owner email.
-- **Multi-Platform Vector Graph Engine**: `components/SkiaLineChart.js` implements `WebSvgLineChart` using `react-native-svg` to ensure 100% vector parity on web desktop where Canvas WASM Skia is unavailable.
-- **Headless Chrome CDP Test Gate**: `scripts/audit-chrome.mjs` integrates native Node 22 WebSocket + Chrome DevTools Protocol to verify 0px horizontal overflow across mobile (320px/390px) and desktop (1280px), zero uncaught exceptions, and clean console output.
+- `workout_sets` Foreign Key Safety: `exercise_id` in `workout_sets` references `exercises(id)`. Client-generated UUIDs (`makeId()`) must NEVER be inserted directly into `exercise_id` without resolving against `exercises(id)`. In `LoggerScreen.js`, fallback to `exercise_id = null` on batch insert error guarantees zero data loss.
+- `HistoryScreen.js` Interactivity: Workout, Nutrition, and Water history cards must always be clickable (`TouchableOpacity`) and render comprehensive AMOLED inspection modals (`selectedSession`, `selectedNutrition`, `selectedWater`) with quick action triggers ("Ulangi Sesi", "Hapus Sesi", "Bagikan").
+- Modular Component Architecture (< 300 - 800 lines): To prevent monolith bloat and isolated re-renders, large screens are modularized into dedicated subdirectories: `components/logger/` (workout modals), `components/landing/` (landing page sections, styles & datasets), `components/history/` (history inspection modals & SVG volume chart), `components/profile/` (profile modal suite), and `components/admin/` (admin tables & management widgets). All extracted components must maintain strict prop contracts, pass universal Babel compilation, and verify 0 broken handlers.
+- Telegram Bot & Webhook Schema Alignment: `scripts/start-telegram-bot.js` and `api/telegram-webhook.js` aligned with `users_profile` schema (`is_premium` & `premium_until` synchronized alongside `is_pro` & `pro_expires_at`). `/growth` query column aligned to `started_at` in `workout_sessions`. Commands `/stats`, `/check`, `/grant`, and `/revoke` ensure full bidirectional synchronization between Telegram admin and the mobile client.
+- Pure Top-Level Module Resolution & Zero DRY Duplication: Cleaned all repeated inline `require()` calls and eliminated local `getLocalDateString` duplications across `AIRoutineModal.js`, `AIChatBubble.js`, `NutritionScannerModal.js`, `ProfileScreen.js`, and `WaterTrackerWidget.js` into canonical imports (`utils/dateHelpers.js`), eliminating runtime bundler overhead.
+- Serverless API Hardening & Privilege Defense: `api/qiospay-callback.js` stripped of hardcoded credentials and protected with webhook secret validation; `api/analyze-nutrition.js` upgraded with 4-layer Gemini cascade and safe candidate chaining; privilege escalation vulnerability in email matching restricted to strict authenticated admin role and exact owner email.
+- Multi-Platform Vector Graph Engine: `components/SkiaLineChart.js` implements `WebSvgLineChart` using `react-native-svg` to ensure 100% vector parity on web desktop where Canvas WASM Skia is unavailable.
+- Headless Chrome CDP Test Gate: `scripts/audit-chrome.mjs` integrates native Node 22 WebSocket + Chrome DevTools Protocol to verify 0px horizontal overflow across mobile (320px/390px) and desktop (1280px), zero uncaught exceptions, and clean console output.
 
 

@@ -1,8 +1,8 @@
 # GymVault Production Deployment & Operations Manual
 
 > Standard Operating Procedure (SOP) for deploying, updating, and operating GymVault across Web (Vercel) and Mobile (Expo EAS).  
-> Author: **Dhani078**  
-> Version: **2.4.0**
+> Author: Dhani078  
+> Version: 2.4.0
 
 ---
 
@@ -105,13 +105,13 @@ eas build --platform ios --profile production
 
 In the event of an unpredicted production regression:
 
-1. **Vercel Instant Rollback:**
+1. Vercel Instant Rollback:
    - Navigate to Vercel Project Dashboard ➔ Deployments.
-   - Locate the previous stable deployment hash and select **Instant Rollback**.
-2. **Git Branch Revert:**
+   - Locate the previous stable deployment hash and select Instant Rollback.
+2. Git Branch Revert:
    ```bash
    git revert HEAD
    git push origin main
    ```
-3. **Database Migration Safety:**
+3. Database Migration Safety:
    - All database migrations are written forward-only with backward compatibility for existing client versions. Column drops must follow a 2-stage deprecation cycle.

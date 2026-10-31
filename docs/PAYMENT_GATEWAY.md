@@ -1,15 +1,15 @@
 # GymVault DOKU QRIS Payment Gateway Integration
 
 > Cryptographic security specification, transaction lifecycle, and HMAC-SHA256 verification protocol for DOKU QRIS integration.  
-> Author: **Dhani078**  
-> Version: **2.4.0**  
+> Author: Dhani078  
+> Version: 2.4.0  
 > Module: `services/dokuService.js`
 
 ---
 
 ## 1. Architecture & Security Model
 
-GymVault integrates directly with DOKU's official Checkout API to issue dynamic QRIS invoices and process asynchronous settlement notifications. The architecture is engineered around a **fail-closed cryptographic security contract**:
+GymVault integrates directly with DOKU's official Checkout API to issue dynamic QRIS invoices and process asynchronous settlement notifications. The architecture is engineered around a fail-closed cryptographic security contract:
 
 ```text
 ┌─────────────────┐       1. Request Checkout        ┌─────────────────────┐
@@ -42,7 +42,7 @@ GymVault integrates directly with DOKU's official Checkout API to issue dynamic 
 
 ## 2. Cryptographic Signature Generation
 
-Every outbound API call to DOKU and every incoming webhook verification requires cryptographic signing using **HMAC-SHA256**.
+Every outbound API call to DOKU and every incoming webhook verification requires cryptographic signing using HMAC-SHA256.
 
 ### 2.1. Body Digest Calculation
 Before calculating the signature, the JSON payload must be hashed with SHA-256 and base64-encoded:
@@ -118,9 +118,9 @@ export function verifyDokuNotification(rawBody, headers, requestTarget = '/api/d
 
 To ensure webhook payloads cannot be captured and replayed maliciously by third parties:
 
-1. **Idempotency Check:** Every transaction record in `payment_requests` has a strict unique constraint on `id`.
-2. **Status Guardrail:** The RPC `approve_payment_request` validates that `status == 'pending'`. If already marked `'approved'`, subsequent duplicate callbacks are rejected as no-ops.
-3. **Timestamp Window:** Notifications with timestamps older than 5 minutes ($\pm 300\,\text{seconds}$) from the server system clock are rejected.
+1. Idempotency Check: Every transaction record in `payment_requests` has a strict unique constraint on `id`.
+2. Status Guardrail: The RPC `approve_payment_request` validates that `status == 'pending'`. If already marked `'approved'`, subsequent duplicate callbacks are rejected as no-ops.
+3. Timestamp Window: Notifications with timestamps older than 5 minutes ($\pm 300\,\text{seconds}$) from the server system clock are rejected.
 
 ---
 

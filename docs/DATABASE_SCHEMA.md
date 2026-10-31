@@ -1,9 +1,9 @@
 # GymVault Database Schema & Security Architecture
 
 > Comprehensive specification for PostgreSQL schema, Row Level Security (RLS) policies, triggers, and RPC procedures on Supabase.  
-> Author: **Dhani078**  
-> Version: **2.4.0**  
-> Status: **Production Ready**
+> Author: Dhani078  
+> Version: 2.4.0  
+> Status: Production Ready
 
 ---
 

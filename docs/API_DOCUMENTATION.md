@@ -1,8 +1,8 @@
 # GymVault API Specification & Endpoint Documentation
 
 > Master specification for all Vercel Serverless Edge endpoints serving GymVault.  
-> Author: **Dhani078**  
-> Version: **2.4.0**  
+> Author: Dhani078  
+> Version: 2.4.0  
 > Base URL: `https://gymvault-app.vercel.app`
 
 ---
@@ -27,8 +27,8 @@ All client API interactions authenticate via Supabase JWT or cryptographic HMAC 
 ### 2.1. `POST /api/doku-checkout`
 Generates an official DOKU QRIS checkout session, records a pending payment in `payment_requests`, and returns the merchant payment URL.
 
-- **Access Level:** Authenticated User
-- **Rate Limit:** 5 requests / minute per user
+- Access Level: Authenticated User
+- Rate Limit: 5 requests / minute per user
 
 #### Request Headers
 ```http
@@ -76,7 +76,7 @@ Authorization: Bearer <supabase_jwt>
 ### 2.2. `POST /api/doku-webhook`
 Handles settlement notifications pushed by DOKU upon successful QRIS scan and payment completion. Employs constant-time HMAC validation to prevent timing attacks.
 
-- **Access Level:** DOKU Payment Server (Verified via HMAC-SHA256)
+- Access Level: DOKU Payment Server (Verified via HMAC-SHA256)
 
 #### Request Headers
 ```http
@@ -137,7 +137,7 @@ Signature: HMACSHA256=abcdef123456...
 ### 2.3. `POST /api/telegram-webhook`
 Receives webhook callbacks from Telegram Bot Platform for SaaS administrative operations.
 
-- **Access Level:** Telegram Bot API (Validated via `X-Telegram-Bot-Api-Secret-Token`)
+- Access Level: Telegram Bot API (Validated via `X-Telegram-Bot-Api-Secret-Token`)
 
 #### Supported Admin Commands
 | Command | Arguments | Description |
@@ -160,8 +160,8 @@ Receives webhook callbacks from Telegram Bot Platform for SaaS administrative op
 ### 2.4. `POST /api/analyze-nutrition`
 Processes food images captured via camera or gallery and extracts calories and macronutrient estimates using Google Gemini 3.7 Vision API.
 
-- **Access Level:** Authenticated User
-- **Payload Constraint:** Base64 image payload capped at 5 MB (OWASP API4 protection).
+- Access Level: Authenticated User
+- Payload Constraint: Base64 image payload capped at 5 MB (OWASP API4 protection).
 
 #### Request Body
 ```json

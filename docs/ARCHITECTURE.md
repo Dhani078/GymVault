@@ -1,9 +1,9 @@
 # GymVault Architecture & System Design Specification
 
 > Master architectural blueprint for GymVault cross-platform fitness platform.  
-> Author: **Dhani078**  
-> Version: **2.4.0**  
-> Status: **Production Ready**
+> Author: Dhani078  
+> Version: 2.4.0  
+> Status: Production Ready
 
 ---
 
@@ -162,9 +162,9 @@ if (!isDesktop) {
 ```
 
 ### Desktop Modes:
-1. **Public Guest (`role !== 'admin'`):** Displays cinematic landing page with dark aesthetic, typography, and seven client-side interactive calculators (1RM, Olympic Plates, TDEE, Karvonen Zones, CNS Decay, Fridge Chef, Voice Simulator).
-2. **Super-Admin (`role === 'admin'`):** Grants access to Admin Control Panel with revenue tracking, user management, and instant payment approval tools.
-3. **Floating View Switcher:** Enables seamless switching between `[ Landing Page ]`, `[ Admin Panel ]`, and `[ App View ]` without signing out.
+1. Public Guest (`role !== 'admin'`): Displays cinematic landing page with dark aesthetic, typography, and seven client-side interactive calculators (1RM, Olympic Plates, TDEE, Karvonen Zones, CNS Decay, Fridge Chef, Voice Simulator).
+2. Super-Admin (`role === 'admin'`): Grants access to Admin Control Panel with revenue tracking, user management, and instant payment approval tools.
+3. Floating View Switcher: Enables seamless switching between `[ Landing Page ]`, `[ Admin Panel ]`, and `[ App View ]` without signing out.
 
 ---
 
@@ -172,12 +172,12 @@ if (!isDesktop) {
 
 State is segregated into three distinct domains:
 
-1. **Transient UI State:** Controlled locally within components via `useState` and `useReducer` (e.g., active modal visibility, input fields, form validation).
-2. **Global Application State:** Orchestrated via React Contexts:
+1. Transient UI State: Controlled locally within components via `useState` and `useReducer` (e.g., active modal visibility, input fields, form validation).
+2. Global Application State: Orchestrated via React Contexts:
    - `AppModeContext`: Persists selected equipment inventory (`dumbbells`, `resistance_band`, `pullup_bar`, `bench`) and toggles between Gym and Home exercise variations.
    - `ThemeContext`: Exposes canonical design tokens (`#000000`, `#0E0E12`, `#16161A`, `#D4F53C`, `#909096`) ensuring zero style drift.
    - `DynamicIslandContext`: Coordinates active rest timer countdowns and floating notifications across screens.
-3. **Persistent Server & Local State:**
+3. Persistent Server & Local State:
    - Active workout draft, custom routines, and offline queue are stored in `@react-native-async-storage/async-storage` using user-scoped keys: `${key}_${userId}`.
    - Authoritative historical logs, athlete profiles, and payment records reside in Supabase PostgreSQL with strict Row Level Security.
 
@@ -187,7 +187,7 @@ State is segregated into three distinct domains:
 
 GymVault maintains continuous usability during gym network dropouts via an offline-first architecture:
 
-1. **Write Phase:** When logging a completed workout session, `LoggerScreen.js` attempts direct insertion to Supabase.
-2. **Catch & Queue Phase:** If a network error, timeout, or DNS failure is intercepted, the complete payload is serialized into `offline_workouts_${userId}` in AsyncStorage.
-3. **Optimistic UI:** The session immediately marks complete in the client UI, updating local streak counters and volume aggregates.
-4. **Reconnection & Drain Phase:** `OfflineSyncBanner.js` monitors network connectivity. Upon detection of active internet, pending sessions are replayed sequentially to Supabase using `safeInsert` and `safeBatchInsert` procedures, draining the queue and notifying the user upon completion.
+1. Write Phase: When logging a completed workout session, `LoggerScreen.js` attempts direct insertion to Supabase.
+2. Catch & Queue Phase: If a network error, timeout, or DNS failure is intercepted, the complete payload is serialized into `offline_workouts_${userId}` in AsyncStorage.
+3. Optimistic UI: The session immediately marks complete in the client UI, updating local streak counters and volume aggregates.
+4. Reconnection & Drain Phase: `OfflineSyncBanner.js` monitors network connectivity. Upon detection of active internet, pending sessions are replayed sequentially to Supabase using `safeInsert` and `safeBatchInsert` procedures, draining the queue and notifying the user upon completion.

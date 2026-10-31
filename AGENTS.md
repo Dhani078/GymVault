@@ -46,11 +46,11 @@ Read the exact versioned docs at https://docs.expo.dev/versions/v54.0.0/ before 
 
 ---
 # CURRENT PROJECT CONTEXT: "The Adaptive Engine & Desktop Web Integration"
-- **Adaptive Engine (Mobile)**: Gym Mode vs. Home Mode seamlessly toggled via `AppModeContext`.
-- **PC Web & Desktop Integration**: Unified Vercel URL serving:
-  1. *Mobile (HP)*: Mobile App (Auth required).
-  2. *Desktop Guest (PC)*: High-End Cinematic Landing Page.
-  3. *Desktop Admin (PC)*: Admin Control Panel & User Analytics Dashboard (`role === 'admin'`).
+- Adaptive Engine (Mobile): Gym Mode vs. Home Mode seamlessly toggled via `AppModeContext`.
+- PC Web & Desktop Integration: Unified Vercel URL serving:
+  1. Mobile (HP): Mobile App (Auth required).
+  2. Desktop Guest (PC): High-End Cinematic Landing Page.
+  3. Desktop Admin (PC): Admin Control Panel & User Analytics Dashboard (`role === 'admin'`).
 @MEMORY.md
 @CLAUDE.md
 @GYMVAULT_CONTEXT.md
