@@ -24,6 +24,8 @@ const {
   formatShortDate,
   formatFullWIBDate,
   formatTime24,
+  formatRelativeTime,
+  getHoursAgo,
   isSameDay,
   getStartOfWeek
 } = require('../utils/dateHelpers');
@@ -248,6 +250,28 @@ assert(plate25.color === '#EF4444', `25kg plate standard color is Red (#EF4444) 
 
 const plate20 = OFFICIAL_BUMPER_PLATES.find(p => p.weight === 20);
 assert(plate20.color === '#3B82F6', `20kg plate standard color is Blue (#3B82F6) [Got: ${plate20.color}]`);
+
+// Test Suite 17: Humanized Relative Timestamps (WIB Engine)
+console.log('\n🧪 [Test Suite 17: Humanized Relative Timestamps (WIB Engine)]');
+const curTime = new Date();
+const halfHourAgo = new Date(curTime.getTime() - 30 * 60 * 1000);
+const rel30m = formatRelativeTime(halfHourAgo);
+assert(rel30m === '30 menit lalu', `30 minutes ago formats as "30 menit lalu" [Got: ${rel30m}]`);
+
+const threeHoursAgo = new Date(curTime.getTime() - 3 * 60 * 60 * 1000);
+const rel3h = formatRelativeTime(threeHoursAgo);
+assert(rel3h === '3 jam lalu', `3 hours ago formats as "3 jam lalu" [Got: ${rel3h}]`);
+
+const yesterday = new Date(curTime.getTime() - 25 * 60 * 60 * 1000);
+const relYest = formatRelativeTime(yesterday);
+assert(relYest === 'Kemarin', `25 hours ago formats as "Kemarin" [Got: ${relYest}]`);
+
+const threeDaysAgo = new Date(curTime.getTime() - 3 * 24 * 60 * 60 * 1000);
+const rel3d = formatRelativeTime(threeDaysAgo);
+assert(rel3d === '3 hari lalu', `3 days ago formats as "3 hari lalu" [Got: ${rel3d}]`);
+
+const hoursCheck = Math.round(getHoursAgo(threeHoursAgo));
+assert(hoursCheck === 3, `getHoursAgo computes 3 hours correctly [Got: ${hoursCheck}]`);
 
 // Summary
 console.log('\n========================================');

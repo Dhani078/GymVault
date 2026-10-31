@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js: 22 LTS](https://img.shields.io/badge/node.js-%3E%3D22.x%20LTS-brightgreen.svg)](https://nodejs.org/)
 
-> GymVault is a certified 10/10 production-grade, AMOLED-styled cross-platform fitness application built with React Native (Expo SDK 54), Supabase, and Google Gemini 3.7 AI. Featuring an Adaptive Engine that dynamically alternates between Gym Mode (machines & barbells) and Home Mode (calisthenics, bands, & dumbbells), hands-free voice-activated workout logging, bilingual audio coaching, computer-vision nutrition scanning, automated verification test suites (`npm test` - 75/75 passing), and unified single-URL desktop/mobile routing with live interactive simulators.
+> GymVault is a certified 10/10 production-grade, AMOLED-styled cross-platform fitness application built with React Native (Expo SDK 54), Supabase, and Google Gemini 3.7 AI. Featuring an Adaptive Engine that dynamically alternates between Gym Mode (machines & barbells) and Home Mode (calisthenics, bands, & dumbbells), hands-free voice-activated workout logging, bilingual audio coaching, computer-vision nutrition scanning, automated verification test suites (`npm test` - 80/80 passing), and unified single-URL desktop/mobile routing with live interactive simulators.
 
 ---
 
@@ -27,7 +27,7 @@
 - 🗺️ 12-Group SVG Muscle Recovery Map: Anatomical body heat-map with mathematical recovery decay, multilingual scientific taxonomy, and tailored rehabilitation exercises.
 - 🧮 Pure Mathematical Engine (`utils/fitnessMath.js`): Isolated, zero-side-effect modules for 1RM (Brzycki), Olympic Barbell Plate Loading (IPF/IWF bumper plates), TDEE (Mifflin-St Jeor), Cardio HR Zones (Karvonen), Kinetic Chain Stabilizer Protection, and 4-Week Plateau Breakers.
 - 💳 Official DOKU QRIS Payment Gateway: Direct instant QRIS payment generation (`services/dokuService.js`, `api/doku-checkout.js`), fail-closed HMAC-SHA256 timing-safe webhook listener (`api/doku-webhook.js`), in-memory IP sliding rate limiting, atomic database RPC settlement, and automated 3-second status polling.
-- 🧪 Automated Test Runner (`npm test`): 75 automated assertion test scenarios across 16 test suites verifying calculation accuracy, edge-case resilience, WCAG contrast standards, and payment cryptography with a 100% pass rate.
+- 🧪 Automated Test Runner (`npm test`): 80 automated assertion test scenarios across 17 test suites verifying calculation accuracy, edge-case resilience, WCAG contrast standards, WIB timestamp humanization, and payment cryptography with a 100% pass rate.
 - 📴 Offline Sync Engine: Full offline workout tracking with auto-queueing and automatic Supabase database synchronization upon network reconnect.
 - 🤖 Super-Admin Telegram Bot Command Suite (`api/telegram-webhook.js`): Real-time SaaS control center from Telegram chat supporting `/stats`, `/growth`, `/recent`, `/check <email>`, `/grant <email> <days>`, `/revoke <email>`, `/broadcast <msg>`, and `/clearnotif` + instant inline `[ ✅ ACC ]` / `[ ❌ TOLAK ]` QRIS approval.
 - 🖥️ Adaptive Web & Desktop Engine (with Desktop View Mode Switcher):
