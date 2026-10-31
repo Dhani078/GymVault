@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, ScrollView, Animated, Easing } from 'react-native';
+import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, Animated, Easing } from 'react-native';
 import { Mail, Lock, User, AtSign, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react-native';
 import { AppText, theme, styles } from '../theme';
 import { supabase } from '../supabaseClient';

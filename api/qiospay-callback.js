@@ -147,7 +147,8 @@ export default async function handler(req, res) {
       success: true,
       message: 'QRIS payment verified and activated successfully',
       refid: refId,
-      amount: amount
+      amount: amount,
+      userId: activatedUserId
     });
 
   } catch (error) {

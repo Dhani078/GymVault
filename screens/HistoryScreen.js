@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { View, SectionList, ActivityIndicator, RefreshControl, TouchableOpacity, Alert, Modal, Share, Platform, DeviceEventEmitter } from "react-native";
+import { View, SectionList, ActivityIndicator, RefreshControl, TouchableOpacity, Alert, Share, Platform, DeviceEventEmitter } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dumbbell, Trash2, Calendar, AlertCircle, ChevronRight, ChevronLeft, Utensils, Droplet } from "lucide-react-native";
 import WorkoutDetailModal from '../components/history/WorkoutDetailModal';

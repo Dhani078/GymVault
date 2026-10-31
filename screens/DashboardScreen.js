@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, TouchableOpacity, ActivityIndicator, RefreshControl, TextInput, DeviceEventEmitter } from "react-native";
-import { Dumbbell, Activity, Flame, Trophy, TrendingUp, Target, Zap, Home } from "lucide-react-native";
+import { Dumbbell, Flame, Trophy, TrendingUp, Target, Zap, Home } from "lucide-react-native";
 import { AppText, styles, theme } from '../theme';
 import { supabase, safeSelect, safeUpsert } from '../supabaseClient';
 import { useTranslation } from '../contexts/LanguageContext';

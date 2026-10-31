@@ -15,7 +15,6 @@ import {
   Crown,
 } from "lucide-react-native";
 import * as ImagePicker from 'expo-image-picker';
-import * as Notifications from 'expo-notifications';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { AppText, theme } from "../theme";

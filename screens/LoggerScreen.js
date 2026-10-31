@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { View, ScrollView, Pressable, Image, ImageBackground, ActivityIndicator, Alert, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
-import { Plus, Check, ChevronLeft, ChevronRight, Clock, Trophy, Trash2, Dumbbell, AlertCircle, Save, X, Volume2, VolumeX, Mic, MicOff } from "lucide-react-native";
+import { View, ScrollView, Pressable, ImageBackground, ActivityIndicator, Alert, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
+import { Plus, ChevronLeft, ChevronRight, Clock, Trophy, Trash2, Dumbbell, AlertCircle, Save, X, Volume2, VolumeX, Mic, MicOff } from "lucide-react-native";
 import * as Notifications from 'expo-notifications';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';

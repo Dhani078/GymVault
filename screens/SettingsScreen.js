@@ -8,7 +8,6 @@ import {
   Bell,
   Target,
   Trash2,
-  Database,
   Check,
 } from "lucide-react-native";
 import { AppText, theme, styles } from '../theme';

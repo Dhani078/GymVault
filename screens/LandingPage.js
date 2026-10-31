@@ -12,11 +12,8 @@ import {
   Heart,
   Timer,
   CheckCircle2,
-  Calculator,
   Droplets,
-  Target,
   PlayCircle,
-  CheckCircle,
   Utensils,
   Mic,
 } from "lucide-react-native";

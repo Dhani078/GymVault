@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal, Alert, RefreshControl } from "react-native";
-import { Users, LogOut, ShieldAlert, Download, X, Ticket, Send, Search } from "lucide-react-native";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, RefreshControl } from "react-native";
+import { LogOut, ShieldAlert, Download, Ticket, Send } from "lucide-react-native";
 import { useTheme } from '../contexts/ThemeContext';
 import AdminStats from '../components/admin/AdminStats';
 import UsersTable from '../components/admin/UsersTable';
