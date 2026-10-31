@@ -65,7 +65,9 @@ export function useProfileData(session, dbReady) {
           if (isPremVal === 'true' || premStatusVal === 'active' || hasLocalActiveDate || localRole === 'admin' || streakNum >= 3) {
             localIsPrem = true;
           }
-        } catch (_storageErr) {}
+        } catch (storageErr) {
+          console.warn('[useProfileData] Local storage read error:', storageErr);
+        }
 
         const isDhaniOrAdmin = Boolean(
           profileData.role === 'admin' ||

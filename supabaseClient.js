@@ -24,7 +24,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 });
 
 // Auto refresh token when app comes to foreground
-const subscription = AppState.addEventListener('change', (state) => {
+AppState.addEventListener('change', (state) => {
   if (state === 'active') {
     supabase.auth.startAutoRefresh();
   } else {
