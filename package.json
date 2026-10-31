@@ -1,6 +1,24 @@
 {
-  "name": "gym",
-  "version": "1.0.0",
+  "name": "gymvault",
+  "version": "2.5.0",
+  "description": "Adaptive workout & CNS muscle recovery engine with Olympic barbell math, Gemini AI nutrition, and QRIS payments.",
+  "author": "Dhani078",
+  "homepage": "https://gymvault-app.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dhani078/GymVault.git"
+  },
+  "keywords": [
+    "fitness",
+    "workout-tracker",
+    "react-native",
+    "expo",
+    "supabase",
+    "1rm-calculator",
+    "barbell-plates",
+    "qris",
+    "doku"
+  ],
   "main": "index.js",
   "scripts": {
     "start": "expo start",
