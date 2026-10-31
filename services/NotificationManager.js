@@ -72,8 +72,8 @@ export const NotificationManager = {
 
       await AsyncStorage.setItem(NOTIFICATION_SETUP_KEY, 'true');
 
-    } catch (_error) {
-
+    } catch (err) {
+      console.warn('[NotificationManager] Schedule reminder error:', err);
     }
   },
 
@@ -81,8 +81,8 @@ export const NotificationManager = {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
       await AsyncStorage.removeItem(NOTIFICATION_SETUP_KEY);
-    } catch (_e) {
-
+    } catch (err) {
+      console.warn('[NotificationManager] Clear reminders error:', err);
     }
   }
 };

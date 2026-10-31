@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { View, Pressable, ScrollView, Modal, Alert, Platform, Image } from "react-native";
+import { View, Pressable, ScrollView, Modal, Alert, Platform } from "react-native";
 import {
   Dumbbell,
   Flame,

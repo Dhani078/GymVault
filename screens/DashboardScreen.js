@@ -200,12 +200,6 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
     onStartWorkout();
   };
 
-
-  const triggerRefresh = () => {
-    fetchDashboardData();
-  };
-
-
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SmoothScrollView

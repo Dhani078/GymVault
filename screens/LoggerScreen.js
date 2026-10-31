@@ -77,8 +77,8 @@ export default function LoggerScreen({
         if (navigator?.mediaDevices?.getUserMedia) {
           try {
             await navigator.mediaDevices.getUserMedia({ audio: true });
-          } catch (_permErr) {
-
+          } catch (permErr) {
+            console.warn('[LoggerScreen] Mic permission denied/cancelled:', permErr);
           }
         }
 
@@ -294,8 +294,8 @@ export default function LoggerScreen({
                 await AsyncStorage.setItem(storageKey, JSON.stringify(prMap));
               }
             }
-          } catch (_dbErr) {
-            // Non-critical background sync
+          } catch (dbErr) {
+            console.warn('[Logger] PR sync background fallback:', dbErr?.message);
           }
         }
 
