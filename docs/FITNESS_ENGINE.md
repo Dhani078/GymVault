@@ -1,9 +1,9 @@
 # GymVault Fitness Mathematics & Biomechanical Engine
 
-> Technical documentation of pure algorithmic models implemented in `utils/fitnessMath.js`.  
-> Author: Dhani078  
-> Version: 2.4.0  
-> Test Coverage: 100% Pass Rate (65/65 assertions)
+Technical documentation of pure algorithmic models implemented in utils/fitnessMath.js.  
+Author: Dhani078  
+Version: 2.5.0  
+Test Coverage: 100% Pass Rate (80/80 assertions across 17 test suites)
 
 ---
 

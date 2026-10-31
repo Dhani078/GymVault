@@ -1,9 +1,10 @@
 # GymVault API Specification & Endpoint Documentation
 
-> Master specification for all Vercel Serverless Edge endpoints serving GymVault.  
-> Author: Dhani078  
-> Version: 2.4.0  
-> Base URL: `https://gymvault-app.vercel.app`
+Master specification for all Vercel Serverless Edge endpoints serving GymVault.  
+Author: Dhani078  
+Version: 2.5.0  
+Contract: OpenAPI 3.1.0 (docs/openapi.yaml)  
+Base URL: https://gymvault-app.vercel.app
 
 ---
 

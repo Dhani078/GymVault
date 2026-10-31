@@ -1,8 +1,9 @@
 # GymVault Production Deployment & Operations Manual
 
-> Standard Operating Procedure (SOP) for deploying, updating, and operating GymVault across Web (Vercel) and Mobile (Expo EAS).  
-> Author: Dhani078  
-> Version: 2.4.0
+Standard Operating Procedure (SOP) for deploying, updating, and operating GymVault across Web (Vercel) and Mobile (Expo EAS).  
+Author: Dhani078  
+Version: 2.5.0  
+Last Updated: 2026-10-31
 
 ---
 
