@@ -504,8 +504,24 @@ BEGIN
 END;
 $$;
 
+-- 10. Nutrition Logs (Meal & Calorie Tracking)
+CREATE TABLE IF NOT EXISTS nutrition_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users_profile(id) ON DELETE CASCADE,
+    food_name TEXT NOT NULL,
+    calories REAL DEFAULT 0,
+    protein REAL DEFAULT 0,
+    carbs REAL DEFAULT 0,
+    fats REAL DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE nutrition_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can manage own nutrition logs" ON nutrition_logs
+    FOR ALL USING (auth.uid() = user_id);
+
 -- =============================================
--- 10. Performance Indexes (Supabase Best Practices)
+-- 11. Performance Indexes (Supabase Best Practices)
 -- Eliminates Sequential Scans on Foreign Keys & Hot Query Paths
 -- =============================================
 CREATE INDEX IF NOT EXISTS idx_workout_sessions_user_date ON workout_sessions(user_id, started_at DESC);
@@ -513,7 +529,7 @@ CREATE INDEX IF NOT EXISTS idx_workout_sets_session ON workout_sets(session_id);
 CREATE INDEX IF NOT EXISTS idx_workout_sets_exercise ON workout_sets(exercise_name);
 CREATE INDEX IF NOT EXISTS idx_payment_requests_user_status ON payment_requests(user_id, status);
 CREATE INDEX IF NOT EXISTS idx_payment_requests_created ON payment_requests(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_food_logs_user_date ON food_logs(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_nutrition_logs_user_date ON nutrition_logs(user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_weight_logs_user_date ON weight_logs(user_id, logged_at DESC);
 CREATE INDEX IF NOT EXISTS idx_promo_codes_code ON promo_codes(code);
 CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_created ON admin_audit_logs(created_at DESC);
