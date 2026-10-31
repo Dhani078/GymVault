@@ -1,0 +1,14 @@
+.git
+.github
+.env*
+node_modules
+artifacts
+scripts
+docs
+.vscode
+.expo
+android
+ios
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

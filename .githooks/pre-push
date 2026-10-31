@@ -1,0 +1,9 @@
+#!/bin/sh
+# GymVault Quality Gate — Pre-Push Automated Test Verification
+set -e
+
+echo "🔍 [Git Pre-Push Hook] Running GymVault 71/71 Automated Tests..."
+npm test
+
+echo "✅ [Git Pre-Push Hook] All tests passed! Proceeding with git push."
+exit 0

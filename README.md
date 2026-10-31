@@ -1,17 +1,24 @@
 # ⚡ GymVault — Elite Workout & Fitness Tracking Platform
 
-> **GymVault** is a certified 10/10 production-grade, AMOLED-styled cross-platform fitness application built with React Native (Expo SDK 54), Supabase, and Google Gemini 3.7 AI. Featuring an **Adaptive Engine** that dynamically alternates between **Gym Mode** (machines & barbells) and **Home Mode** (calisthenics, bands, & dumbbells), hands-free voice-activated workout logging, bilingual audio coaching, computer-vision nutrition scanning, automated verification test suites (`npm test` - 65/65 passing), and unified single-URL desktop/mobile routing with live interactive simulators.
+[![CI](https://github.com/Dhani078/GymVault/actions/workflows/ci.yml/badge.svg)](https://github.com/Dhani078/GymVault/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js: 22 LTS](https://img.shields.io/badge/node.js-%3E%3D22.x%20LTS-brightgreen.svg)](https://nodejs.org/)
+
+> **GymVault** is a certified 10/10 production-grade, AMOLED-styled cross-platform fitness application built with React Native (Expo SDK 54), Supabase, and Google Gemini 3.7 AI. Featuring an **Adaptive Engine** that dynamically alternates between **Gym Mode** (machines & barbells) and **Home Mode** (calisthenics, bands, & dumbbells), hands-free voice-activated workout logging, bilingual audio coaching, computer-vision nutrition scanning, automated verification test suites (`npm test` - 71/71 passing), and unified single-URL desktop/mobile routing with live interactive simulators.
 
 ---
 
 ## 🌐 Live Production URL
-👉 **[https://gymvault-app.vercel.app](https://gymvault-app.vercel.app)**
+👉 **[https://gymvault-app.vercel.app](https://gymvault-app.vercel.app)**  
+📜 Legal: **[Privacy Policy](https://gymvault-app.vercel.app/privacy)** · **[Terms of Service](https://gymvault-app.vercel.app/terms)** · **[OpenAPI 3.1 Contract](https://github.com/Dhani078/GymVault/blob/main/docs/openapi.yaml)**
 
 ---
 
 ## 🌟 Key Features
 
 - 🏋️ **Adaptive Workout Engine**: Seamlessly switch between Gym Mode and Home Mode. Exercises automatically swap to match available home inventory without losing workout structure.
+- 🛡️ **Global Error Boundary (`components/ErrorBoundary.js`)**: Root-level crash guard styled in pitch black AMOLED (`#000000`) and Electric Lime (`#D4F53C`), protecting offline sessions and eliminating white screens of death.
+- 📶 **PWA Standalone & Offline Service Worker (`web/sw.js`)**: Stale-while-revalidate caching and offline navigation fallback ensuring seamless tracking in underground basement gyms.
 - 🎙️ **Voice-Activated Hands-Free Workout Logging**: Speak natural voice commands (*"Coach, catat 80 kilo 8 repetisi"*) while holding heavy dumbbells. Uses Web Speech API to parse weight/reps, mark sets complete, and trigger dynamic rest timers.
 - ⏱️ **Zero-Friction Live Logger**: Real-time set tracker with progressive overload double progression, back-off set recommendations, kinetic chain fatigue warnings, local persistence (`AsyncStorage`), and bilingual Text-to-Speech (TTS) voice coach.
 - 🍳 **"Fridge-to-Macro" Smart Chef**: Generate gram-precise recipes and ingredient portions from whatever is currently in the kitchen fridge, perfectly matching remaining daily calorie and protein targets.
@@ -19,8 +26,8 @@
 - 📸 **Smart Nutrition Scanner**: Camera-based nutritional label scanner for instant meal macro breakdown and calorie logging.
 - 🗺️ **12-Group SVG Muscle Recovery Map**: Anatomical body heat-map with mathematical recovery decay, multilingual scientific taxonomy, and tailored rehabilitation exercises.
 - 🧮 **Pure Mathematical Engine (`utils/fitnessMath.js`)**: Isolated, zero-side-effect modules for 1RM (Brzycki), Olympic Barbell Plate Loading (IPF/IWF bumper plates), TDEE (Mifflin-St Jeor), Cardio HR Zones (Karvonen), Kinetic Chain Stabilizer Protection, and 4-Week Plateau Breakers.
-- 💳 **Official DOKU QRIS Payment Gateway**: Direct instant QRIS payment generation (`services/dokuService.js`, `api/doku-checkout.js`), fail-closed HMAC-SHA256 timing-safe webhook listener (`api/doku-webhook.js`), atomic database RPC settlement, and automated 3-second status polling.
-- 🧪 **Automated Test Runner (`npm test`)**: 65 automated assertion test scenarios across 15 test suites verifying calculation accuracy, data taxonomy, and payment cryptography with a 100% pass rate.
+- 💳 **Official DOKU QRIS Payment Gateway**: Direct instant QRIS payment generation (`services/dokuService.js`, `api/doku-checkout.js`), fail-closed HMAC-SHA256 timing-safe webhook listener (`api/doku-webhook.js`), in-memory IP sliding rate limiting, atomic database RPC settlement, and automated 3-second status polling.
+- 🧪 **Automated Test Runner (`npm test`)**: 71 automated assertion test scenarios across 15 test suites verifying calculation accuracy, edge-case resilience, data taxonomy, and payment cryptography with a 100% pass rate.
 - 📴 **Offline Sync Engine**: Full offline workout tracking with auto-queueing and automatic Supabase database synchronization upon network reconnect.
 - 🤖 **Super-Admin Telegram Bot Command Suite (`api/telegram-webhook.js`)**: Real-time SaaS control center from Telegram chat supporting `/stats`, `/growth`, `/recent`, `/check <email>`, `/grant <email> <days>`, `/revoke <email>`, `/broadcast <msg>`, and `/clearnotif` + instant inline `[ ✅ ACC ]` / `[ ❌ TOLAK ]` QRIS approval.
 - 🖥️ **Adaptive Web & Desktop Engine (with Desktop View Mode Switcher)**:

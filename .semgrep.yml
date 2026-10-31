@@ -1,0 +1,39 @@
+rules:
+  - id: no-supabase-service-role-in-client
+    patterns:
+      - pattern-either:
+          - pattern: process.env.EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY
+          - pattern: process.env.SUPABASE_SERVICE_ROLE_KEY
+    paths:
+      include:
+        - screens/**
+        - components/**
+        - contexts/**
+        - hooks/**
+    message: "CRITICAL: Service role key must never be referenced in client-side code."
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: require-timing-safe-equal-for-hmac
+    patterns:
+      - pattern-either:
+          - pattern: $SIG === $EXPECTED
+          - pattern: $SIG == $EXPECTED
+      - pattern-regex: (signature|digest|hmac)
+    paths:
+      include:
+        - services/**
+        - api/**
+    message: "SECURITY: Cryptographic signature comparison must use crypto.timingSafeEqual to prevent timing attacks."
+    languages: [javascript, typescript]
+    severity: WARNING
+
+  - id: no-empty-catch-blocks
+    pattern: |
+      try {
+        ...
+      } catch ($ERR) {
+      }
+    message: "QUALITY: Empty catch block swallows errors silently. Log or handle the exception explicitly."
+    languages: [javascript, typescript]
+    severity: INFO
