@@ -175,6 +175,74 @@ async function runAudit() {
     console.log('Buttons Detected:', domCheck.buttonLabels);
     console.log('Body Text Snippet:', domCheck.bodySnippet);
 
+    // PWA & Service Worker Audit
+    console.log('\n--- PWA & Manifest Audit ---');
+    const pwaCheck = await evaluate(`(() => {
+      const manifestEl = document.querySelector('link[rel="manifest"]');
+      const hasSw = 'serviceWorker' in navigator;
+      const themeColor = document.querySelector('meta[name="theme-color"]')?.content;
+      return {
+        hasManifest: !!manifestEl,
+        manifestHref: manifestEl?.href || null,
+        hasServiceWorkerSupport: hasSw,
+        themeColor
+      };
+    })()`);
+    console.log('Manifest Link:', pwaCheck.hasManifest ? `✔ FOUND (${pwaCheck.manifestHref})` : '❌ MISSING');
+    console.log('Service Worker API:', pwaCheck.hasServiceWorkerSupport ? '✔ SUPPORTED' : '❌ NOT SUPPORTED');
+    console.log('Theme Color:', pwaCheck.themeColor || 'NOT SET');
+
+    // SEO & Structured Data Audit
+    console.log('\n--- SEO & Social Metadata Audit ---');
+    const seoCheck = await evaluate(`(() => {
+      const ldJsonEl = document.querySelector('script[type="application/ld+json"]');
+      let ldJsonValid = false;
+      let ldType = null;
+      if (ldJsonEl) {
+        try {
+          const parsed = JSON.parse(ldJsonEl.innerText);
+          ldType = parsed['@type'];
+          ldJsonValid = true;
+        } catch (_e) {}
+      }
+      return {
+        hasLdJson: ldJsonValid,
+        schemaType: ldType,
+        ogTitle: document.querySelector('meta[property="og:title"]')?.content,
+        ogImage: document.querySelector('meta[property="og:image"]')?.content,
+        twitterCard: document.querySelector('meta[name="twitter:card"]')?.content,
+        canonical: document.querySelector('link[rel="canonical"]')?.href
+      };
+    })()`);
+    console.log('Schema.org JSON-LD:', seoCheck.hasLdJson ? `✔ VALID (@type: ${seoCheck.schemaType})` : '❌ INVALID/MISSING');
+    console.log('OpenGraph Title:', seoCheck.ogTitle || 'MISSING');
+    console.log('Twitter Card:', seoCheck.twitterCard || 'MISSING');
+    console.log('Canonical URL:', seoCheck.canonical || 'MISSING');
+
+    // Web Vitals & Real-Time Navigation Performance Timing
+    console.log('\n--- Web Vitals & Performance Telemetry ---');
+    const perfTiming = await evaluate(`(() => {
+      const nav = performance.getEntriesByType('navigation')[0];
+      const mem = performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1024 / 1024) : null;
+      if (!nav) return { available: false, heapMb: mem };
+      return {
+        available: true,
+        dnsMs: Math.round(nav.domainLookupEnd - nav.domainLookupStart),
+        tcpMs: Math.round(nav.connectEnd - nav.connectStart),
+        ttfbMs: Math.round(nav.responseStart - nav.requestStart),
+        domReadyMs: Math.round(nav.domContentLoadedEventEnd - nav.startTime),
+        loadMs: Math.round(nav.loadEventEnd - nav.startTime),
+        heapMb: mem
+      };
+    })()`);
+    if (perfTiming.available) {
+      console.log(`DNS Lookup: ${perfTiming.dnsMs}ms | TCP Connect: ${perfTiming.tcpMs}ms`);
+      console.log(`TTFB: ${perfTiming.ttfbMs}ms | DOM Ready: ${perfTiming.domReadyMs}ms | Full Load: ${perfTiming.loadMs}ms`);
+      if (perfTiming.heapMb) console.log(`JS Heap Usage: ${perfTiming.heapMb} MB`);
+    } else {
+      console.log('Navigation timing entry not yet finalized.');
+    }
+
     console.log('\n--- Console Logs Captured (' + consoleLogs.length + ') ---');
     for (const log of consoleLogs) {
       const prefix = log.type === 'error' ? '❌' : (log.type === 'warning' ? '⚠️' : 'ℹ️');
