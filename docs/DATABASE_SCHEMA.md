@@ -318,20 +318,34 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 ---
 
-## 6. Performance Indexes
+## 6. Performance Indexes & Foreign Key Optimization
 
-The following B-Tree indexes optimize high-volume queries:
+The following B-Tree indexes optimize high-volume queries and eliminate sequential table scans:
 
 ```sql
 -- Workout session lookups by user and date
 CREATE INDEX idx_workout_sessions_user_date ON workout_sessions(user_id, started_at DESC);
 
 -- Fast set queries by session
-CREATE INDEX idx_workout_sets_session ON workout_sets(session_id, set_index ASC);
+CREATE INDEX idx_workout_sets_session ON workout_sets(session_id);
+
+-- Set lookups by exercise name
+CREATE INDEX idx_workout_sets_exercise ON workout_sets(exercise_name);
+
+-- Payment requests by user and status
+CREATE INDEX idx_payment_requests_user_status ON payment_requests(user_id, status);
+CREATE INDEX idx_payment_requests_created ON payment_requests(created_at DESC);
 
 -- Nutrition chronological history
-CREATE INDEX idx_nutrition_logs_user_date ON nutrition_logs(user_id, logged_at DESC);
+CREATE INDEX idx_nutrition_logs_user_date ON nutrition_logs(user_id, created_at DESC);
 
--- Pending payment requests for admin dashboard
-CREATE INDEX idx_payment_requests_pending ON payment_requests(status) WHERE status = 'pending';
+-- Weight logs history
+CREATE INDEX idx_weight_logs_user_date ON weight_logs(user_id, logged_at DESC);
+
+-- Promo code validation
+CREATE INDEX idx_promo_codes_code ON promo_codes(code);
+
+-- Security and audit logs
+CREATE INDEX idx_admin_logs_created ON admin_logs(created_at DESC);
+CREATE INDEX idx_admin_logs_admin_id ON admin_logs(admin_id);
 ```

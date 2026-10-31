@@ -135,10 +135,19 @@ E:\Hermesproject\GYM\
 │   ├── dateHelpers.js         # WIB canonical date arithmetic
 │   ├── fitnessMath.js         # Pure functional fitness algorithms
 │   └── makeId.js              # Cryptographic short ID generator
+├── web/                    # PWA Shell, Service Worker & Static Engine
+│   ├── index.html             # HTML5 template with JSON-LD schema & DNS prefetch
+│   ├── sw.js                  # Stale-while-revalidate PWA service worker
+│   ├── manifest.json          # Standalone PWA manifest specification
+│   ├── offline.html           # Standalone offline emergency fallback
+│   ├── privacy.html           # Public Privacy Policy
+│   ├── terms.html             # Public Terms of Service
+│   └── llms.txt               # Standard machine-readable AI context
 └── scripts/                # Automated audit, test, and verification tools
     ├── audit-chrome.mjs       # Headless Chrome CDP visual regression test
-    ├── test-fitness-engine.js # Automated unit test suite (61 assertions)
-    └── test-doku.js           # DOKU QRIS HMAC & validation suite (4 assertions)
+    ├── healthcheck-db.mjs     # Supabase REST latency & table diagnostic (6 tables)
+    ├── test-fitness-engine.js # Automated unit test suite (76 assertions, 17 suites)
+    └── test-doku.mjs          # DOKU QRIS HMAC & validation suite (4 assertions)
 ```
 
 ---
