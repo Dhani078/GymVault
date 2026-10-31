@@ -1,6 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { createDokuCheckout } from '../services/dokuService.js';
 
+// In-memory rate limiter per IP (prevents payment invoice flooding)
+const rateLimitMap = new Map();
+function isRateLimited(key, limit = 10, windowMs = 60000) {
+  const now = Date.now();
+  const timestamps = (rateLimitMap.get(key) || []).filter((t) => now - t < windowMs);
+  if (timestamps.length >= limit) return true;
+  timestamps.push(now);
+  rateLimitMap.set(key, timestamps);
+  return false;
+}
+
 export default async function handler(req, res) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -17,6 +28,11 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown').split(',')[0].trim();
+  if (isRateLimited(clientIp, 10, 60000)) {
+    return res.status(429).json({ error: 'Too many requests. Please wait a minute.' });
   }
 
   try {

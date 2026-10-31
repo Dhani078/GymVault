@@ -215,6 +215,26 @@ assert(voiceCmd3.success === true && voiceCmd3.weightKg === 25 && voiceCmd3.reps
 const voiceCmdEmpty = parseVoiceWorkoutCommand('');
 assert(voiceCmdEmpty.success === false, `Empty voice command returns success: false [Got: ${voiceCmdEmpty.success}]`);
 
+// Test Suite 15: Edge Case Resilience & Mathematical Bounds
+console.log('\n🧪 [Test Suite 15: Edge Case Resilience & Mathematical Bounds]');
+const clampMinRep = calculate1RM(100, -5);
+assert(clampMinRep === 100, `Negative reps clamps to 1 rep [Got: ${clampMinRep}]`);
+
+const clampMaxRep = calculate1RM(100, 25);
+const expectedCap12 = calculate1RM(100, 12);
+assert(clampMaxRep === expectedCap12, `Extreme reps (>12) caps at 12 to maintain formula accuracy [Got: ${clampMaxRep}]`);
+
+const underBarPlate = calculatePlateBreakdown(15, 20);
+assert(underBarPlate.platesPerSide.length === 0, `Weight below bar weight yields 0 plates [Got: ${underBarPlate.platesPerSide.length}]`);
+assert(underBarPlate.totalWeight === 20, `Weight below bar weight defaults to bar weight [Got: ${underBarPlate.totalWeight}]`);
+
+const microPlate = calculatePlateBreakdown(22.5, 20);
+assert(microPlate.platesPerSide.length === 1 && microPlate.platesPerSide[0].weight === 1.25, `22.5kg bar loads 1.25kg plate per side [Got: ${microPlate.platesPerSide[0]?.weight}kg]`);
+
+const leapDay1 = new Date('2024-02-29T08:00:00Z');
+const leapDay2 = new Date('2024-02-29T12:00:00Z');
+assert(isSameDay(leapDay1, leapDay2) === true, `Leap day isSameDay handles Feb 29 accurately`);
+
 // Summary
 console.log('\n========================================');
 if (failedTests === 0) {
