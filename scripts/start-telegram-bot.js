@@ -1,3 +1,23 @@
+const fs = require('fs');
+const path = require('path');
+
+// Auto-load local .env if present (zero dependencies)
+try {
+  const envPath = path.resolve('.env');
+  if (fs.existsSync(envPath)) {
+    const lines = fs.readFileSync(envPath, 'utf8').split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      const eqIdx = trimmed.indexOf('=');
+      if (eqIdx > 0 && !trimmed.startsWith('#')) {
+        const k = trimmed.slice(0, eqIdx).trim();
+        const v = trimmed.slice(eqIdx + 1).trim();
+        if (!process.env[k]) process.env[k] = v;
+      }
+    }
+  }
+} catch (_) {}
+
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://sjrzhiigrcrcpgvnfixo.supabase.co';
