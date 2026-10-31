@@ -10,6 +10,8 @@
     "build": "expo export -p web",
     "bot": "node scripts/telegram-listener.js",
     "healthcheck:db": "node scripts/healthcheck-db.mjs",
+    "typecheck": "tsc --noEmit",
+    "analyze": "npx source-map-explorer 'dist/**/*.js'",
     "test": "node scripts/test-fitness-engine.js && node --no-warnings scripts/test-doku.mjs",
     "test:doku": "node --no-warnings scripts/test-doku.mjs"
   },
