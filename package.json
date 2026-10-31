@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "build": "expo export -p web",
     "bot": "node scripts/telegram-listener.js",
+    "healthcheck:db": "node scripts/healthcheck-db.mjs",
     "test": "node scripts/test-fitness-engine.js && node --no-warnings scripts/test-doku.mjs",
     "test:doku": "node --no-warnings scripts/test-doku.mjs"
   },

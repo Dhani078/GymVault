@@ -14,7 +14,13 @@
     },
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "bundleIdentifier": "com.dhani0788.GYM",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "GymVault requires microphone access for hands-free voice-activated workout logging.",
+        "NSCameraUsageDescription": "GymVault requires camera access to scan nutritional labels and meals for macro calculation.",
+        "NSPhotoLibraryUsageDescription": "GymVault requires photo library access to upload profile avatars and workout progress photos."
+      }
     },
     "android": {
       "adaptiveIcon": {
