@@ -12,6 +12,7 @@ import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_7
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import AdaptiveLayout from './components/AdaptiveLayout';
 import VercelTelemetry from './components/VercelTelemetry';
+import ErrorBoundary from './components/ErrorBoundary';
 
 if (Platform.OS !== 'web') {
   Notifications.setNotificationHandler({
@@ -476,15 +477,17 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <AppModeProvider>
-          <DynamicIslandProvider>
-            <AppContent />
-            <VercelTelemetry />
-          </DynamicIslandProvider>
-        </AppModeProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <LanguageProvider>
+          <AppModeProvider>
+            <DynamicIslandProvider>
+              <AppContent />
+              <VercelTelemetry />
+            </DynamicIslandProvider>
+          </AppModeProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

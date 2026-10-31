@@ -57,6 +57,15 @@
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
 
+    <!-- PWA Offline Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/sw.js').catch(function () {});
+        });
+      }
+    </script>
+
     <style>
       /* Reset for Expo Web root */
       html, body {

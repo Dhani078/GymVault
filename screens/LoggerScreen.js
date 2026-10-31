@@ -955,6 +955,8 @@ export default function LoggerScreen({
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Pressable 
               onPress={() => setVoiceModalVisible(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Voice Workout Logger"
               style={{ 
                 backgroundColor: 'rgba(56, 189, 248, 0.1)', 
                 width: 36, 
@@ -971,6 +973,8 @@ export default function LoggerScreen({
             </Pressable>
             <Pressable 
               onPress={toggleVoiceGuide}
+              accessibilityRole="button"
+              accessibilityLabel={voiceGuideEnabled ? "Matikan Panduan Suara" : "Aktifkan Panduan Suara"}
               style={{ 
                 backgroundColor: voiceGuideEnabled ? 'rgba(212, 245, 60, 0.1)' : 'rgba(255, 255, 255, 0.03)', 
                 width: 36, 
@@ -1049,7 +1053,12 @@ export default function LoggerScreen({
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <AppText weight="bold" style={{ fontSize: 16, color: '#FFF' }}>{curEx.name}</AppText>
                   {proMode && (
-                    <Pressable onPress={() => setShowPlateModal(true)} style={{ backgroundColor: 'rgba(212,245,60,0.15)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: '#D4F53C', zIndex: 10 }}>
+                    <Pressable 
+                      onPress={() => setShowPlateModal(true)} 
+                      accessibilityRole="button"
+                      accessibilityLabel="Kalkulator Barbell Plate"
+                      style={{ backgroundColor: 'rgba(212,245,60,0.15)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: '#D4F53C', zIndex: 10 }}
+                    >
                       <AppText weight="bold" style={{ color: '#D4F53C', fontSize: 10 }}>PLATES</AppText>
                     </Pressable>
                   )}
@@ -1066,7 +1075,13 @@ export default function LoggerScreen({
                   })()}
                 </View>
               </View>
-              <Pressable onPress={removeExercise} hitSlop={15} style={{ padding: 6, zIndex: 10 }}>
+              <Pressable 
+                onPress={removeExercise} 
+                hitSlop={15} 
+                accessibilityRole="button"
+                accessibilityLabel="Hapus Latihan dari Sesi"
+                style={{ padding: 6, zIndex: 10 }}
+              >
                 <Trash2 color="#EF4444" size={16} />
               </Pressable>
             </View>
