@@ -153,14 +153,14 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           }));
           setLeaderboardData(mapped);
         } else if (rpcErr) {
-
+          console.warn('[DashboardScreen] Leaderboard RPC warning:', rpcErr.message);
         }
-      } catch (_leaderboardErr) {
-
+      } catch (leaderboardErr) {
+        console.warn('[DashboardScreen] Leaderboard load error:', leaderboardErr);
       }
 
-    } catch (_e) {
-
+    } catch (err) {
+      console.warn('[DashboardScreen] Refresh load error:', err);
       setDbError(true);
     }
 

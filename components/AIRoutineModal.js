@@ -129,7 +129,9 @@ export default function AIRoutineModal({ visible, onClose, onStartRoutine, cnsSc
       } else {
         setUsageCount(0);
       }
-    } catch (_e) {}
+    } catch (err) {
+      console.warn('[AIRoutineModal] Load usage count warning:', err);
+    }
   };
 
   const handleGenerate = async () => {
@@ -164,28 +166,24 @@ export default function AIRoutineModal({ visible, onClose, onStartRoutine, cnsSc
           routine = data;
         }
       }
-    } catch (_apiErr) {
-      // Fallback to Tier 2
+    } catch (apiErr) {
+      console.warn('[AIRoutineModal] Tier 1 API fallback:', apiErr?.message);
     }
 
     if (!routine) {
       try {
-        const prompt = `You are an expert AI personal trainer.
-Create a workout routine returning ONLY a valid JSON object. No markdown, no backticks.
-The user is doing a ${isHome ? 'Home Workout' : 'Gym Workout'}.
+        const prompt = `System: You are an expert AI strength & conditioning specialist. Output strictly valid JSON without explanation or code blocks.
+User Request: Create a workout routine for an athlete doing a ${isHome ? 'Home Workout' : 'Gym Workout'}.
 Available Equipment: ${isHome && equipmentInventory?.length > 0 ? equipmentInventory.join(', ') : 'Full Gym Equipment'}.
-Difficulty: ${level}.
-Focus Area: ${focus}.
-CNS Fatigue (1=Tired, 5=Fresh): ${cnsScore}. 
-Adjust volume/intensity based on CNS. The routine MUST focus on the requested Focus Area (e.g., if Push, include Chest/Shoulders/Triceps; if Pull, include Back/Biceps; if Legs, include Quads/Hamstrings/Glutes/Calves).
-Format strictly:
+Difficulty: ${level}. Focus Area: ${focus}. CNS Fatigue Score (1=Tired, 5=Fresh): ${cnsScore}.
+JSON Output Format:
 {
   "name": "Generated Routine Name",
   "exercises": [
     { "name": "Exercise Name", "numSets": 3, "muscle_group": "Chest", "image": "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=300&auto=format&fit=crop" }
   ]
 }
-Ensure exercise names are popular (e.g., Squat, Push Up, Bench Press, Lat Pulldown, Romanian Deadlift). Limit to 4-6 exercises.`;
+Ensure exercise names are standard barbell/dumbbell/bodyweight exercises. Limit to 4-6 exercises.`;
 
         const { text: rawText } = await generateWithGeminiCascade({
           prompt,
@@ -204,8 +202,8 @@ Ensure exercise names are popular (e.g., Squat, Push Up, Bench Press, Lat Pulldo
         if (parsed && Array.isArray(parsed.exercises) && parsed.exercises.length > 0) {
           routine = parsed;
         }
-      } catch (_geminiErr) {
-        // Fallback to Tier 3
+      } catch (geminiErr) {
+        console.warn('[AIRoutineModal] Tier 2 Gemini fallback:', geminiErr?.message);
       }
     }
 

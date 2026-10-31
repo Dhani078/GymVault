@@ -198,7 +198,9 @@ export default function AIChatBubble() {
                 exerciseId = newEx.id;
               }
             }
-          } catch (_exErr) {}
+          } catch (exErr) {
+            console.warn('[AIChatBubble] Exercise lookup warning:', exErr);
+          }
 
           if (ex.sets && ex.sets.length > 0) {
             const setRows = ex.sets.map((s, idx) => ({
@@ -558,8 +560,8 @@ export default function AIChatBubble() {
       let offlineResult = null;
       try {
         offlineResult = await processOfflineMessage(textToSend);
-      } catch (_offErr) {
-
+      } catch (offErr) {
+        console.warn('[AIChatBubble] Offline pattern matching fallback:', offErr);
       }
 
       if (offlineResult) {

@@ -69,8 +69,8 @@ export default function NutritionWidget({ session, userProfile, refreshTrigger }
           }
         }
       }
-    } catch (_nutErr) {
-
+    } catch (nutErr) {
+      console.warn('[NutritionWidget] Sync offline nutrition warning:', nutErr);
     } finally {
       setIsSyncing(false);
     }
