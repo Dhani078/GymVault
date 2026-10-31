@@ -32,7 +32,8 @@
     "analyze": "npx source-map-explorer 'dist/**/*.js'",
     "test": "node scripts/test-fitness-engine.js && node --no-warnings scripts/test-doku.mjs",
     "test:ci": "npm run typecheck && npm test",
-    "test:doku": "node --no-warnings scripts/test-doku.mjs"
+    "test:doku": "node --no-warnings scripts/test-doku.mjs",
+    "audit:cve": "npm audit --audit-level=high"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",

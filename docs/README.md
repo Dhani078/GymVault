@@ -38,6 +38,7 @@ This directory houses the comprehensive architectural, mathematical, security, a
 - [docs/TESTING_STRATEGY.md](TESTING_STRATEGY.md): Comprehensive breakdown of all 17 automated test suites (80 assertions).
 - [docs/BENCHMARKS_AND_PERFORMANCE.md](BENCHMARKS_AND_PERFORMANCE.md): FlashList recycling efficiency, execution latency, and Core Web Vitals.
 - [docs/CI_CD_PIPELINE.md](CI_CD_PIPELINE.md): GitHub Actions workflow, git pre-push quality gates, and automated validation.
+- [docs/ZERO_CVE_POLICY.md](ZERO_CVE_POLICY.md): Active LTS runtime standards and dependency vulnerability remediation SLA.
 
 ### 5. Deployment, Containerization & Roadmap
 - [docs/DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md): Standard Operating Procedure for Vercel Web and Expo EAS Mobile distribution.
