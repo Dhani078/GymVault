@@ -3,6 +3,7 @@ const CACHE_NAME = 'gymvault-shell-v1';
 const PRECACHE_URLS = [
   '/',
   '/manifest.json',
+  '/offline.html',
   '/assets/icon.png',
   '/assets/favicon.png'
 ];
@@ -37,7 +38,7 @@ self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => {
-        return caches.match('/') || caches.match('/index.html');
+        return caches.match('/') || caches.match('/index.html') || caches.match('/offline.html');
       })
     );
     return;

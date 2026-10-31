@@ -520,8 +520,27 @@ ALTER TABLE nutrition_logs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage own nutrition logs" ON nutrition_logs
     FOR ALL USING (auth.uid() = user_id);
 
+-- 11. Admin Audit Logs (Security & Administration Activity)
+CREATE TABLE IF NOT EXISTS admin_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    admin_id UUID REFERENCES users_profile(id) ON DELETE SET NULL,
+    action TEXT NOT NULL,
+    target_user_id UUID,
+    details TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE admin_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Admins can manage audit logs" ON admin_logs
+    FOR ALL USING (
+        EXISTS (
+            SELECT 1 FROM users_profile 
+            WHERE users_profile.id = auth.uid() AND users_profile.role = 'admin'
+        )
+    );
+
 -- =============================================
--- 11. Performance Indexes (Supabase Best Practices)
+-- 12. Performance Indexes (Supabase Best Practices)
 -- Eliminates Sequential Scans on Foreign Keys & Hot Query Paths
 -- =============================================
 CREATE INDEX IF NOT EXISTS idx_workout_sessions_user_date ON workout_sessions(user_id, started_at DESC);
@@ -532,6 +551,7 @@ CREATE INDEX IF NOT EXISTS idx_payment_requests_created ON payment_requests(crea
 CREATE INDEX IF NOT EXISTS idx_nutrition_logs_user_date ON nutrition_logs(user_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_weight_logs_user_date ON weight_logs(user_id, logged_at DESC);
 CREATE INDEX IF NOT EXISTS idx_promo_codes_code ON promo_codes(code);
-CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_created ON admin_audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_logs_created ON admin_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_logs_admin_id ON admin_logs(admin_id);
 
 

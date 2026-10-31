@@ -34,7 +34,11 @@
       "destination": "/llms.txt"
     },
     {
-      "source": "/((?!api/|ads\\.txt|robots\\.txt|sitemap\\.xml|manifest\\.json|sw\\.js|privacy|terms|llms\\.txt).*)",
+      "source": "/offline",
+      "destination": "/offline.html"
+    },
+    {
+      "source": "/((?!api/|ads\\.txt|robots\\.txt|sitemap\\.xml|manifest\\.json|sw\\.js|privacy|terms|llms\\.txt|offline).*)",
       "destination": "/index.html"
     }
   ],

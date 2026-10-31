@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Mode Offline — GymVault</title>
+  <meta name="theme-color" content="#000000" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000000;
+      color: #FFFFFF;
+      font-family: 'Inter', -apple-system, sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .card {
+      max-width: 420px;
+      background: #161618;
+      border: 1px solid #252528;
+      border-radius: 16px;
+      padding: 32px 24px;
+    }
+    .icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 32px;
+      background: rgba(212, 245, 60, 0.12);
+      border: 1px solid rgba(212, 245, 60, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 16px auto;
+      font-size: 28px;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      color: #FFFFFF;
+    }
+    p {
+      color: #909096;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0 0 24px 0;
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      background: #D4F53C;
+      color: #000000;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 0;
+      border-radius: 10px;
+      text-decoration: none;
+      box-sizing: border-box;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📶</div>
+    <h1>Koneksi Terputus</h1>
+    <p>Anda sedang berada di luar jangkauan internet. Sesi latihan dan catatan beban lokal tetap aman di penyimpanan perangkat Anda.</p>
+    <a href="/" class="btn" onclick="window.location.reload(); return false;">Coba Muat Ulang</a>
+  </div>
+</body>
+</html>

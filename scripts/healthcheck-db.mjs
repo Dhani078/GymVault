@@ -34,7 +34,7 @@ console.log('🩺 GYMVAULT DATABASE HEALTHCHECK');
 console.log('========================================');
 console.log(`Target: ${supabaseUrl}`);
 
-const tablesToCheck = ['exercises', 'workout_sessions', 'workout_sets', 'payment_requests', 'nutrition_logs'];
+const tablesToCheck = ['exercises', 'workout_sessions', 'workout_sets', 'payment_requests', 'nutrition_logs', 'admin_logs'];
 
 async function runHealthcheck() {
   const startTime = Date.now();
