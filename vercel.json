@@ -30,7 +30,11 @@
       "destination": "/terms.html"
     },
     {
-      "source": "/((?!api/|ads\\.txt|robots\\.txt|sitemap\\.xml|manifest\\.json|sw\\.js|privacy|terms).*)",
+      "source": "/llms.txt",
+      "destination": "/llms.txt"
+    },
+    {
+      "source": "/((?!api/|ads\\.txt|robots\\.txt|sitemap\\.xml|manifest\\.json|sw\\.js|privacy|terms|llms\\.txt).*)",
       "destination": "/index.html"
     }
   ],

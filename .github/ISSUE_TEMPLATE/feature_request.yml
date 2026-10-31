@@ -1,0 +1,29 @@
+name: "💡 Feature Request"
+description: "Suggest a new fitness calculation, anatomical feature, or UI enhancement"
+title: "[FEAT]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Punya ide untuk GymVault? Beritahu kami fitur atau algoritma apa yang ingin Anda lihat.
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Latar Belakang Masalah (Problem Statement)"
+      description: "Masalah apa yang sedang ingin diselesaikan?"
+      placeholder: "Saya sering kesulitan saat..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Solusi yang Diusulkan"
+      description: "Jelaskan cara kerja fitur atau formula yang Anda bayangkan."
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatif yang Sudah Dipertimbangkan"
+      description: "Apakah ada solusi atau aplikasi alternatif yang pernah Anda coba?"

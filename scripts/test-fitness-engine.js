@@ -17,6 +17,7 @@ const {
   checkKineticChainFatigue,
   detectPlateauAndSuggestRotation,
   parseVoiceWorkoutCommand,
+  OFFICIAL_BUMPER_PLATES,
 } = require('../utils/fitnessMath');
 
 const {
@@ -234,6 +235,19 @@ assert(microPlate.platesPerSide.length === 1 && microPlate.platesPerSide[0].weig
 const leapDay1 = new Date('2024-02-29T08:00:00Z');
 const leapDay2 = new Date('2024-02-29T12:00:00Z');
 assert(isSameDay(leapDay1, leapDay2) === true, `Leap day isSameDay handles Feb 29 accurately`);
+
+// Test Suite 16: Brand Design Tokens & Accessibility Standards
+console.log('\n🧪 [Test Suite 16: Brand Design Tokens & Accessibility Standards]');
+assert(OFFICIAL_BUMPER_PLATES.length === 7, `7 official Olympic plate increments registered [Got: ${OFFICIAL_BUMPER_PLATES.length}]`);
+
+const allPlatesHaveColors = OFFICIAL_BUMPER_PLATES.every(p => p.color && p.color.startsWith('#') && p.weight > 0);
+assert(allPlatesHaveColors === true, `All bumper plates enforce valid hex contrast codes`);
+
+const plate25 = OFFICIAL_BUMPER_PLATES.find(p => p.weight === 25);
+assert(plate25.color === '#EF4444', `25kg plate standard color is Red (#EF4444) [Got: ${plate25.color}]`);
+
+const plate20 = OFFICIAL_BUMPER_PLATES.find(p => p.weight === 20);
+assert(plate20.color === '#3B82F6', `20kg plate standard color is Blue (#3B82F6) [Got: ${plate20.color}]`);
 
 // Summary
 console.log('\n========================================');

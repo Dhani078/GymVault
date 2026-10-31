@@ -1,0 +1,32 @@
+# GymVault
+
+> The Adaptive Workout & CNS Muscle Recovery Engine. Built for competitive lifters, athletes, and fitness enthusiasts with 120 FPS Skia telemetry, Olympic barbell math, and Gemini AI nutrition analysis.
+
+## Docs
+
+- [GymVault Home & Web App](https://gymvault-app.vercel.app/): Interactive workout tracking platform featuring Adaptive Gym & Home mode, Olympic barbell loading calculators, and CNS recovery heat-map.
+- [Privacy Policy](https://gymvault-app.vercel.app/privacy): Official data handling policy covering device permissions, local-first offline storage, and user rights.
+- [Terms of Service](https://gymvault-app.vercel.app/terms): Terms of use, subscription management, medical fitness disclaimers, and account policies.
+- [OpenAPI 3.1 Specification](https://github.com/Dhani078/GymVault/blob/main/docs/openapi.yaml): Machine-readable contract specification for GymVault serverless payment, webhook, and admin endpoints.
+
+## Core Capabilities
+
+- **Adaptive Workout Engine**: Seamlessly switch between Gym Mode (barbells & machines) and Home Mode (calisthenics, bands & dumbbells) without breaking session architecture.
+- **Hands-Free Voice Logger**: Speak commands naturally while holding heavy dumbbells to log sets, adjust reps, and trigger rest countdown timers.
+- **Pure Mathematical Engine**: Zero-dependency functional formulas for 1-Rep Max (Brzycki), Olympic Barbell Plate Loading (IPF/IWF standards), TDEE (Mifflin-St Jeor), and Karvonen Cardio Heart Rate Zones.
+- **DOKU QRIS Payment Gateway**: Direct instant QRIS invoice generation with fail-closed HMAC-SHA256 timing-safe webhook verification and atomic subscription provisioning.
+- **Offline-First PWA**: Stale-while-revalidate service worker and local storage caching ensuring full workout logging even in basement gyms without cellular reception.
+
+## Key Facts
+
+- Lead Maintainer: Dhani078
+- Architecture: React Native (Expo SDK 54), Supabase (PostgreSQL with RLS), Node.js 22 LTS
+- Theme: Pitch Black AMOLED (`#000000`) & Electric Lime (`#D4F53C`)
+- Test Coverage: 75/75 automated assertions passing across 16 test suites
+- Official Website: https://gymvault-app.vercel.app
+
+## Contact
+
+- Website: https://gymvault-app.vercel.app
+- Security Disclosures: security@gymvault.id
+- Maintainer Email: dhanisepeda@gmail.com
