@@ -132,7 +132,7 @@ export function verifyDokuNotification({
     const actualBuf = Buffer.from(signature);
     if (expectedBuf.length !== actualBuf.length) return false;
     return crypto.timingSafeEqual(expectedBuf, actualBuf);
-  } catch (err) {
+  } catch (_err) {
     return false;
   }
 }

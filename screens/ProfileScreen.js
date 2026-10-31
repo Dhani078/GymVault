@@ -69,7 +69,7 @@ export default function ProfileScreen({ session, dbReady, onGoToHistory }) {
   } = useProfileData(session, dbReady);
   const { showNotification } = useDynamicIsland();
   const themeContext = useTheme();
-  const { darkMode, proMode: _proMode } = themeContext;
+  const { darkMode, proMode: _proMode, colors } = themeContext;
   const languageContext = useTranslation();
   const { t } = languageContext;
 

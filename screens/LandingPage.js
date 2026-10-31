@@ -7,7 +7,6 @@ import {
   Zap,
   Flame,
   Award,
-  TrendingUp,
   Sparkles,
   Check,
   Heart,

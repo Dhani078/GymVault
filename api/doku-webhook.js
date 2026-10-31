@@ -67,7 +67,7 @@ export default async function handler(req, res) {
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     // 3. Cari payment_requests berdasarkan nomor invoice
-    const { data: matchedRequests, error: fetchErr } = await supabase
+    const { data: matchedRequests, error: _fetchErr } = await supabase
       .from('payment_requests')
       .select('*')
       .ilike('proof_url', `%${orderId}%`)
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
       // Jalankan RPC atomic approval
       try {
         await supabase.rpc('approve_payment_request', { request_id: targetRequest.id });
-      } catch (rpcErr) {
+      } catch (_rpcErr) {
         // Fallback update jika RPC gagal
         const intervalMs = activatedPlan === 'yearly' ? 365 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000;
         const premiumUntil = new Date(Date.now() + intervalMs).toISOString();
