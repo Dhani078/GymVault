@@ -504,3 +504,18 @@ BEGIN
 END;
 $$;
 
+-- =============================================
+-- 10. Performance Indexes (Supabase Best Practices)
+-- Eliminates Sequential Scans on Foreign Keys & Hot Query Paths
+-- =============================================
+CREATE INDEX IF NOT EXISTS idx_workout_sessions_user_date ON workout_sessions(user_id, started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_workout_sets_session ON workout_sets(session_id);
+CREATE INDEX IF NOT EXISTS idx_workout_sets_exercise ON workout_sets(exercise_name);
+CREATE INDEX IF NOT EXISTS idx_payment_requests_user_status ON payment_requests(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_payment_requests_created ON payment_requests(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_food_logs_user_date ON food_logs(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_weight_logs_user_date ON weight_logs(user_id, logged_at DESC);
+CREATE INDEX IF NOT EXISTS idx_promo_codes_code ON promo_codes(code);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_created ON admin_audit_logs(created_at DESC);
+
+

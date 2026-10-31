@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Kebijakan Privasi — GymVault</title>
+  <meta name="description" content="Kebijakan privasi GymVault mengenai perlindungan data biometrik, izin mikrofon, kamera, dan penyimpanan offline." />
+  <meta name="theme-color" content="#000000" />
+  <link rel="canonical" href="https://gymvault-app.vercel.app/privacy" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #000000;
+      color: #FFFFFF;
+      font-family: 'Inter', -apple-system, sans-serif;
+      margin: 0;
+      padding: 32px 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .badge {
+      color: #000000;
+      background-color: #D4F53C;
+      font-weight: 700;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 8px 0;
+    }
+    .updated {
+      color: #909096;
+      font-size: 13px;
+      margin-bottom: 32px;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #D4F53C;
+      margin-top: 28px;
+      border-bottom: 1px solid #252528;
+      padding-bottom: 8px;
+    }
+    p, li {
+      color: #D1D5DB;
+      font-size: 14px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    .card {
+      background: #161618;
+      border: 1px solid #252528;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+    a {
+      color: #D4F53C;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 24px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-btn">&larr; Kembali ke Beranda</a>
+    <div><span class="badge">Privasi & Kepatuhan</span></div>
+    <h1>Kebijakan Privasi GymVault</h1>
+    <div class="updated">Terakhir diperbarui: 31 Oktober 2026</div>
+
+    <p>Selamat datang di <strong>GymVault</strong>. Kami menghormati dan melindungi privasi setiap atlet dan pengguna. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi data Anda saat menggunakan aplikasi mobile dan web GymVault.</p>
+
+    <h2>1. Data yang Kami Kumpulkan</h2>
+    <ul>
+      <li><strong>Data Akun & Autentikasi:</strong> Alamat email, nama profil, dan kata sandi terenkripsi (dikelola secara aman melalui Supabase Auth).</li>
+      <li><strong>Data Biometrik & Latihan:</strong> Berat badan, tinggi badan, perkiraan One-Rep Max (1RM), riwayat set/repetisi, dan catatan kelelahan sistem saraf pusat (CNS).</li>
+      <li><strong>Log Nutrisi:</strong> Foto makanan dan estimasi kalori/makronutrisi melalui AI Vision (hanya saat Anda menggunakan fitur pemindai nutrisi).</li>
+    </ul>
+
+    <h2>2. Penggunaan Izin Perangkat (Device Permissions)</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Mikrofon (Audio):</strong> Digunakan semata-mata untuk fitur <em>Voice Workout Logger</em> hands-free saat mencatat beban dan repetisi. Kami tidak menyimpan atau mengirim rekaman suara latar belakang Anda.</li>
+        <li><strong>Kamera & Galeri Foto:</strong> Digunakan untuk mengunggah avatar profil dan memindai foto piring makanan untuk analisis nutrisi. Foto tidak dibagikan ke pihak ketiga tanpa izin Anda.</li>
+        <li><strong>Notifikasi:</strong> Digunakan untuk timer istirahat antardasar (rest timer) dan pengingat jadwal latihan harian.</li>
+      </ul>
+    </div>
+
+    <h2>3. Penyimpanan Data Lokal & Offline First</h2>
+    <p>GymVault menerapkan prinsip <em>offline-first</em>. Sesi latihan, log harian, dan set tersimpan secara lokal di perangkat Anda (AsyncStorage / Web Storage). Ketika koneksi internet tersedia, data disinkronkan secara aman ke Supabase Postgres dengan perlindungan Row Level Security (RLS).</p>
+
+    <h2>4. Pembayaran & Gerbang QRIS</h2>
+    <p>Pembayaran langganan Premium diproses melalui gerbang pembayaran berlisensi resmi (DOKU QRIS). GymVault tidak pernah menyimpan nomor kartu kredit atau detail perbankan pribadi Anda.</p>
+
+    <h2>5. Iklan Pihak Ketiga</h2>
+    <p>Untuk pengguna paket gratis, versi web GymVault dapat menampilkan iklan yang dilayani oleh Google AdSense. Google menggunakan cookie untuk menayangkan iklan berdasarkan kunjungan Anda ke situs ini dan situs lainnya di internet.</p>
+
+    <h2>6. Hak Pengguna & Penghapusan Data</h2>
+    <p>Anda berhak melihat, mengunduh (JSON export), atau meminta penghapusan permanen akun dan seluruh riwayat latihan Anda kapan saja melalui menu Pengaturan &gt; Data &amp; Privasi di dalam aplikasi.</p>
+
+    <h2>7. Hubungi Kami</h2>
+    <p>Pertanyaan seputar privasi dapat disampaikan melalui email: <a href="mailto:support@gymvault.id">support@gymvault.id</a>.</p>
+  </div>
+</body>
+</html>

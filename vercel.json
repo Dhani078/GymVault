@@ -22,7 +22,15 @@
       "destination": "/sw.js"
     },
     {
-      "source": "/((?!api/|ads\\.txt|robots\\.txt|sitemap\\.xml|manifest\\.json|sw\\.js).*)",
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/((?!api/|ads\\.txt|robots\\.txt|sitemap\\.xml|manifest\\.json|sw\\.js|privacy|terms).*)",
       "destination": "/index.html"
     }
   ],

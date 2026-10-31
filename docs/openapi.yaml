@@ -1,0 +1,145 @@
+openapi: 3.1.0
+info:
+  title: GymVault Serverless Backend API
+  description: Official OpenAPI 3.1 contract specification for GymVault serverless payment, webhook, and admin endpoints.
+  version: 2.5.0
+  contact:
+    name: Dhani078
+    url: https://gymvault-app.vercel.app
+
+servers:
+  - url: https://gymvault-app.vercel.app/api
+    description: Production Vercel Serverless Edge
+
+paths:
+  /doku-checkout:
+    post:
+      summary: Generate DOKU QRIS Checkout URL
+      description: Issues an official DOKU QRIS invoice link and registers a pending transaction in Supabase.
+      operationId: createDokuCheckout
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                  description: The authenticated athlete user UUID.
+                plan:
+                  type: string
+                  enum: [monthly, yearly]
+                  default: monthly
+                amount:
+                  type: integer
+                  description: Custom transaction amount in IDR (optional).
+                userEmail:
+                  type: string
+                  format: email
+                userName:
+                  type: string
+      responses:
+        '200':
+          description: DOKU Checkout URL created successfully or manual QRIS fallback returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  paymentUrl:
+                    type: string
+                    format: uri
+                  invoiceNumber:
+                    type: string
+                  requestId:
+                    type: string
+                    nullable: true
+                  amount:
+                    type: integer
+                  plan:
+                    type: string
+        '400':
+          description: Missing required parameters.
+        '429':
+          description: Too Many Requests (Rate limit exceeded).
+        '500':
+          description: Internal server or database configuration error.
+
+  /doku-webhook:
+    post:
+      summary: DOKU QRIS Payment Notification Webhook
+      description: Receives asynchronous payment completion callbacks from DOKU with timing-safe HMAC-SHA256 signature verification.
+      operationId: handleDokuWebhook
+      parameters:
+        - in: header
+          name: Client-Id
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: Request-Id
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: Request-Timestamp
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: Signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order:
+                  type: object
+                  properties:
+                    invoice_number:
+                      type: string
+                    amount:
+                      type: integer
+                transaction:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+      responses:
+        '200':
+          description: Webhook received, verified, and atomic subscription provisioned.
+        '400':
+          description: Invalid signature, spoofed digest, or missing headers.
+        '500':
+          description: Database RPC processing error.
+
+  /qiospay-callback:
+    post:
+      summary: Secondary QiosPay Payment Callback
+      description: Fallback webhook processor for secondary QRIS providers.
+      operationId: handleQiospayCallback
+      responses:
+        '200':
+          description: Payment confirmed and user upgraded.
+        '500':
+          description: Internal server error.
+
+  /telegram-webhook:
+    post:
+      summary: Telegram Admin Bot Command Gateway
+      description: Processes admin commands for subscriber stats, revenue telemetry, and manual approval triggers.
+      operationId: handleTelegramWebhook
+      responses:
+        '200':
+          description: Command executed successfully.
