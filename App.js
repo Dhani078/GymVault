@@ -371,8 +371,8 @@ function AppContent() {
     }
     return (
       <>
-        <View style={{ flex: 1, width: '100%', alignSelf: 'center', backgroundColor: colors.background, overflow: 'hidden' }}>
-          <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, width: '100%', alignSelf: 'center', backgroundColor: colors.background, overflow: 'hidden', ...(Platform.OS === 'web' ? { height: '100%', maxHeight: '100%' } : {}) }}>
+          <View style={{ flex: 1, overflow: 'hidden' }}>
             <View style={{ flex: 1, display: tab === 'Dashboard' ? 'flex' : 'none' }}>
               {visitedTabs.includes('Dashboard') && <DashboardScreen onStartWorkout={handleStartWorkout} onStartRoutine={handleStartRoutine} session={session} dbReady={dbReady} hasActiveWorkout={workoutData.length > 0} />}
             </View>
@@ -469,7 +469,7 @@ function AppContent() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background, ...(Platform.OS === 'web' ? { height: '100vh', maxHeight: '100vh', overflow: 'hidden' } : {}) }}>
       <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
       <AdaptiveLayout session={session}>
         {renderContent()}

@@ -272,6 +272,7 @@ export const styles = {
       alignItems: 'center',
       justifyContent: 'space-between',
       flexShrink: 0,
+      zIndex: 100,
     };
   },
   get tabItem() {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Pressable, TextInput, Alert } from 'react-native';
+import { View, Pressable, TextInput, Alert, DeviceEventEmitter } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppText, theme } from '../../theme';
 import { supabase } from '../../supabaseClient';
@@ -21,8 +21,18 @@ export default function SaveRoutineModal({
     if (!routineName.trim() || workoutData.length === 0) return;
     setSaving(true);
     try {
-      const existingStr = await AsyncStorage.getItem('customRoutines');
-      const existing = existingStr ? JSON.parse(existingStr) : [];
+      const storageKey = session?.user?.id ? `customRoutines_${session.user.id}` : 'customRoutines_guest';
+      const existingStr = await AsyncStorage.getItem(storageKey);
+      let existing = [];
+      if (existingStr) {
+        try { existing = JSON.parse(existingStr); } catch (_e) {}
+      } else {
+        const legacyStr = await AsyncStorage.getItem('customRoutines');
+        if (legacyStr) {
+          try { existing = JSON.parse(legacyStr); } catch (_e) {}
+        }
+      }
+
       const newRoutine = {
         id: Date.now().toString(),
         name: routineName.trim(),
@@ -33,7 +43,7 @@ export default function SaveRoutineModal({
         }))
       };
       const updatedRoutines = [...existing, newRoutine];
-      await AsyncStorage.setItem('customRoutines', JSON.stringify(updatedRoutines));
+      await AsyncStorage.setItem(storageKey, JSON.stringify(updatedRoutines));
       
       if (session?.user?.id && dbReady) {
         const { error } = await supabase
@@ -42,6 +52,8 @@ export default function SaveRoutineModal({
           .eq('id', session.user.id);
         if (error) console.warn('[SaveRoutineModal] Failed to sync routine to Supabase:', error.message);
       }
+
+      DeviceEventEmitter.emit('custom_routines_updated', updatedRoutines);
 
       setRoutineName('');
       if (typeof showNotification === 'function') {

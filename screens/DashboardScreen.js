@@ -427,7 +427,7 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
           </View>
         </View>
 
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 20 }}>
           <TouchableOpacity
             activeOpacity={0.7}
             style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, backgroundColor: 'rgba(212,245,60,0.08)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(212,245,60,0.35)' }}
@@ -439,6 +439,9 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
             <AppText weight="bold" style={{ color: theme.colors.primary, fontSize: 15, letterSpacing: 0.5 }}>AI Routine Assistant</AppText>
           </TouchableOpacity>
         </View>
+
+        {/* ═══ MY ROUTINES WIDGET (PROMINENT TOP POSITION) ═══ */}
+        <CustomRoutinesWidget session={session} dbReady={dbReady} onStartRoutine={onStartRoutine} />
 
         <LeaderboardPreviewWidget leaderboardData={leaderboardData} onShowLeaderboard={() => setShowLeaderboard(true)} />
 
@@ -516,8 +519,6 @@ export default function DashboardScreen({ onStartWorkout, onStartRoutine, sessio
         <WaterTrackerWidget userProfile={userProfile} refreshTrigger={refreshing} />
 
         <CommunitySocialFeedWidget leaderboardData={leaderboardData} />
-
-        <CustomRoutinesWidget session={session} dbReady={dbReady} onStartRoutine={onStartRoutine} />
 
       </MotiView>
 
